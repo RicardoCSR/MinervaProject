@@ -51,8 +51,8 @@ PA12    anode Nixie B
 PA15    anode Nixie A
 
 PB0     Nivel Bateria
-PB1     anode Nixie D
-PB2     anode Nixie C
+PB1     
+PB2     
 PB3     Pino SCL BME280 // TESTAR
 PB4      
 PB5     Pino SDA BME280 // TESTAR
@@ -67,8 +67,8 @@ PB14    Botao Up
 PB15    Botao Down
 
 PC13    Leitura Bat EN
-PC14    
-PC15    
+PC14    anode Nixie C
+PC15    anode Nixie D
 
 
 
@@ -399,6 +399,9 @@ byte effectModeNixie = 0;
 // effectModeNixie = 1 Sequência Metro Nixie {6 7 5 8 4 3 9 2 0 1}
 // effectModeNixie = 2 Sequência Numerica Nixie {9 8 7 6 5 4 3 2 1 0}
 
+
+int* prt;
+
 //------------------------------- CONFIGURACAO DOS PINOS DE SENSORES E DISPLAY --------
 
 int ldrPinPower = PA0;          // Pino de alimentação do Sensor LDR
@@ -485,8 +488,8 @@ volatile int repetitions = 2000;
 
 #define pinAnode0 PA15          // Pino Nixie Anodo Hora 1 
 #define pinAnode1 PA12          // Pino Nixie Anodo Hora 2
-#define pinAnode2 PB2           // Pino Nixie Anodo Minuto 1
-#define pinAnode3 PB1           // Pino Nixie Anodo Minuto 2
+#define pinAnode2 PC14          // Pino Nixie Anodo Minuto 1
+#define pinAnode3 PC15          // Pino Nixie Anodo Minuto 2
 
 #define driverPinA PA8          // Pino Driver Catodo A
 #define driverPinB PA9          // Pino Driver Catodo B
@@ -553,7 +556,7 @@ void setup() {
     uint8_t config_reg    = (t_sb << 5) | (filter << 2) | spi3w_en;
     uint8_t ctrl_hum_reg  = osrs_h;
 
-    Serial.begin(250000);
+    Serial.begin(500000);
     analogWrite (dspPinPower, 0);
 
     LowPower.begin();
@@ -596,8 +599,6 @@ void setup() {
 
 void loop(void) {
 
-    nixie();
-
     int upBtnPressed = digitalRead(BUTTON_UP);
     int downBtnPressed = digitalRead(BUTTON_DOWN);
     int modeBtnPressed = digitalRead(BUTTON_MODE);
@@ -633,6 +634,8 @@ void loop(void) {
             analogWrite(dspPinPower, 0);
         }        
     }
+    
+    nixie();
 
     if (logostarted == 1 && displayTFT > 0 && sleepMode == 0 && displayFlag > 0) {
 
@@ -2443,6 +2446,8 @@ unsigned long int calibration_H(signed long int adc_H) {
    return (unsigned long int)(v_x1 >> 12);   
 }
 
+
+
 // ------------------------------- FUNCAO NIXIE WRITER ------------------------------------
 void nixie() {
     if( upperSeconds >= 10)   upperSeconds = upperSeconds / 10;
@@ -2462,7 +2467,7 @@ void nixie() {
 }
 
 // void DisplayNumberString (int* array)
-void DisplayNumberString(int(array)) {
+void DisplayNumberString (int* array) {
     DisplayNumberSet(0,array[0]);   
     DisplayNumberSet(1,array[1]);   
     DisplayNumberSet(2,array[2]);   
@@ -2497,25 +2502,10 @@ void DisplayNumberSet(int anod, int num1) {
     
     // ---------------------------------- CORRIGIR ---------------------------------
 
-    /*
-    // ATUALIZA VISUALIZAÇÃO DOS NIXIES ????
-
-    //unsigned long nixieAttTime = millis();
-
-    if (millis() - nixieAttTime <= refreshNixie * 1000) {
-        nixieAttTime = millis();
-        digitalWrite(anodPin, LOW);
-        digitalWrite(ledPinTeste, LOW);
-    } else {
-        digitalWrite(anodPin, HIGH);
-        digitalWrite(ledPinTeste, HIGH);
-    }
-    */
-
     // ---------------------------------------------------------------------------
 
     digitalWrite(anodPin, HIGH);   
-    delay(refreshNixie);
+    //delay(refreshNixie);
     digitalWrite(anodPin, LOW);
 }
 
@@ -2543,7 +2533,8 @@ void effectNixieSelected () {
                         }
                     }  
                     numberArray[nixieAnode] = flashNixie;
-                    DisplayNumberString(numberArray[nixieAnode]);
+                    prt = &nixieAnode;
+                    DisplayNumberString(prt);
                 }
                 if (nixieCounts > 9) {
                     nixieCounts = 0;
@@ -2551,7 +2542,7 @@ void effectNixieSelected () {
                     numberArray[1] = lowerHours;
                     numberArray[2] = upperMins;
                     numberArray[3] = lowerMins;
-                    DisplayNumberString(numberArray[nixieAnode]);
+                    DisplayNumberString(prt);
                     nixieAnode ++;
                 } 
                 if (nixieAnode == 4) {
@@ -2582,7 +2573,7 @@ void effectNixieSelected () {
                         }
                     }  
                     numberArray[nixieAnode] = flashNixie;
-                    DisplayNumberString(numberArray[nixieAnode]);
+                    DisplayNumberString(prt);
                 }
                 if (nixieCounts > 9) {
                     nixieCounts = 0;
@@ -2590,7 +2581,7 @@ void effectNixieSelected () {
                     numberArray[1] = lowerHours;
                     numberArray[2] = upperMins;
                     numberArray[3] = lowerMins;
-                    DisplayNumberString(numberArray[nixieAnode]);
+                    DisplayNumberString(prt);
                     nixieAnode ++;
                 } 
                 if (nixieAnode == 4) {
