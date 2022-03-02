@@ -84,3 +84,7 @@ ST7789 - Alimentação Ideal 3v3 possível 5V mas com aquecimento
 - PC13    Leitura Bat EN
 - PC14    
 - PC15    
+
+Detectado falha grave na execução conjunta dos modulos de Nixie e ST7789, não sendo possível a parada da execução sem a perda de dados comprometendo assim o funcionamento e o projeto, sendo então continuado a utilização do microcontrolador ARM STM32F401CC e adicionado com interação ao Microcontrolador ESP32, escolhido pela dimensão capacidade de armazenamento e poder de processamento tendo assim, novas opções e funcionalidade como rede Bluetooth e Wi-Fi.
+
+*Projeto em desenvolvimento, concluído 30% 02/03/2022
