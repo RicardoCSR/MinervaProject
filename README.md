@@ -2,6 +2,16 @@
 
 Registro Mestre de Projeto 
 
+Bases e arquivos de apoio utilizados para o desenvolvimento do projeto:
+
+STM32duino - IDE Arduino Ver.1 e Ver.2
+
+- Fontes TTL 
+https://github.com/FrankBoesing/fonts.git
+- Display TFT SPI/I2C
+https://github.com/FrankBoesing/TFT_eSPI_ext.git
+
+
 Nixie_Clock - Extensor de Sensores de Sobrevivência
 
 Iniciando em 16/10/2021
