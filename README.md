@@ -1,5 +1,8 @@
 # MinervaProject
-Nixie_Clock
+
+Registro Mestre de Projeto 
+
+Nixie_Clock - Extensor de Sensores de Sobrevivência
 
 Iniciando em 16/10/2021
 
@@ -48,7 +51,9 @@ SN74141 : True Table // Podendo utilizar k155id1 ou SN74141
 
 ST7789 - Alimentação Ideal 3v3 possível 5V mas com aquecimento
 
-- R       Botao Hard Reset
+STM32F401CC
+
+- R       Botao Hard Reset (Apenas para Desenvolvimento)
 
 - PA0     Alimentacao LDR
 - PA1     Pino DC ST7789
@@ -84,6 +89,44 @@ ST7789 - Alimentação Ideal 3v3 possível 5V mas com aquecimento
 - PC13    Leitura Bat EN
 - PC14    
 - PC15    
+
+
+ESP32S
+
+- R       Botao Hard Reset
+
+- GPIO0
+- GPIO1
+- GPIO2
+- GPIO3
+- GPIO4
+- GPIO6
+- GPIO7
+- GPIO8
+- GPIO9
+- GPIO10
+- GPIO11
+- GPIO12
+- GPIO13
+- GPIO14
+- GPIO15
+- GPIO16
+- GPIO17
+- GPIO18
+- GPIO19
+- GPIO21
+- GPIO22
+- GPIO23
+- GPIO25
+- GPIO26
+- GPIO27
+- GPIO32
+- GPIO33
+- GPIO34
+- GPIO35
+- GPIO36
+- GPIO39
+
 
 Detectado falha grave na execução conjunta dos modulos de Nixie e ST7789, não sendo possível a parada da execução sem a perda de dados comprometendo assim o funcionamento e o projeto, sendo então continuado a utilização do microcontrolador ARM STM32F401CC e adicionado com interação ao Microcontrolador ESP32, escolhido pela dimensão capacidade de armazenamento e poder de processamento tendo assim, novas opções e funcionalidade como rede Bluetooth e Wi-Fi.
 
