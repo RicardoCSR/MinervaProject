@@ -10,6 +10,10 @@ STM32duino - IDE Arduino Ver.1 e Ver.2
 https://github.com/FrankBoesing/fonts.git
 - Display TFT SPI/I2C
 https://github.com/FrankBoesing/TFT_eSPI_ext.git
+- FontConverter - 1
+https://rop.nl/truetype2gfx/
+- FontConverter - 2
+https://oleddisplay.squix.ch/#/home
 
 
 Nixie_Clock - Extensor de Sensores de Sobrevivência
