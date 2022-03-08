@@ -160,7 +160,7 @@ double uSv = 0;                 // Armazena dado de µSv/h
 double compareuSv;              // Armazena uSv do Display 
 byte countsCalc = 0;            // Armazena contagem da Função de 10x
 byte controller;                // Armazena contagem da Função de 20x
-
+int avgCPMz = avgCPM;
 
     // DADOS DESENHO MENU GEIGER
 int xGeiger = 120;
@@ -312,6 +312,10 @@ int compareArrow = 0;           // Armazena o dado da Seta no Display
 int battery = 0;                // Armazena o dado de Leitura da Bateria
 byte batteryPower;              // Armazena Leitura da Bateria
 
+    // NIVEL DE BATERIA E WIFI          CORRIGIR red red red red red red red red red
+byte statusMenu = 1;            // Armazena os dado de atualização
+byte compareStatusMenu = 0;     // Armazena os dados de atualização
+
 
 // ------------------------------ BANCO DE DADOS DE COMPARADORES -----------------------
 
@@ -394,15 +398,75 @@ byte geigerFunctional = 0;
 // geigerFunctional = 0 Geiger não conectado
 // geigerFunctional = 1 Geiger conectado
 
+byte wifiFuncional = 0;
+// wifiFuncional = 0 WiFi em alta potência
+// wifiFuncional = 1 WiFi em media potência
+// wifiFuncional = 2 WiFi em baixa potência
+// wifiFuncional = 3 WiFi sem Sinal
+
 byte effectModeNixie = 0;
 // effectModeNixie = 0 Efeito desativado
 // effectModeNixie = 1 Sequência Metro Nixie {6 7 5 8 4 3 9 2 0 1}
 // effectModeNixie = 2 Sequência Numerica Nixie {9 8 7 6 5 4 3 2 1 0}
 
+// ------------------------------ ARMAZENA DADOS DE STYLE ---------------------------
 
-int* prt;
+byte displayStyleMode = 0;      
+// displayStyleMode = 0 Apresentação DEFAULT
+// displayStyleMode = 1 Apresentação DALTONIC
+// displayStyleMode = 2 Apresentação WHITE
+// displayStyleMode = 3 Apresentação ACHROMATIC
+// displayStyleMode = 4 Apresentação ACHROM W.
 
-//------------------------------- CONFIGURACAO DOS PINOS DE SENSORES E DISPLAY --------
+byte batteryStyleMode = 1;
+// batteryStyleMode = 0 Apresentação Modo 1
+// batteryStyleMode = 1 Apresentação Modo 2
+// batteryStyleMode = 2 Apresentação Modo 3
+// batteryStyleMode = 3 Apresentação Modo 4
+
+// ------------------------------ CONVERTE VALORES EM STRING ------------------------
+
+String stringuSv = String(uSv);
+String stringcpm = String(cpm);
+String stringAcpm = String(avgCPMz);
+String stringAusv = String(avgUSV);
+String stringDay = String(day);
+String stringDayMin = String(day - 1);
+String stringDayMax = String(day + 1);
+String stringMonth = String(month);
+String stringMonthMin = String(month - 1);
+String stringMonthMax = String(month + 1);
+String stringYear = String(year);
+String stringYearMin = String(year - 1);
+String stringYearMax = String(year + 1);
+String stringSec = String(secsBias);
+String stringSecMin = String(secsBias - 1);
+String stringSecMax = String(secsBias + 1);
+String stringMin = String(mins);
+String stringMinMin = String(mins - 1);
+String stringMinMax = String(mins + 1);        
+String stringHour = String(hours);
+String stringHourMin = String(hours - 1);
+String stringHourMax = String(hours + 1);
+String stringFuso = String(fuso);
+String stringDayCount = String(dayCount);
+String stringWeekCount = String(weekCount);
+String stringTemp = String(temperature);
+String stringTempMin = String(temperatureMin);
+String stringTempMax = String(temperatureMax);
+String stringHumi = String(humidity);
+String stringHumiMin = String(humidityMin);
+String stringHumiMax = String(humidityMax);
+String stringPres = String(pressure);
+String stringPresMin = String(pressureMin);
+String stringPresMax = String(pressureMax);
+String stringUpdZambMin = String(updateZambrettiMin);
+String stringUpdZambHr = String(updateZambrettiHr);
+
+
+int* prt;           // CORRIGE LEITURA PARA ARQUITETURA ARM
+
+// ------------------------------ CONFIGURACAO DOS PINOS DE SENSORES E DISPLAY --------
 
 int ldrPinPower = PA0;          // Pino de alimentação do Sensor LDR
 int ldrSensor = PA4;            // Pino do Sensor LDR
@@ -424,12 +488,13 @@ int driverPinD = PA11;          // Pino Driver Catodo D
 
 // ------------------------------ CORES DISPLAY STY7789 -------------------------------
 
-uint16_t blue_battery = 0x16DC;         //0x10DBE6
-uint16_t green_battery = 0x9669;        //0x94CE4A
-uint16_t yellow_battery = 0xEF02;       //0xEFE310
+uint16_t blue_battery = 0x16BB;         //0x15D9E2
+uint16_t green_battery = 0x9669;        //0x9AD24D
+uint16_t yellow_battery = 0xEF02;       //0xF4E317
 uint16_t yellowed_battery = 0xF523;     //0xF7A619
-uint16_t orange_battery = 0xEB84;       //0xEF7121
-uint16_t red_battery = 0xEA69;          //0xEF4D4A
+uint16_t orange_battery = 0xEB84;       //0xF67423
+uint16_t red_battery = 0xEA69;          //0xEF4D4F
+uint16_t charge_battery = 0x1F01;       //0x1AE510
 
 uint16_t januaryColor = 0x21D1;         //0x27398F
 uint16_t februeryColor = 0x0B35;        //0x0B69B1       
@@ -443,6 +508,21 @@ uint16_t septemberColor = 0xE0CB;       //0xE91B5B
 uint16_t octoberColor = 0xB8EC;         //0xBE1D69
 uint16_t novemberColor = 0x3232;        //0x344698
 uint16_t decemberColor = 0x296F;        //0x31307E
+
+uint16_t nixieColor = 0xEAEA;           //0xF16057
+
+uint16_t wifi_level3 = 0x16BB;          //0x15D9E2
+uint16_t wifi_level2 = 0x053D;          //0x04A7F2
+uint16_t wifi_level1 = 0x0B35;          //0x0B69B1
+
+uint16_t wifi_off3 = 0x9CF3;            //0x9F9F9F
+uint16_t wifi_off2 = 0x7BEF;            //0x7E7E7E
+uint16_t wifi_off1 = 0x52AA;            //0x555555
+
+
+
+
+
 
 uint16_t temperatureColor = 0xF14B;     //0xE02961
 uint16_t humidityColor = 0x92BA;        //0x9558D8
@@ -510,16 +590,18 @@ volatile int repetitions = 2000;
 
 #include "Imagens.h"
 
-#include "Fonts/Lato_bold_24.h"
-#include "Fonts/Lato_Bold_48.h"
-#include "Fonts/Lato_Regular_14.h"
-#include "Fonts/Lato_Regular_10.h"
+#include "Lato_bold_24.h"
+#include "Lato_Bold_48.h"
+#include "RedHatDisplay_Regular_10.h"
+#include "RedHatDisplay_Regular_14.h"
+#include "Lato_Regular_14.h"
 
 
 #define latoBold24 &Lato_Bold_24
 #define latoBold48 &Lato_Bold_48
 #define latoRegular14 &Lato_Regular_14
-#define latoRegular10 &Lato_Regular_10
+#define RHDRegular14 & RedHatDisplay_Regular_14
+#define RHDRegular10 &RedHatDisplay_Regular_10
 
 
   // TL_DATUM = Top left (default)
@@ -660,75 +742,12 @@ void loop(void) {
                 Serial.println(secs);
             }
         }
-
-        int avgCPMz = avgCPM;
     //-------------------------------------- DADOS CONVERTIDOS PARA STRING ------------------
-
-        String stringuSv = String(uSv);
-        String stringcpm = String(cpm);
-        String stringAcpm = String(avgCPMz);
-        String stringAusv = String(avgUSV);
-        String stringDay = String(day);
-        String stringDayMin = String(day - 1);
-        String stringDayMax = String(day + 1);
-        String stringMonth = String(month);
-        String stringMonthMin = String(month - 1);
-        String stringMonthMax = String(month + 1);
-        String stringYear = String(year);
-        String stringYearMin = String(year - 1);
-        String stringYearMax = String(year + 1);
-        String stringSec = String(secsBias);
-        String stringSecMin = String(secsBias - 1);
-        String stringSecMax = String(secsBias + 1);
-        String stringMin = String(mins);
-        String stringMinMin = String(mins - 1);
-        String stringMinMax = String(mins + 1);        
-        String stringHour = String(hours);
-        String stringHourMin = String(hours - 1);
-        String stringHourMax = String(hours + 1);
-        String stringFuso = String(fuso);
-        String stringDayCount = String(dayCount);
-        String stringWeekCount = String(weekCount);
-        String stringTemp = String(temperature);
-        String stringTempMin = String(temperatureMin);
-        String stringTempMax = String(temperatureMax);
-        String stringHumi = String(humidity);
-        String stringHumiMin = String(humidityMin);
-        String stringHumiMax = String(humidityMax);
-        String stringPres = String(pressure);
-        String stringPresMin = String(pressureMin);
-        String stringPresMax = String(pressureMax);
-        String stringUpdZambMin = String(updateZambrettiMin);
-        String stringUpdZambHr = String(updateZambrettiHr);
-
         switch (displayFlag) {
-            case 1:         
-                if (uSv != compareuSv) {
-                    tft.fillRect (140, 164, 55, 16, black);
-                    compareuSv = uSv;
+            case 1:      
+                if (displayStyleMode == 0) {
+                    geigerStyleMode0();
                 }
-                tft.setTextDatum(ML_DATUM);
-                tft.setTextColor(white);
-                tft.setFreeFont(latoRegular14);
-                tft.drawString("Counts per second", 51, 141, GFXFF);
-                tft.drawString("sieverts", 71, 169, GFXFF);
-                tft.drawString(stringuSv, 140, 169, GFXFF);
-                if (uSv <= 9) {
-                    tft.drawString("u", 170, 169, GFXFF);
-                    tft.drawLine(170, 174, 170, 179, white);
-                } else if (uSv <= 99) {
-                    tft.drawString("u", 180, 169, GFXFF);
-                    tft.drawLine(180, 174, 180, 179, white);
-                } else {
-                    tft.drawString("u", 190, 169, GFXFF);
-                    tft.drawLine(190, 174, 190, 179, white);
-                }
-                circleGeiger();
-                arrowGeiger();
-
-                statusBattery();
-                subMenu();
-                backView();       
             break; // GEIGER
 
             case 2:
@@ -755,7 +774,6 @@ void loop(void) {
 
                 circleDosimeter();
                 statusBattery();
-                backView();
             break; // DOSIMETER
 
 
@@ -793,7 +811,6 @@ void loop(void) {
                 geigerGraphGF();
                 statusBattery();
                 subMenu();
-                backView();
             break; // GEIGER GF
 
             case 4:
@@ -816,7 +833,6 @@ void loop(void) {
                 unknownWeather();
                 statusBattery();
                 subMenu();
-                backView();
 
                 tft.setTextDatum(ML_DATUM);
                 tft.setTextColor(white);
@@ -834,7 +850,6 @@ void loop(void) {
             case 6:
 
                 statusBattery();
-                backView();
                 if (calendarFill == 0) {
                     switch (month) {
                         case 1: tft.fillRect(0, 109, 240, 131, januaryColor);
@@ -1008,7 +1023,6 @@ void loop(void) {
 
                 statusBattery();
                 subMenu();
-                backView();
             break; // TIMER
 
             case 8:
@@ -1335,8 +1349,8 @@ void loop(void) {
                     if (geigerFunctional == 0) {
                         tft.setTextDatum(ML_DATUM);
                         tft.setTextColor(redScript);
-                        tft.setFreeFont(latoRegular10);
-                        tft.drawString("No Operational", 140, 90, GFXFF);
+                        tft.setFreeFont(latoRegular14);
+                        tft.drawString("No Operational", 125, 90, GFXFF);
                     }
                     
                     tft.setTextDatum(ML_DATUM);
@@ -1352,14 +1366,14 @@ void loop(void) {
                     tft.setTextDatum(ML_DATUM);
                     tft.setTextColor(white);
                     tft.setFreeFont(latoRegular14);
-                    tft.drawString("SETTING", 60, 160, GFXFF);
+                    tft.drawString("SETTINGS", 60, 160, GFXFF);
                 break;
                 case 2:
                     if (geigerFunctional == 0) {
                         tft.setTextDatum(ML_DATUM);
                         tft.setTextColor(redScript);
-                        tft.setFreeFont(latoRegular10);
-                        tft.drawString("No Operational", 140, 90, GFXFF);
+                        tft.setFreeFont(latoRegular14);
+                        tft.drawString("No Operational", 125, 90, GFXFF);
                     }
 
                     tft.setTextDatum(ML_DATUM);
@@ -1381,8 +1395,8 @@ void loop(void) {
                     if (geigerFunctional == 0) {
                         tft.setTextDatum(ML_DATUM);
                         tft.setTextColor(redScript);
-                        tft.setFreeFont(latoRegular10);
-                        tft.drawString("No Operational", 140, 90, GFXFF);
+                        tft.setFreeFont(latoRegular14);
+                        tft.drawString("No Operational", 125, 90, GFXFF);
                     }
 
                     tft.setTextDatum(ML_DATUM);
@@ -1404,8 +1418,8 @@ void loop(void) {
                     if (bmeFunctional != 0) {
                         tft.setTextDatum(ML_DATUM);
                         tft.setTextColor(redScript);
-                        tft.setFreeFont(latoRegular10);
-                        tft.drawString("No Operational", 140, 90, GFXFF);
+                        tft.setFreeFont(latoRegular14);
+                        tft.drawString("No Operational", 125, 90, GFXFF);
                     }
 
                     tft.setTextDatum(ML_DATUM);
@@ -1427,8 +1441,8 @@ void loop(void) {
                     if (bmeFunctional != 0) {
                         tft.setTextDatum(ML_DATUM);
                         tft.setTextColor(redScript);
-                        tft.setFreeFont(latoRegular10);
-                        tft.drawString("No Operational", 140, 90, GFXFF);
+                        tft.setFreeFont(latoRegular14);
+                        tft.drawString("No Operational", 125, 90, GFXFF);
                     }
 
                     tft.setTextDatum(ML_DATUM);
@@ -1551,94 +1565,94 @@ void loop(void) {
 
     // ------------------------------- COMANDO HIBERNAR OPERACIONAL ---------------------------
 
-    if (sleepBtnPressed == LOW && startedPressingSleep == 0) {
-        startedPressingSleep = 1;
-        timerSleep = millis();
-    } else if (sleepBtnPressed == HIGH) {
-        startedPressingSleep = 0;
-        timerSleep = millis();
-    }    
-    if (millis() - timerSleep >= pressingDuration && startedPressingSleep == 1) {
-        HibernMode();
-        startedPressingSleep = 0;
-    }
+        if (sleepBtnPressed == LOW && startedPressingSleep == 0) {
+            startedPressingSleep = 1;
+            timerSleep = millis();
+        } else if (sleepBtnPressed == HIGH) {
+            startedPressingSleep = 0;
+            timerSleep = millis();
+        }    
+        if (millis() - timerSleep >= pressingDuration && startedPressingSleep == 1) {
+            HibernMode();
+            startedPressingSleep = 0;
+        }
 
     // ------------------------------- COMANDO MENU OPERACIONAL -------------------------------
     
-    else if (modeBtnPressed == LOW && startedPressingMode == 0) {
-        startedPressingMode = 1;
-        timerMode = millis();
-    } else if (modeBtnPressed == HIGH) {
-        startedPressingMode = 0;
-        timerMode = millis();
-    }
+        else if (modeBtnPressed == LOW && startedPressingMode == 0) {
+            startedPressingMode = 1;
+            timerMode = millis();
+        } else if (modeBtnPressed == HIGH) {
+            startedPressingMode = 0;
+            timerMode = millis();
+        }
 
-    if (millis() - timerMode >= (pressingDuration / 2) && startedPressingMode == 1) {
-        displayMenu();
-        startedPressingMode = 0;
-    }
+        if (millis() - timerMode >= (pressingDuration / 2) && startedPressingMode == 1) {
+            displayMenu();
+            startedPressingMode = 0;
+        }
 
     // ------------------------------- COMANDO UP MENU OPERACIONAL ----------------------------
 
-    else if (upBtnPressed == LOW && startedPressingUp == 0) {
-        startedPressingUp = 1;
-        timerUp = millis();
+        else if (upBtnPressed == LOW && startedPressingUp == 0) {
+            startedPressingUp = 1;
+            timerUp = millis();
 
-    } else if (upBtnPressed == HIGH) {
-        triangleDisplay = 1;
-        startedPressingUp = 0;
-        timerUp = millis(); 
-        if (triangleDisplay == 2 && timerUp - millis() >= 10) {
-            timerDown = millis();
-            enterDisplayMenu();
+        } else if (upBtnPressed == HIGH) {
+            triangleDisplay = 1;
+            startedPressingUp = 0;
+            timerUp = millis(); 
+            if (triangleDisplay == 2 && timerUp - millis() >= 10) {
+                timerDown = millis();
+                enterDisplayMenu();
+            }
         }
-    }
 
-    if (millis() - timerUp >= (pressingDuration / 2) && startedPressingUp == 1) {
-        tft.fillScreen(black); 
-        upModeDisplay();  
-        startedPressingUp = 0;
-        displayFlag = 0;
-        calendarFill = 0;
-    } 
+        if (millis() - timerUp >= (pressingDuration / 2) && startedPressingUp == 1) {
+            tft.fillScreen(black); 
+            upModeDisplay();  
+            startedPressingUp = 0;
+            displayFlag = 0;
+            calendarFill = 0;
+        } 
 
     // ------------------------------- COMANDO DOWN MENU OPERACIONAL --------------------------
 
-    else if (downBtnPressed == LOW && startedPressingDown == 0) {
-        startedPressingDown = 1;
-        timerDown = millis();
+        else if (downBtnPressed == LOW && startedPressingDown == 0) {
+            startedPressingDown = 1;
+            timerDown = millis();
 
-    } else if (downBtnPressed == HIGH) {
-        triangleDisplay = 2;
-        startedPressingDown = 0;
-        timerDown = millis(); 
-        if (triangleDisplay == 1 && timerDown - millis() >= 10) {
-            timerUp = millis();
-            enterDisplayMenu();
+        } else if (downBtnPressed == HIGH) {
+            triangleDisplay = 2;
+            startedPressingDown = 0;
+            timerDown = millis(); 
+            if (triangleDisplay == 1 && timerDown - millis() >= 10) {
+                timerUp = millis();
+                enterDisplayMenu();
+            }
         }
-    }
 
-    if (millis() - timerDown >= (pressingDuration / 2) && startedPressingDown == 1) {
-        tft.fillScreen(black); 
-        downModeDisplay();  
-        startedPressingDown = 0;
-        displayFlag = 0;
-        calendarFill = 0;
-    } 
+        if (millis() - timerDown >= (pressingDuration / 2) && startedPressingDown == 1) {
+            tft.fillScreen(black); 
+            downModeDisplay();  
+            startedPressingDown = 0;
+            displayFlag = 0;
+            calendarFill = 0;
+        } 
 
     // ------------------------------- HORARIO VIA MILLIS() OPERACIONAL -----------------------
-    secs = millis() / 1000 + (long)hourBias * 3600 + (long)minuteBias * 60;
-    secsBias = secs % 60;
-    mins = (secs / 60) % 60;
-    hours = (secs / 3600) % fuso;
-    time = hours * 100 + mins;
+        secs = millis() / 1000 + (long)hourBias * 3600 + (long)minuteBias * 60;
+        secsBias = secs % 60;
+        mins = (secs / 60) % 60;
+        hours = (secs / 3600) % fuso;
+        time = hours * 100 + mins;
 
     //------------------------------- FUNCAO RELOGIO OPERACIONAL ------------------------------
-    if (time < 0 || time > 9999) {
-        errorTime();
-    } else if (sleepMode == 0 && logostarted == 1 && displayTFT == 0) {
-        showTime();
-    }
+        if (time < 0 || time > 9999) {
+            errorTime();
+        } else if (sleepMode == 0 && logostarted == 1 && displayTFT == 0) {
+            showTime();
+        }
 }
 
 // ------------------------------ FUNCAO COMANDOS GEIGER OPERACIONAL ----------------------
@@ -1701,51 +1715,157 @@ void exitHibernMode() {
 
 void startLogo() {
     tft.setSwapBytes(true);
-    tft.pushImage(0, 0, 240, 240, abertura);
+    //tft.pushImage(0, 0, 240, 240, abertura);
 }
 
 // ------------------------------ FUNCAO DISPLAY MENUS OPERACIONAL --------------------
 
 void statusBattery() {
 
-    tft.drawRoundRect (193, 4, 43, 22, 4, white);
-    tft.drawRoundRect (194, 5, 41, 20, 3, white);
-    tft.fillRect (189, 10, 5, 10, white);
+    if (statusMenu != compareStatusMenu) {
+        tft.fillRect(150, 7, 85, 25, black);
+        if (batteryStyleMode == 0) {
+            tft.drawRoundRect (180, 10, 52, 22, 5, white);
+            tft.drawRoundRect (181, 11, 50, 20, 4, white);
 
-    if (powerCharger == 1) {
-        if (batteryPower >= 213) {
-            tft.fillRect (198, 8, 33, 14, blue_battery);
-
-        } else if ((batteryPower >= 171) && (batteryPower <= 212)) {
-            tft.fillRect (203, 8, 28, 14, green_battery);
-
-        } else if ((batteryPower >= 129) && (batteryPower <= 170)) {
-            tft.fillRect (210, 8, 21, 14, yellow_battery);
-
-        } else if ((batteryPower >= 87) && (batteryPower <= 128)) {
-            tft.fillRect (214, 8, 17, 14, yellowed_battery);
-
-        } else if ((batteryPower >= 42) && (batteryPower <= 86)) {
-            tft.fillRect (221, 8, 10, 14, orange_battery);
-
-        } else if ((batteryPower >= 0) && (batteryPower <= 41)) {
-            tft.fillRect (226, 8, 5, 14, red_battery);
+            if (powerCharger == 1) {
+                if (batteryPower >= 213) {
+                    tft.fillRoundRect (182, 12, 48, 18, 3, blue_battery);
+                } else if ((batteryPower >= 171) && (batteryPower <= 212)) {
+                    tft.fillRoundRect (190, 12, 40, 18, 3, green_battery);
+                } else if ((batteryPower >= 129) && (batteryPower <= 170)) {
+                    tft.fillRoundRect (200, 12, 30, 18, 3, yellow_battery);    
+                } else if ((batteryPower >= 87) && (batteryPower <= 128)) {
+                    tft.fillRoundRect (210, 12, 20, 18, 3, yellowed_battery);
+                    
+                } else if ((batteryPower >= 42) && (batteryPower <= 86)) {
+                    tft.fillRoundRect (215, 12, 15, 18, 3, orange_battery);
+                    
+                } else if ((batteryPower >= 0) && (batteryPower <= 41)) {
+                    tft.fillRoundRect (220, 12, 10, 18, 3, red_battery);
+                }
+            } else {
+                tft.fillRoundRect (182, 12, 48, 18, 3, charge_battery);
+                tft.fillTriangle(194, 21, 207, 16, 207, 21, black);
+                tft.fillTriangle(204, 21, 204, 26, 217, 21, black);
+            }
         }
-    } else {
-        tft.fillRect (203, 14, 20, 2, white);
-        tft.fillTriangle (225, 12, 225, 16, 227, 14, white);
 
-        tft.drawLine (206, 14, 211, 9, white);
-        tft.drawLine (207, 14, 212, 9, white);
+        if (batteryStyleMode == 1) {
+            tft.drawRoundRect (180, 10, 52, 22, 5, white);
+            tft.drawRoundRect (181, 11, 50, 20, 4, white);
 
-        tft.fillRect (211, 9, 3, 2, white);
-        tft.fillCircle (217, 9, 1, white);
+            if (powerCharger == 1) {
+                if (batteryPower >= 213) {
+                    tft.fillRoundRect (182, 12, 48, 18, 3, blue_battery);
+                } else if ((batteryPower >= 171) && (batteryPower <= 212)) {
+                    tft.fillRoundRect (190, 12, 40, 18, 3, green_battery);
+                } else if ((batteryPower >= 129) && (batteryPower <= 170)) {
+                    tft.fillRoundRect (200, 12, 30, 18, 3, yellow_battery);  
+                } else if ((batteryPower >= 87) && (batteryPower <= 128)) {
+                    tft.fillRoundRect (210, 12, 20, 18, 3, yellowed_battery);
+                } else if ((batteryPower >= 42) && (batteryPower <= 86)) {
+                    tft.fillRoundRect (215, 12, 15, 18, 3, orange_battery);
+                } else if ((batteryPower >= 0) && (batteryPower <= 41)) {
+                    tft.fillRoundRect (220, 12, 10, 18, 3, red_battery);
+                }
+                tft.drawLine(190, 12, 190, 30, black);
+                tft.drawLine(200, 12, 200, 30, black);
+                tft.drawLine(210, 12, 210, 30, black);
+                tft.drawLine(220, 12, 220, 30, black);
+            } else {
+                tft.fillRoundRect (182, 12, 48, 18, 3, charge_battery);
+                tft.fillTriangle(194, 21, 207, 16, 207, 21, black);
+                tft.fillTriangle(204, 21, 204, 26, 217, 21, black);
+            }
+        }
 
-        tft.drawLine (212, 15, 217, 19, white);
-        tft.drawLine (211, 15, 216, 19, white);
-
-        tft.fillRect (217, 19, 3, 2, white);
-        tft.fillRect (223, 19, 2, 2, white);
+        if (wifiFuncional == 0) {
+                for (byte radi = 21; radi > 15; radi --) {
+                    for (int i = 230; i < 310; i++) {
+                        double radians = i * PI / 180;
+                        double px = 162 + radi * cos(radians);
+                        double py = 31 + radi * sin(radians);
+                        tft.drawPixel(px, py, wifi_level3);
+                    }
+                }
+                for (byte radi = 15; radi > 8; radi --) {
+                    for (int i = 230; i < 310; i++) {
+                        double radians = i * PI / 180;
+                        double px = 162 + radi * cos(radians);
+                        double py = 31 + radi * sin(radians);
+                        tft.drawPixel(px, py, wifi_level2);
+                    }
+                }
+                for (byte radi = 8; radi > 0; radi --) {
+                    for (int i = 230; i < 310; i++) {
+                        double radians = i * PI / 180;
+                        double px = 162 + radi * cos(radians);
+                        double py = 31 + radi * sin(radians);
+                        tft.drawPixel(px, py, wifi_level1);
+                    }
+                }
+            } else if (wifiFuncional == 1) {
+                for (byte radi = 15; radi > 8; radi --) {
+                    for (int i = 230; i < 310; i++) {
+                        double radians = i * PI / 180;
+                        double px = 162 + radi * cos(radians);
+                        double py = 31 + radi * sin(radians);
+                        tft.drawPixel(px, py, wifi_level2);
+                    }
+                }
+                for (byte radi = 8; radi > 0; radi --) {
+                    for (int i = 230; i < 310; i++) {
+                        double radians = i * PI / 180;
+                        double px = 162 + radi * cos(radians);
+                        double py = 31 + radi * sin(radians);
+                        tft.drawPixel(px, py, wifi_level1);
+                    }
+                }
+            } else if (wifiFuncional == 2) {
+                for (byte radi = 8; radi > 0; radi --) {
+                    for (int i = 230; i < 310; i++) {
+                        double radians = i * PI / 180;
+                        double px = 162 + radi * cos(radians);
+                        double py = 31 + radi * sin(radians);
+                        tft.drawPixel(px, py, wifi_level1);
+                    }
+                }
+            } else if (wifiFuncional == 3) {
+                for (byte radi = 15; radi > 8; radi --) {
+                    for (int i = 230; i < 310; i++) {
+                        double radians = i * PI / 180;
+                        double px = 162 + radi * cos(radians);
+                        double py = 31 + radi * sin(radians);
+                        tft.drawPixel(px, py, wifi_level2);
+                    }
+                }
+                for (byte radi = 21; radi > 15; radi --) {
+                    for (int i = 230; i < 310; i++) {
+                        double radians = i * PI / 180;
+                        double px = 162 + radi * cos(radians);
+                        double py = 31 + radi * sin(radians);
+                        tft.drawPixel(px, py, wifi_off3);
+                    }
+                }
+                for (byte radi = 15; radi > 8; radi --) {
+                    for (int i = 230; i < 310; i++) {
+                        double radians = i * PI / 180;
+                        double px = 162 + radi * cos(radians);
+                        double py = 31 + radi * sin(radians);
+                        tft.drawPixel(px, py, wifi_off2);
+                    }
+                }
+                for (byte radi = 8; radi > 0; radi --) {
+                    for (int i = 230; i < 310; i++) {
+                        double radians = i * PI / 180;
+                        double px = 162 + radi * cos(radians);
+                        double py = 31 + radi * sin(radians);
+                        tft.drawPixel(px, py, wifi_off1);
+                    }
+                }
+            }
+        compareStatusMenu = statusMenu;
     }
 }
 
@@ -1817,14 +1937,6 @@ void subMenu() {
     }
 }
 
-void backView() {
-    tft.fillTriangle(12, 16, 22, 10, 22, 22, white);
-    tft.setTextDatum(ML_DATUM);
-    tft.setTextColor(white);
-    tft.setFreeFont(latoRegular14);
-    tft.drawString("Back", 30, 15, GFXFF);
-}
-
 // ------------------------------- FUNCAO DISPLAY GEIGER 
 
 void circleGeiger() {
@@ -1856,7 +1968,7 @@ void circleGeiger() {
 
     tft.setTextDatum(ML_DATUM);
     tft.setTextColor(white);
-    tft.setFreeFont(latoRegular10);
+    tft.setFreeFont(RHDRegular10);
     tft.drawString("2", 43, 110, GFXFF);
     tft.drawString("5", 46, 95, GFXFF);
 
@@ -1867,7 +1979,7 @@ void circleGeiger() {
 
     tft.setTextDatum(ML_DATUM);
     tft.setTextColor(white);
-    tft.setFreeFont(latoRegular10);
+    tft.setFreeFont(RHDRegular10);
     tft.drawString("20", 63, 58, GFXFF);
     tft.drawString("50", 83, 48, GFXFF);
 
@@ -1878,7 +1990,7 @@ void circleGeiger() {
 
     tft.setTextDatum(ML_DATUM);
     tft.setTextColor(white);
-    tft.setFreeFont(latoRegular10);
+    tft.setFreeFont(RHDRegular10);
     tft.drawString("200", 153, 53, GFXFF);
     tft.drawString("500", 172, 66, GFXFF);
 
@@ -1889,7 +2001,7 @@ void circleGeiger() {
 
     tft.setTextDatum(ML_DATUM);
     tft.setTextColor(white);
-    tft.setFreeFont(latoRegular10);
+    tft.setFreeFont(RHDRegular10);
     tft.drawString("2K", 195, 105, GFXFF);
 }
 
@@ -2021,7 +2133,7 @@ void geigerGraphGF() {
 
     tft.setTextDatum(MC_DATUM);
     tft.setTextColor(white);
-    tft.setFreeFont(latoRegular10);
+    tft.setFreeFont(RHDRegular10);
     tft.drawString("3", 36, 199, GFXFF);
     tft.drawString("9", 90, 199, GFXFF);
     tft.drawString("15", 144, 199, GFXFF);
@@ -3361,4 +3473,32 @@ void snowWeather() {
     tft.fillRect(165, 73, 50, 5, drizzleColor);
 
 
+}
+
+
+void geigerStyleMode0() {
+    if (uSv != compareuSv) {
+        tft.fillRect (140, 164, 55, 16, black);
+        compareuSv = uSv;
+    }
+    tft.setTextDatum(ML_DATUM);
+    tft.setTextColor(white);
+    tft.setFreeFont(latoRegular14);
+    tft.drawString("Counts per second", 51, 141, GFXFF);
+    tft.drawString("sieverts", 71, 169, GFXFF);
+    tft.drawString(stringuSv, 140, 169, GFXFF);
+    if (uSv <= 9) {
+        tft.drawString("u", 170, 169, GFXFF);
+        tft.drawLine(170, 174, 170, 179, white);
+    } else if (uSv <= 99) {
+        tft.drawString("u", 180, 169, GFXFF);
+        tft.drawLine(180, 174, 180, 179, white);
+    } else {
+        tft.drawString("u", 190, 169, GFXFF);
+        tft.drawLine(190, 174, 190, 179, white);
+    }
+    circleGeiger();
+    arrowGeiger();
+    statusBattery();
+    subMenu();   
 }
