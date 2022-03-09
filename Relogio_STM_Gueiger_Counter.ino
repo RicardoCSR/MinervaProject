@@ -311,6 +311,7 @@ int compareArrow = 0;           // Armazena o dado da Seta no Display
     // NIVEL DE BATERIA
 int battery = 0;                // Armazena o dado de Leitura da Bateria
 byte batteryPower;              // Armazena Leitura da Bateria
+float voltageBattery;           // Armazena Tensão de Entrada
 
     // NIVEL DE BATERIA E WIFI          CORRIGIR red red red red red red red red red
 byte statusMenu = 1;            // Armazena os dado de atualização
@@ -418,51 +419,11 @@ byte displayStyleMode = 0;
 // displayStyleMode = 3 Apresentação ACHROMATIC
 // displayStyleMode = 4 Apresentação ACHROM W.
 
-byte batteryStyleMode = 1;
+byte batteryStyleMode = 0;
 // batteryStyleMode = 0 Apresentação Modo 1
 // batteryStyleMode = 1 Apresentação Modo 2
 // batteryStyleMode = 2 Apresentação Modo 3
 // batteryStyleMode = 3 Apresentação Modo 4
-
-// ------------------------------ CONVERTE VALORES EM STRING ------------------------
-
-String stringuSv = String(uSv);
-String stringcpm = String(cpm);
-String stringAcpm = String(avgCPMz);
-String stringAusv = String(avgUSV);
-String stringDay = String(day);
-String stringDayMin = String(day - 1);
-String stringDayMax = String(day + 1);
-String stringMonth = String(month);
-String stringMonthMin = String(month - 1);
-String stringMonthMax = String(month + 1);
-String stringYear = String(year);
-String stringYearMin = String(year - 1);
-String stringYearMax = String(year + 1);
-String stringSec = String(secsBias);
-String stringSecMin = String(secsBias - 1);
-String stringSecMax = String(secsBias + 1);
-String stringMin = String(mins);
-String stringMinMin = String(mins - 1);
-String stringMinMax = String(mins + 1);        
-String stringHour = String(hours);
-String stringHourMin = String(hours - 1);
-String stringHourMax = String(hours + 1);
-String stringFuso = String(fuso);
-String stringDayCount = String(dayCount);
-String stringWeekCount = String(weekCount);
-String stringTemp = String(temperature);
-String stringTempMin = String(temperatureMin);
-String stringTempMax = String(temperatureMax);
-String stringHumi = String(humidity);
-String stringHumiMin = String(humidityMin);
-String stringHumiMax = String(humidityMax);
-String stringPres = String(pressure);
-String stringPresMin = String(pressureMin);
-String stringPresMax = String(pressureMax);
-String stringUpdZambMin = String(updateZambrettiMin);
-String stringUpdZambHr = String(updateZambrettiHr);
-
 
 int* prt;           // CORRIGE LEITURA PARA ARQUITETURA ARM
 
@@ -518,6 +479,11 @@ uint16_t wifi_level1 = 0x0B35;          //0x0B69B1
 uint16_t wifi_off3 = 0x9CF3;            //0x9F9F9F
 uint16_t wifi_off2 = 0x7BEF;            //0x7E7E7E
 uint16_t wifi_off1 = 0x52AA;            //0x555555
+
+uint16_t geigerGreen = 0x362F;          //0x39C87E
+
+uint16_t geigerColor1 = 0xFDA0;         //0xFFB801
+uint16_t geigerColor2 = 0xDCA6;         //0xE49837
 
 
 
@@ -592,16 +558,15 @@ volatile int repetitions = 2000;
 
 #include "Lato_bold_24.h"
 #include "Lato_Bold_48.h"
-#include "RedHatDisplay_Regular_10.h"
-#include "RedHatDisplay_Regular_14.h"
 #include "Lato_Regular_14.h"
-
+#include "Lato_Regular_12.h"
+#include "Lato_Regular_10.h"
 
 #define latoBold24 &Lato_Bold_24
 #define latoBold48 &Lato_Bold_48
 #define latoRegular14 &Lato_Regular_14
-#define RHDRegular14 & RedHatDisplay_Regular_14
-#define RHDRegular10 &RedHatDisplay_Regular_10
+#define latoRegular12 &Lato_Regular_12
+#define latoRegular10 &Lato_Regular_10
 
 
   // TL_DATUM = Top left (default)
@@ -697,6 +662,7 @@ void loop(void) {
 
     battery = analogRead(batteryLevel);
     batteryPower = map(battery, 0, 1023, 1, 255);
+    voltageBattery = analogRead(batteryLevel) * 3.301 / 1024;    // red red red red red red red red rd red red VERIFICAR CASAS APOS . 
 
     if (counts > 0) {
         geigerFunctional = 1;
@@ -742,7 +708,46 @@ void loop(void) {
                 Serial.println(secs);
             }
         }
-    //-------------------------------------- DADOS CONVERTIDOS PARA STRING ------------------
+        // ------------------------------ CONVERTE VALORES EM STRING ------------------------
+
+        String stringuSv = String(uSv);
+        String stringcpm = String(cpm);
+        String stringAcpm = String(avgCPMz);
+        String stringAusv = String(avgUSV);
+        String stringDay = String(day);
+        String stringDayMin = String(day - 1);
+        String stringDayMax = String(day + 1);
+        String stringMonth = String(month);
+        String stringMonthMin = String(month - 1);
+        String stringMonthMax = String(month + 1);
+        String stringYear = String(year);
+        String stringYearMin = String(year - 1);
+        String stringYearMax = String(year + 1);
+        String stringSec = String(secsBias);
+        String stringSecMin = String(secsBias - 1);
+        String stringSecMax = String(secsBias + 1);
+        String stringMin = String(mins);
+        String stringMinMin = String(mins - 1);
+        String stringMinMax = String(mins + 1);        
+        String stringHour = String(hours);
+        String stringHourMin = String(hours - 1);
+        String stringHourMax = String(hours + 1);
+        String stringFuso = String(fuso);
+        String stringDayCount = String(dayCount);
+        String stringWeekCount = String(weekCount);
+        String stringTemp = String(temperature);
+        String stringTempMin = String(temperatureMin);
+        String stringTempMax = String(temperatureMax);
+        String stringHumi = String(humidity);
+        String stringHumiMin = String(humidityMin);
+        String stringHumiMax = String(humidityMax);
+        String stringPres = String(pressure);
+        String stringPresMin = String(pressureMin);
+        String stringPresMax = String(pressureMax);
+        String stringUpdZambMin = String(updateZambrettiMin);
+        String stringUpdZambHr = String(updateZambrettiHr);
+        String stringVoltageBattery = String(voltageBattery, 3);
+
         switch (displayFlag) {
             case 1:      
                 if (displayStyleMode == 0) {
@@ -1721,7 +1726,7 @@ void startLogo() {
 // ------------------------------ FUNCAO DISPLAY MENUS OPERACIONAL --------------------
 
 void statusBattery() {
-
+    String stringVoltageBattery = String(voltageBattery, 3);
     if (statusMenu != compareStatusMenu) {
         tft.fillRect(150, 7, 85, 25, black);
         if (batteryStyleMode == 0) {
@@ -1779,6 +1784,91 @@ void statusBattery() {
                 tft.fillTriangle(204, 21, 204, 26, 217, 21, black);
             }
         }
+
+        if (batteryStyleMode == 2) {
+            if (powerCharger == 1) {
+                tft.setTextDatum(TL_DATUM);
+                tft.setFreeFont(latoRegular12);
+                tft.setTextColor(white);
+                if (batteryPower >= 213) {
+                    tft.drawRoundRect (180, 10, 52, 22, 5, blue_battery);
+                    tft.drawRoundRect (181, 11, 50, 20, 4, blue_battery);
+                    tft.drawString(stringVoltageBattery, 184, 15, GFXFF);
+                    tft.drawString("V", 221, 15, GFXFF);
+                } else if ((batteryPower >= 171) && (batteryPower <= 212)) {
+                    tft.drawRoundRect (180, 10, 52, 22, 5, green_battery);
+                    tft.drawRoundRect (181, 11, 50, 20, 4, green_battery);
+                    tft.drawString(stringVoltageBattery, 184, 15, GFXFF);
+                    tft.drawString("V", 221, 15, GFXFF);
+                } else if ((batteryPower >= 129) && (batteryPower <= 170)) {
+                    tft.drawRoundRect (180, 10, 52, 22, 5, yellow_battery);
+                    tft.drawRoundRect (181, 11, 50, 20, 4, yellow_battery);
+                    tft.drawString(stringVoltageBattery, 184, 15, GFXFF);  
+                    tft.drawString("V", 221, 15, GFXFF);
+                } else if ((batteryPower >= 87) && (batteryPower <= 128)) {
+                    tft.drawRoundRect (180, 10, 52, 22, 5, yellowed_battery);
+                    tft.drawRoundRect (181, 11, 50, 20, 4, yellowed_battery);
+                    tft.drawString(stringVoltageBattery, 184, 15, GFXFF);
+                    tft.drawString("V", 221, 15, GFXFF);
+                } else if ((batteryPower >= 42) && (batteryPower <= 86)) {
+                    tft.drawRoundRect (180, 10, 52, 22, 5, orange_battery);
+                    tft.drawRoundRect (181, 11, 50, 20, 4, orange_battery);
+                    tft.drawString(stringVoltageBattery, 184, 15, GFXFF);
+                    tft.drawString("V", 221, 15, GFXFF);
+                } else if ((batteryPower >= 0) && (batteryPower <= 41)) {
+                    tft.drawRoundRect (180, 10, 52, 22, 5, red_battery);
+                    tft.drawRoundRect (181, 11, 50, 20, 4, red_battery);
+                    tft.drawString(stringVoltageBattery, 184, 15, GFXFF);
+                    tft.drawString("V", 221, 15, GFXFF);
+                }
+            } else {
+                tft.drawRoundRect (180, 10, 52, 22, 5, charge_battery);
+                tft.drawRoundRect (181, 11, 50, 20, 4, charge_battery);
+                tft.fillRoundRect (182, 12, 48, 18, 3, charge_battery);
+                tft.fillTriangle(194, 21, 207, 16, 207, 21, black);
+                tft.fillTriangle(204, 21, 204, 26, 217, 21, black);
+            }
+        }
+
+        if (batteryStyleMode == 3) {
+            if (powerCharger == 1) {
+                if (batteryPower >= 213) {
+                    tft.drawRoundRect (180, 10, 52, 22, 5, blue_battery);
+                    tft.drawRoundRect (181, 11, 50, 20, 4, blue_battery);
+                    tft.fillRoundRect (182, 12, 48, 18, 3, blue_battery);
+                } else if ((batteryPower >= 171) && (batteryPower <= 212)) {
+                    tft.drawRoundRect (180, 10, 52, 22, 5, green_battery);
+                    tft.drawRoundRect (181, 11, 50, 20, 4, green_battery);
+                    tft.fillRoundRect (190, 12, 40, 18, 3, green_battery);
+                } else if ((batteryPower >= 129) && (batteryPower <= 170)) {
+                    tft.drawRoundRect (180, 10, 52, 22, 5, yellow_battery);
+                    tft.drawRoundRect (181, 11, 50, 20, 4, yellow_battery);
+                    tft.fillRoundRect (200, 12, 30, 18, 3, yellow_battery);    
+                } else if ((batteryPower >= 87) && (batteryPower <= 128)) {
+                    tft.drawRoundRect (180, 10, 52, 22, 5, yellowed_battery);
+                    tft.drawRoundRect (181, 11, 50, 20, 4, yellowed_battery);
+                    tft.fillRoundRect (210, 12, 20, 18, 3, yellowed_battery);
+                    
+                } else if ((batteryPower >= 42) && (batteryPower <= 86)) {
+                    tft.drawRoundRect (180, 10, 52, 22, 5, orange_battery);
+                    tft.drawRoundRect (181, 11, 50, 20, 4, orange_battery);
+                    tft.fillRoundRect (215, 12, 15, 18, 3, orange_battery);
+                    
+                } else if ((batteryPower >= 0) && (batteryPower <= 41)) {
+                    tft.drawRoundRect (180, 10, 52, 22, 5, red_battery);
+                    tft.drawRoundRect (181, 11, 50, 20, 4, red_battery);
+                    tft.fillRoundRect (220, 12, 10, 18, 3, red_battery);
+                }
+            } else {
+                tft.drawRoundRect (180, 10, 52, 22, 5, charge_battery);
+                tft.drawRoundRect (181, 11, 50, 20, 4, charge_battery);
+                tft.fillRoundRect (182, 12, 48, 18, 3, charge_battery);
+                tft.fillTriangle(194, 21, 207, 16, 207, 21, black);
+                tft.fillTriangle(204, 21, 204, 26, 217, 21, black);
+            }
+        }
+
+
 
         if (wifiFuncional == 0) {
                 for (byte radi = 21; radi > 15; radi --) {
@@ -1939,70 +2029,70 @@ void subMenu() {
 
 // ------------------------------- FUNCAO DISPLAY GEIGER 
 
-void circleGeiger() {
 
-    for (int i = startAngleGeiger; i < endAngleGeiger; i++) {
-        double radians = i * PI / 180;
-        double px = xGeiger + radiusGeiger * cos(radians);
-        double py = yGeiger + radiusGeiger * sin(radians);
-        tft.drawPixel(px, py, white);
+  // TL_DATUM = Top left (default)
+  // TC_DATUM = Top centre
+  // TR_DATUM = Top right
+  // ML_DATUM = Middle left
+  // MC_DATUM = Middle centre
+  // MR_DATUM = Middle right
+  // BL_DATUM = Bottom left
+  // BC_DATUM = Bottom centre
+  // BR_DATUM = Bottom right
+  // L_BASELINE = Left character baseline (Line the 'A' character would sit on)
+  // C_BASELINE = Centre character baseline
+  // R_BASELINE = Right character baseline
+
+void geigerStyleMode0() {
+    String stringuSv = String(uSv);
+
+    if (uSv != compareuSv) {
+        tft.fillRect (140, 172, 60, 20, black);
+        compareuSv = uSv;
     }
 
-    for (byte radi = 5; radi > 1; radi --) {
-        for (int i = 0; i < 360; i++) {
-            double radians = i * PI / 180;
-            double px = 120 + radi * cos(radians);
-            double py = 120 + radi * sin(radians);
-            tft.drawPixel(px, py, geigerArrow);
-        }
-    }
-
-    for (byte radi = 64; radi > 55; radi --) {
-        for (int i = 270; i < 315; i++) {
-            double radians = i * PI / 180;
-            double px = 120 + radi * cos(radians);
-            double py = 120 + radi * sin(radians);
-            tft.drawPixel(px, py, geigerGraph);
-        }
-    }
-
-    tft.setTextDatum(ML_DATUM);
-    tft.setTextColor(white);
-    tft.setFreeFont(RHDRegular10);
-    tft.drawString("2", 43, 110, GFXFF);
-    tft.drawString("5", 46, 95, GFXFF);
+    tft.drawRect(25, 96, 190, 25, white);
+    tft.fillRect(115, 91, 26, 5, geigerGreen);
 
     tft.setTextDatum(ML_DATUM);
     tft.setTextColor(white);
     tft.setFreeFont(latoRegular14);
-    tft.drawString("10", 45, 76, GFXFF);
+    tft.drawString("Counts per second", 53, 149, GFXFF);
+    tft.setFreeFont(latoBold24);
+    tft.drawString("sieverts", 41, 180, GFXFF);
+    tft.drawString(stringuSv, 147, 180, GFXFF);
 
-    tft.setTextDatum(ML_DATUM);
-    tft.setTextColor(white);
-    tft.setFreeFont(RHDRegular10);
-    tft.drawString("20", 63, 58, GFXFF);
-    tft.drawString("50", 83, 48, GFXFF);
+    tft.setFreeFont(latoRegular10);
+    tft.drawString("2", 28, 80, GFXFF);
+    tft.drawString("5", 38, 80, GFXFF);
+    tft.drawString("20", 68, 80, GFXFF);
+    tft.drawString("50", 85, 80, GFXFF);
+    tft.drawString("200", 133, 80, GFXFF);
+    tft.drawString("500", 155, 80, GFXFF);
+    tft.drawString("2K", 199, 80, GFXFF);
 
-    tft.setTextDatum(ML_DATUM);
-    tft.setTextColor(white);
     tft.setFreeFont(latoRegular14);
-    tft.drawString("100", 108, 40, GFXFF);
+    tft.drawString("10", 48, 77, GFXFF);
+    tft.drawString("100", 103, 77, GFXFF);
+    tft.drawString("1K", 177, 77, GFXFF);
 
-    tft.setTextDatum(ML_DATUM);
-    tft.setTextColor(white);
-    tft.setFreeFont(RHDRegular10);
-    tft.drawString("200", 153, 53, GFXFF);
-    tft.drawString("500", 172, 66, GFXFF);
+    tft.fillRectHGradient(26, 97, 73, 23, geigerColor1, geigerColor2);
+    tft.fillRect(99, 97, 2, 40, geigerColor2);
 
-    tft.setTextDatum(ML_DATUM);
-    tft.setTextColor(white);
-    tft.setFreeFont(latoRegular14);
-    tft.drawString("1K", 190, 88, GFXFF);
-
-    tft.setTextDatum(ML_DATUM);
-    tft.setTextColor(white);
-    tft.setFreeFont(RHDRegular10);
-    tft.drawString("2K", 195, 105, GFXFF);
+    /*
+    if (uSv <= 9) {
+        tft.drawString("u", 170, 169, GFXFF);
+        tft.drawLine(170, 174, 170, 179, white);
+    } else if (uSv <= 99) {
+        tft.drawString("u", 180, 169, GFXFF);
+        tft.drawLine(180, 174, 180, 179, white);
+    } else {
+        tft.drawString("u", 190, 169, GFXFF);
+        tft.drawLine(190, 174, 190, 179, white);
+    }
+    */
+    statusBattery();
+    subMenu();   
 }
 
 void circleDosimeter() {
@@ -2133,7 +2223,7 @@ void geigerGraphGF() {
 
     tft.setTextDatum(MC_DATUM);
     tft.setTextColor(white);
-    tft.setFreeFont(RHDRegular10);
+    tft.setFreeFont(latoRegular10);
     tft.drawString("3", 36, 199, GFXFF);
     tft.drawString("9", 90, 199, GFXFF);
     tft.drawString("15", 144, 199, GFXFF);
@@ -3473,32 +3563,4 @@ void snowWeather() {
     tft.fillRect(165, 73, 50, 5, drizzleColor);
 
 
-}
-
-
-void geigerStyleMode0() {
-    if (uSv != compareuSv) {
-        tft.fillRect (140, 164, 55, 16, black);
-        compareuSv = uSv;
-    }
-    tft.setTextDatum(ML_DATUM);
-    tft.setTextColor(white);
-    tft.setFreeFont(latoRegular14);
-    tft.drawString("Counts per second", 51, 141, GFXFF);
-    tft.drawString("sieverts", 71, 169, GFXFF);
-    tft.drawString(stringuSv, 140, 169, GFXFF);
-    if (uSv <= 9) {
-        tft.drawString("u", 170, 169, GFXFF);
-        tft.drawLine(170, 174, 170, 179, white);
-    } else if (uSv <= 99) {
-        tft.drawString("u", 180, 169, GFXFF);
-        tft.drawLine(180, 174, 180, 179, white);
-    } else {
-        tft.drawString("u", 190, 169, GFXFF);
-        tft.drawLine(190, 174, 190, 179, white);
-    }
-    circleGeiger();
-    arrowGeiger();
-    statusBattery();
-    subMenu();   
 }
