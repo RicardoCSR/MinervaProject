@@ -14,7 +14,8 @@ https://github.com/FrankBoesing/TFT_eSPI_ext.git
 https://rop.nl/truetype2gfx/
 - FontConverter - 2
 https://oleddisplay.squix.ch/#/home
-
+- RGB888 para RGB565
+https://trolsoft.ru/ru/articles/rgb565-color-picker
 
 Nixie_Clock - Extensor de Sensores de Sobrevivência
 
