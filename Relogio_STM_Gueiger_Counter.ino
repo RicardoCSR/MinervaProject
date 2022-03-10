@@ -480,19 +480,25 @@ uint16_t wifi_off3 = 0x9CF3;            //0x9F9F9F
 uint16_t wifi_off2 = 0x7BEF;            //0x7E7E7E
 uint16_t wifi_off1 = 0x52AA;            //0x555555
 
-uint16_t geigerGreen = 0x362F;          //0x39C87E
+uint16_t geigerLevel3 = 0x362F;          //0x39C87E
+uint16_t geigerLevel2 = 0xFF06;          //0xFFE437
+uint16_t geigerLevel1 = 0xD8E4;          //0xE02028
 
 uint16_t geigerColor1 = 0xFDA0;         //0xFFB801
 uint16_t geigerColor2 = 0xDCA6;         //0xE49837
 
+uint16_t temperatureColor1 = 0xEBE8;    //0xF18148
+uint16_t temperatureColor2 = 0xD12B;    //0xDE2662
+
+uint16_t humidityColor1 = 0x25B9;       //0x25B7D0
+uint16_t humidityColor2 = 0x929A;       //0x9A54D8
+
+uint16_t pressureColor1 = 0x76A7;       //0x76DA41
+uint16_t pressureColor2 = 0x1DF2;       //0x1EC099
 
 
 
 
-
-uint16_t temperatureColor = 0xF14B;     //0xE02961
-uint16_t humidityColor = 0x92BA;        //0x9558D8
-uint16_t pressureColor = 0x1DF2;        //0x1DBF99
 
 uint16_t greenScript = 0x5E6B;          //0x5BD25D
 uint16_t yellowScript = 0xFF06;         //0xFFE437
@@ -756,29 +762,9 @@ void loop(void) {
             break; // GEIGER
 
             case 2:
-                if (uSv != compareuSv) {
-                    tft.fillRect (85, 130, 70, 24, black);
-                    tft.fillRect (60, 180, 60, 20, black);
-                    compareuSv = uSv;
+                if (displayStyleMode == 0) {
+                    dosimeterStyleMode0();
                 }
-
-                tft.drawCircle(120, 140, 40, greyScript);
-
-                tft.setTextDatum(TC_DATUM);
-                tft.setTextColor(geigerGraph);
-                tft.setFreeFont(latoBold24);
-                tft.drawString(stringuSv, 120, 130, GFXFF);
-
-                tft.setTextDatum(ML_DATUM);
-                tft.setTextColor(greywhite);
-                tft.setFreeFont(latoRegular14);
-                tft.drawString("uSv/h", 170, 155, GFXFF);
-                tft.drawLine(170, 159, 170, 164, greywhite);
-
-
-
-                circleDosimeter();
-                statusBattery();
             break; // DOSIMETER
 
 
@@ -2052,7 +2038,7 @@ void geigerStyleMode0() {
     }
 
     tft.drawRect(25, 96, 190, 25, white);
-    tft.fillRect(115, 91, 26, 5, geigerGreen);
+    tft.fillRect(115, 91, 26, 5, geigerLevel3);
 
     tft.setTextDatum(ML_DATUM);
     tft.setTextColor(white);
@@ -2095,53 +2081,58 @@ void geigerStyleMode0() {
     subMenu();   
 }
 
-void circleDosimeter() {
-
+void dosimeterStyleMode0() {
     String stringcpm = String(cpm);
-    String stringDosimeter = String(prevDosimeter);
+    String stringuSv = String(uSv);
+
+    tft.drawRect(25, 76, 190, 25, white);
 
     tft.setTextDatum(ML_DATUM);
     tft.setTextColor(greywhite);
     tft.setFreeFont(latoRegular14);
-    tft.drawString("0", 45, 90, GFXFF);
-    tft.drawString("2", 70, 70, GFXFF);
-    tft.drawString("4", 98, 60, GFXFF);
-    tft.drawString("6", 122, 60, GFXFF);
-    tft.drawString("8", 150, 70, GFXFF);
-    tft.drawString("10", 175, 90, GFXFF);
 
-    tft.drawString("CPM:", 20, 190, GFXFF);
-    tft.drawString("Update: ", 20, 220, GFXFF);
-    tft.drawString(stringDosimeter, 80, 220, GFXFF);
-    tft.drawString(stringcpm, 60, 190, GFXFF);
+    tft.drawString(stringcpm, 60, 163, GFXFF);
+    tft.drawString(stringuSv, 74, 180, GFXFF);
+
+    tft.drawString("CPM:", 21, 163, GFXFF);
+    tft.drawString("Update", 21, 180, GFXFF);
+    tft.drawString("0", 26, 60, GFXFF);
+    tft.drawString("2", 60, 60, GFXFF);
+    tft.drawString("4", 95, 60, GFXFF);
+    tft.drawString("6", 129, 60, GFXFF);
+    tft.drawString("8", 164, 60, GFXFF);
+    tft.drawString("10", 198, 60, GFXFF);
+
+    tft.setFreeFont(latoBold24);
+
+    tft.drawString("Sieverts", 21, 120, GFXFF);
+    tft.drawString("Sv/h", 180, 120, GFXFF);
+    tft.drawString(stringuSv, 127, 120);
+
+    tft.fillRect(26, 77, 73, 23, geigerLevel3);
+    tft.fillRect(99, 77, 86, 23, geigerLevel2);
+    tft.fillRect(185, 77, 29, 23, geigerLevel1);
 
 
-    for (byte radi = 109; radi > 96; radi --) {
-        for (int i = 210; i < 265; i++) {
-            double radians = i * PI / 180;
-            double px = 120 + radi * cos(radians);
-            double py = 140 + radi * sin(radians);
-            tft.drawPixel(px, py, greenScript);
-        }
+
+    tft.fillRect(190, 77, 2, 30, black);
+    tft.fillTriangle(167, 144, 189, 144, 179, 171, temperatureColor2);
+    tft.fillTriangle(147, 185, 175, 177, 161, 202, temperatureColor2);
+    tft.fillTriangle(210, 185, 183, 177, 196, 202, temperatureColor2);
+    tft.fillTriangle(179, 163, 168, 182, 190, 182, black);
+    tft.fillCircle(179, 175, 5, temperatureColor2);
+
+
+
+    if (uSv != compareuSv) {
+        tft.fillRect (125, 110, 54, 24, black);
+        tft.fillRect (60, 156, 30, 16, black);
+        tft.fillRect (74, 175, 30, 16, black);
+        compareuSv = uSv;
     }
 
-    for (byte radi = 109; radi > 96; radi --) {
-        for (int i = 265; i < 310; i++) {
-            double radians = i * PI / 180;
-            double px = 120 + radi * cos(radians);
-            double py = 140 + radi * sin(radians);
-            tft.drawPixel(px, py, yellowScript);
-        }
-    }
 
-    for (byte radi = 109; radi > 96; radi --) {
-        for (int i = 310; i < 330; i++) {
-            double radians = i * PI / 180;
-            double px = 120 + radi * cos(radians);
-            double py = 140 + radi * sin(radians);
-            tft.drawPixel(px, py, redScript);
-        }
-    }
+    statusBattery();
 }
 
 void arrowGeiger() {
@@ -2280,7 +2271,7 @@ void weatherGF() {
             double radians = i * PI / 180;
             double px = 45 + radi * cos(radians);
             double py = 165 + radi * sin(radians);
-            tft.drawPixel(px, py, temperatureColor);
+            tft.drawPixel(px, py, temperatureColor2);
         }
         //tft.fillCircle (px, py, 5, geigerGraphGF1);
     }
@@ -2289,7 +2280,7 @@ void weatherGF() {
             double radians = i * PI / 180;
             double px = 120 + radi * cos(radians);
             double py = 165 + radi * sin(radians);
-            tft.drawPixel(px, py, humidityColor);
+            tft.drawPixel(px, py, humidityColor2);
         }
         //tft.fillCircle (px, py, 5, geigerGraphGF1);
     }
@@ -2299,7 +2290,7 @@ void weatherGF() {
             double radians = i * PI / 180;
             double px = 195 + radi * cos(radians);
             double py = 165 + radi * sin(radians);
-            tft.drawPixel(px, py, pressureColor);
+            tft.drawPixel(px, py, pressureColor2);
         }
         //tft.fillCircle (px, py, 5, geigerGraphGF1);
     }
@@ -3564,3 +3555,4 @@ void snowWeather() {
 
 
 }
+
