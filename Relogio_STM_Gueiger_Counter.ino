@@ -320,6 +320,8 @@ byte compareStatusMenu = 0;     // Armazena os dados de atualização
 
 // ------------------------------ BANCO DE DADOS DE COMPARADORES -----------------------
 
+byte weatherSelector = 0;
+
 byte sleepMode = 0;  
 // sleepMode = 0 Sistema aguardando comando
 // sleepMode = 1 Habilita entrada do Modo Hibernar
@@ -480,9 +482,9 @@ uint16_t wifi_off3 = 0x9CF3;            //0x9F9F9F
 uint16_t wifi_off2 = 0x7BEF;            //0x7E7E7E
 uint16_t wifi_off1 = 0x52AA;            //0x555555
 
-uint16_t geigerLevel3 = 0x362F;          //0x39C87E
-uint16_t geigerLevel2 = 0xFF06;          //0xFFE437
-uint16_t geigerLevel1 = 0xD8E4;          //0xE02028
+uint16_t geigerLevel3 = 0x362F;         //0x39C87E
+uint16_t geigerLevel2 = 0xFF06;         //0xFFE437
+uint16_t geigerLevel1 = 0xD8E4;         //0xE02028
 
 uint16_t geigerColor1 = 0xFDA0;         //0xFFB801
 uint16_t geigerColor2 = 0xDCA6;         //0xE49837
@@ -496,7 +498,7 @@ uint16_t humidityColor2 = 0x929A;       //0x9A54D8
 uint16_t pressureColor1 = 0x76A7;       //0x76DA41
 uint16_t pressureColor2 = 0x1DF2;       //0x1EC099
 
-
+uint16_t redAjust = 0xD8E4;             //0xE02028
 
 
 
@@ -756,85 +758,21 @@ void loop(void) {
 
         switch (displayFlag) {
             case 1:      
-                if (displayStyleMode == 0) {
-                    geigerStyleMode0();
-                }
-            break; // GEIGER
+                if (displayStyleMode == 0) { geigerStyleMode0(); } break; // GEIGER
 
             case 2:
-                if (displayStyleMode == 0) {
-                    dosimeterStyleMode0();
-                }
-            break; // DOSIMETER
-
+                if (displayStyleMode == 0) { dosimeterStyleMode0(); } break; // DOSIMETER
 
             case 3:
-                if (uSv != compareuSv) {
-                    tft.fillRect (82, 61, 148, 32, black);
-                    compareuSv = uSv;
-                }
-                tft.setTextDatum(ML_DATUM);
-                tft.setTextColor(white);
-                tft.setFreeFont(latoRegular14);
-                tft.drawString("sieverts", 13, 65, GFXFF);
-                tft.drawString(stringuSv, 82, 65, GFXFF);
-                if (uSv <= 9) {
-                    tft.drawString("u", 114, 65, GFXFF);
-                    tft.drawLine(114, 70, 114, 75, white);
-                } else if (uSv <= 99) {
-                    tft.drawString("u", 124, 65, GFXFF);
-                    tft.drawLine(124, 70, 124, 75, white);
-                } else {
-                    tft.drawString("u", 134, 65, GFXFF);
-                    tft.drawLine(134, 70, 134, 75, white);
-                }
-
-                tft.drawString("CPM", 13, 84, GFXFF);
-                tft.drawString(stringcpm, 82, 84, GFXFF);
-
-                tft.drawString("uSh", 200, 65, GFXFF);
-                tft.drawLine(200, 70, 200, 75, white);
-                tft.drawString(stringAusv, 160, 65, GFXFF);
-
-                tft.drawString("mCPM", 130, 84, GFXFF);
-                tft.drawString(stringAcpm, 200, 84, GFXFF);
-
-                geigerGraphGF();
-                statusBattery();
-                subMenu();
+                if (displayStyleMode == 0) { geigerGraphStyleMode0(); } break; // GEIGER GF
             break; // GEIGER GF
 
             case 4:
-                /*
-                
-                String stringTemp = String(temperature);
-                String stringHumi = String(humidity);
-                String stringPres = String(pressure);
-
-                tft.setTextDatum(ML_DATUM);
-                tft.setTextColor(white);
-                tft.setFreeFont(latoRegular14);
-                tft.drawString(stringTemp, 15, 156, GFXFF);
-                tft.drawString(stringHumi, 90, 156, GFXFF);
-                tft.drawString(stringPres, 165, 156, GFXFF);
-
-                */
-               
-                weatherGF();
-                unknownWeather();
-                statusBattery();
-                subMenu();
-
-                tft.setTextDatum(ML_DATUM);
-                tft.setTextColor(white);
-                tft.setFreeFont(latoRegular14);
-                tft.drawString("Atualiza em", 25, 80, GFXFF);
-                tft.drawString(stringUpdZambMin, 50, 100, GFXFF);
-                tft.drawString(stringUpdZambHr, 70, 100, GFXFF);
+                if (displayStyleMode == 0) { weatherStyleMode0(); } break; // WEATHER
             break; // WEATHER
 
             case 5:
-
+                if (displayStyleMode == 0) { weatherGraphStyleMode0(); } break; // WEATHER GF TEMP
 
             break; // WEATHER GF
 
@@ -1282,19 +1220,6 @@ void loop(void) {
             tft.fillScreen(black);
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     // ------------------------------- FUNCAO MENU DISPLAY OPERACIONAL ------------------------
 
@@ -2015,20 +1940,6 @@ void subMenu() {
 
 // ------------------------------- FUNCAO DISPLAY GEIGER 
 
-
-  // TL_DATUM = Top left (default)
-  // TC_DATUM = Top centre
-  // TR_DATUM = Top right
-  // ML_DATUM = Middle left
-  // MC_DATUM = Middle centre
-  // MR_DATUM = Middle right
-  // BL_DATUM = Bottom left
-  // BC_DATUM = Bottom centre
-  // BR_DATUM = Bottom right
-  // L_BASELINE = Left character baseline (Line the 'A' character would sit on)
-  // C_BASELINE = Centre character baseline
-  // R_BASELINE = Right character baseline
-
 void geigerStyleMode0() {
     String stringuSv = String(uSv);
 
@@ -2135,170 +2046,290 @@ void dosimeterStyleMode0() {
     statusBattery();
 }
 
-void arrowGeiger() {
-
-    if (millis() - timerGeiger >= 5) {
-        timerGeiger = millis();
-        countsCalc ++;
-        if (countsCalc > 10) {
-            controller ++;
-        }
-        if (countsCalc <= 10) {
-            secCounts[countsCalc] = counts - secCounts[controller];
-            processedCounts = secCounts[countsCalc];
-        }
-        if (controller == 10) {
-            secCounts[countsCalc] = counts - secCounts[countsCalc];
-        }
-
-    } 
-    if (countsCalc == 20) {
-        for (controller = 0; controller < 10; controller ++) {
-            processedCounts = processedCounts + secCounts[controller];
-        }
-        countsCalc = 0;
+void geigerGraphStyleMode0() {
+    if (uSv != compareuSv) {
+        tft.fillRect (82, 61, 148, 32, black);
+        compareuSv = uSv;
     }
 
-    if (processedCounts <= 10) {
-        graphCounts = map(processedCounts, 1, 10, 185, 212);            // Calibrated
-    } else if (processedCounts <= 20) {
-        graphCounts = map(processedCounts, 11, 20, 213, 230);           // Calibrated        
-    } else if (processedCounts <= 50) {
-        graphCounts = map(processedCounts, 21, 50, 231, 245);           // Calibrated
-    } else if (processedCounts <= 100) {
-        graphCounts = map(processedCounts, 51, 100, 246, 270);          // Calibrated
-    } else if (processedCounts <= 200) {
-        graphCounts = map(processedCounts, 101, 200, 271, 300);         // Calibrated
-    } else if (processedCounts <= 500) {
-        graphCounts = map(processedCounts, 201, 500, 301, 318);         // Calibrated
-    } else if (processedCounts <= 1000) {
-        graphCounts = map(processedCounts, 501, 1000, 319, 337);        // Calibrated
-    } else if (processedCounts <= 2000) {
-        graphCounts = map(processedCounts, 1001, 2000, 338, 350);       // Calibrated
-    } else if (processedCounts > 2000) {
-        graphCounts = map(processedCounts, 2001, 2200, 351, 360);       // Calibrated
-    }
-
-    if (compareCounts != graphCounts) {
-        tft.drawLine(pxLate, pyLate, 118, 120, black);
-        tft.drawLine(pxLate, pyLate, 119, 120, black);
-        tft.drawLine(pxLate, pyLate, 120, 120, black);
-        tft.drawLine(pxLate, pyLate, 121, 120, black);
-        tft.drawLine(pxLate, pyLate, 122, 120, black);
-
-        double radians = graphCounts * PI / 180;
-        double px = 120 + 63 * cos(radians);
-        double py = 120 + 63 * sin(radians);
-        tft.drawLine(px, py, 118, 120, geigerArrow);
-        tft.drawLine(px, py, 119, 120, geigerArrow);
-        tft.drawLine(px, py, 120, 120, geigerArrow);
-        tft.drawLine(px, py, 121, 120, geigerArrow);
-        tft.drawLine(px, py, 122, 120, geigerArrow);
-        compareCounts = graphCounts;
-        pxLate = px;
-        pyLate = py;
-    }
-}
-
-// ------------------------------- FUNCAO DISPLAY GEIGER 
-
-void geigerGraphGF() {
-    tft.setTextDatum(MC_DATUM);
-    tft.setTextColor(white);
+    tft.setTextDatum(ML_DATUM);
+    tft.setTextColor(greywhite);
     tft.setFreeFont(latoRegular14);
-    tft.drawString("0", 8, 199, GFXFF);
-    tft.drawString("6", 62, 199, GFXFF);
-    tft.drawString("12", 116, 199, GFXFF);
+
+    tft.drawString("Sieverts", 13, 51, GFXFF);
+    tft.drawString("uSh", 195, 51, GFXFF);
+    tft.drawLine(196, 54, 196, 62, white);
+    tft.drawString("CPM", 13, 70, GFXFF);
+    tft.drawString("mCPM", 136, 70, GFXFF);
+    tft.drawString("0", 7, 199, GFXFF);
+    tft.drawString("6", 65, 199, GFXFF);
+    tft.drawString("12", 115, 199, GFXFF);
     tft.drawString("18", 170, 199, GFXFF);
     tft.drawString("24", 223, 199, GFXFF);
 
-    tft.setTextDatum(MC_DATUM);
-    tft.setTextColor(white);
     tft.setFreeFont(latoRegular10);
+
     tft.drawString("3", 36, 199, GFXFF);
-    tft.drawString("9", 90, 199, GFXFF);
-    tft.drawString("15", 144, 199, GFXFF);
-    tft.drawString("21", 199, 199, GFXFF);
+    tft.drawString("9", 91, 199, GFXFF);
+    tft.drawString("15", 143, 199, GFXFF);
+    tft.drawString("21", 198, 199, GFXFF);
 
-    tft.fillRect(7, 185, 2, 5, geigerGraphGF1);
-    tft.fillRect(62, 185, 2, 5, geigerGraphGF1);
-    tft.fillRect(115, 185, 2, 5, geigerGraphGF1);
-    tft.fillRect(169, 185, 2, 5, geigerGraphGF1);
-    tft.fillRect(223, 185, 2, 5, geigerGraphGF1);
+    tft.fillRect(10, 183, 2, 6, redAjust);
+    tft.fillRect(38, 183, 1, 5, wifi_off2);
+    tft.fillRect(68, 183, 2, 6, redAjust);
+    tft.fillRect(93, 183, 1, 5, wifi_off2);
+    tft.fillRect(123, 183, 2, 6, redAjust);
+    tft.fillRect(147, 183, 1, 5, wifi_off2);
+    tft.fillRect(178, 183, 2, 6, redAjust);
+    tft.fillRect(203, 183, 1, 5, wifi_off2);
+    tft.fillRect(230, 183, 2, 6, redAjust);
 
-    tft.fillRect(35, 185, 2, 5, geigerGraphGF2);
-    tft.fillRect(89, 185, 2, 5, geigerGraphGF2);
-    tft.fillRect(144, 185, 2, 5, geigerGraphGF2);
-    tft.fillRect(198, 185, 2, 5, geigerGraphGF2);
+    //tft.fillRect(10, 85, 220, 85, sunColor);
 
-        /*
-        226 passos
-        r   42  8       
-        g   245 174     
-        b   152 234     
-
-        r = 42  - 0.150442478 x 226 = 7.99
-        g = 245 - 0.314159292 x 226 = 174
-        b = 152 + 0.362831858 x 226 = 234 
-        */
-
-    if (targetTime == 0) {
-        for (int i = 8; i < 224; i++) {
-            int randon = random(100, 160);
-
-            red = red - 0.150442478;
-            green = green - 0.314159292;
-            blue = blue + 0.362831858;
-
-            gradient = red << 15 | green << 3 | blue;
-            tft.drawLine(i, randon, i, 175, gradient);
-            targetTime = 1;
-        }
-    }
+    statusBattery();
+    subMenu();
 }
 
-void weatherGF() {
+// ------------------------------- FUNCAO DISPLAY WEATHER 
+
+void weatherStyleMode0() {
     String stringTemp = String(temperature);
     String stringHumi = String(humidity);
     String stringPres = String(pressure);
+    String stringUpdZambMin = String(updateZambrettiMin);
+    String stringUpdZambHr = String(updateZambrettiHr);    
+    String stringTempMin = String(temperatureMin);
+    String stringTempMax = String(temperatureMax);
+    String stringHumiMin = String(humidityMin);
+    String stringHumiMax = String(humidityMax);
+    String stringPresMin = String(pressureMin);
+    String stringPresMax = String(pressureMax);
 
     tft.setTextDatum(ML_DATUM);
     tft.setTextColor(white);
     tft.setFreeFont(latoRegular14);
+    tft.drawString(stringTempMin, 27, 135, GFXFF);
+    tft.drawString(stringTempMax, 185, 135, GFXFF);
+    tft.drawString(stringHumiMin, 27, 160, GFXFF);
+    tft.drawString(stringHumiMax, 185, 160, GFXFF);
+    tft.drawString(stringPresMin, 18, 185, GFXFF);
+    tft.drawString(stringPresMax, 185, 185, GFXFF);
+    tft.drawString("Update", 25, 80, GFXFF);
+    tft.drawString(stringUpdZambMin, 80, 80, GFXFF);
+    tft.drawString(stringUpdZambHr, 110, 80, GFXFF);
 
-    for (byte radi = 30; radi > 25; radi --) {
-        for (int i = 0; i < 360; i++) {
-            double radians = i * PI / 180;
-            double px = 45 + radi * cos(radians);
-            double py = 165 + radi * sin(radians);
-            tft.drawPixel(px, py, temperatureColor2);
-        }
-        //tft.fillCircle (px, py, 5, geigerGraphGF1);
-    }
-    for (byte radi = 30; radi > 25; radi --) {
-        for (int i = 0; i < 360; i++) {
-            double radians = i * PI / 180;
-            double px = 120 + radi * cos(radians);
-            double py = 165 + radi * sin(radians);
-            tft.drawPixel(px, py, humidityColor2);
-        }
-        //tft.fillCircle (px, py, 5, geigerGraphGF1);
-    }
+    tft.drawRect(49, 127, 130, 20, white);
+    tft.drawRect(49, 152, 130, 20, white);
+    tft.drawRect(49, 177, 130, 20, white);
 
-    for (byte radi = 30; radi > 25; radi --) {
-        for (int i = 0; i < 360; i++) {
-            double radians = i * PI / 180;
-            double px = 195 + radi * cos(radians);
-            double py = 165 + radi * sin(radians);
-            tft.drawPixel(px, py, pressureColor2);
-        }
-        //tft.fillCircle (px, py, 5, geigerGraphGF1);
+    tft.fillRectHGradient(87, 128, 36, 18, temperatureColor1, temperatureColor2);
+    tft.fillRectHGradient(76, 153, 67, 18, humidityColor1, humidityColor2);
+    tft.fillRectHGradient(105, 178, 18, 18, pressureColor1, pressureColor2);
+
+    climateStyleMode0();
+    statusBattery();
+    subMenu();
+}
+
+void climateStyleMode0() {
+    switch (weatherSelector) {
+        case 1: cleanWeather(); tft.setTextDatum(ML_DATUM); tft.setFreeFont(latoRegular14); tft.drawString("Clean", 25, 60, GFXFF); break;
+        case 2: cloudWeather(); tft.setTextDatum(ML_DATUM); tft.setFreeFont(latoRegular14); tft.drawString("Cloud", 25, 60, GFXFF); break;
+        case 3: sereneWeather(); tft.setTextDatum(ML_DATUM); tft.setFreeFont(latoRegular14); tft.drawString("Serene", 25, 60, GFXFF); break;
+        case 4: drizzleWeather(); tft.setTextDatum(ML_DATUM); tft.setFreeFont(latoRegular14); tft.drawString("Drizzle", 25, 60, GFXFF); break;
+        case 5: thunderWeather(); tft.setTextDatum(ML_DATUM); tft.setFreeFont(latoRegular14); tft.drawString("Thunderstorm", 25, 60, GFXFF); break;
+        case 6: stormWeather(); tft.setTextDatum(ML_DATUM); tft.setFreeFont(latoRegular14); tft.drawString("Storm", 25, 60, GFXFF); break;
+        case 7: tempestWeather(); tft.setTextDatum(ML_DATUM); tft.setFreeFont(latoRegular14); tft.drawString("Tempest", 25, 60, GFXFF); break;
+        case 8: seTempestWeather(); tft.setTextDatum(ML_DATUM); tft.setFreeFont(latoRegular14); tft.drawString("??Tempest", 25, 60, GFXFF); break;
+        case 9: hailWeather(); tft.setTextDatum(ML_DATUM); tft.setFreeFont(latoRegular14); tft.drawString("Hail", 25, 60, GFXFF); break;
+        case 10: seRainWeather(); tft.setTextDatum(ML_DATUM); tft.setFreeFont(latoRegular14); tft.drawString("??Rain", 25, 60, GFXFF); break;
+        case 11: hvSereneWeather(); tft.setTextDatum(ML_DATUM); tft.setFreeFont(latoRegular14); tft.drawString("Heavy Serene", 25, 60, GFXFF); break;
+        case 12: snowWeather(); tft.setTextDatum(ML_DATUM); tft.setFreeFont(latoRegular14); tft.drawString("Snow", 25, 60, GFXFF); break;
+        default:
+            unknownWeather(); tft.setTextDatum(ML_DATUM); tft.setFreeFont(latoRegular14); tft.drawString("Unknown", 25, 60, GFXFF); break;
     }
+}
+
+// ------- CORRIGR
+void weatherGraphStyleMode0() {
+    byte weatherGraph = 0;
+    if (sleepMode == 0) {
+        weatherGraph ++;
+        if (weatherGraph == 1) {
+            tempGraphStyleMode0();
+        } else if (weatherGraph == 2) {
+            humiGraphStyleMode0();
+        } else {
+            presGraphStyleMode0();
+        }   
+    }    
+}
+
+void tempGraphStyleMode0() {
+    String stringTemp = String(temperature);
+    String stringTempMin = String(temperatureMin);
+    String stringTempMax = String(temperatureMax);
+
+    tft.setTextDatum(ML_DATUM);
+    tft.setTextColor(greywhite);
+
     tft.setFreeFont(latoBold24);
 
-    tft.drawString(stringTemp, 45, 163, GFXFF);
-    tft.drawString(stringHumi, 115, 163, GFXFF);
-    tft.drawString(stringPres, 190, 163, GFXFF);
+    tft.drawString(stringTemp, 150, 165, GFXFF);
+    tft.drawString("C", 190, 165, GFXFF);
+    tft.drawCircle(215, 160, 3, white);
+    tft.drawCircle(215, 160, 4, white);
+
+    tft.setFreeFont(latoRegular14);
+
+    tft.drawString("0", 7, 125, GFXFF);
+    tft.drawString("6", 65, 125, GFXFF);
+    tft.drawString("12", 115, 125, GFXFF);
+    tft.drawString("18", 170, 125, GFXFF);
+    tft.drawString("24", 223, 125, GFXFF);
+
+    tft.drawString("Min:", 24, 155, GFXFF);
+    tft.drawString("Max:", 24, 175, GFXFF);
+
+    tft.drawString(stringTempMin, 60, 155, GFXFF);
+    tft.drawString(stringTempMax, 60, 175, GFXFF);
+
+    tft.drawString("C", 85, 155, GFXFF);
+    tft.drawString("C", 85, 175, GFXFF);
+    tft.drawCircle(100, 150, 2, white);
+    tft.drawCircle(100, 170, 2, white);
+
+    tft.setFreeFont(latoRegular10);
+
+    tft.drawString("3", 36, 125, GFXFF);
+    tft.drawString("9", 91, 125, GFXFF);
+    tft.drawString("15", 143, 125, GFXFF);
+    tft.drawString("21", 198, 125, GFXFF);
+
+    tft.fillRect(10, 110, 2, 6, temperatureColor1);
+    tft.fillRect(38, 110, 1, 5, wifi_off2);
+    tft.fillRect(68, 110, 2, 6, temperatureColor1);
+    tft.fillRect(93, 110, 1, 5, wifi_off2);
+    tft.fillRect(123, 110, 2, 6, temperatureColor1);
+    tft.fillRect(147, 110, 1, 5, wifi_off2);
+    tft.fillRect(178, 110, 2, 6, temperatureColor1);
+    tft.fillRect(203, 110, 1, 5, wifi_off2);
+    tft.fillRect(230, 110, 2, 6, temperatureColor1);
+
+    tft.fillRectHGradient(10, 50, 220, 55, temperatureColor1, temperatureColor2);
+
+    statusBattery();
+    subMenu();
+}
+
+void humiGraphStyleMode0() {
+    String stringHumi = String(humidity);
+    String stringHumiMin = String(humidityMin);
+    String stringHumiMax = String(humidityMax);
+
+    tft.setTextDatum(ML_DATUM);
+    tft.setTextColor(greywhite);
+
+    tft.setFreeFont(latoBold24);
+
+    tft.drawString(stringHumi, 150, 165, GFXFF);
+    tft.drawString("%", 190, 165, GFXFF);
+
+    tft.setFreeFont(latoRegular14);
+
+    tft.drawString("0", 7, 125, GFXFF);
+    tft.drawString("6", 65, 125, GFXFF);
+    tft.drawString("12", 115, 125, GFXFF);
+    tft.drawString("18", 170, 125, GFXFF);
+    tft.drawString("24", 223, 125, GFXFF);
+
+    tft.drawString("Min:", 24, 155, GFXFF);
+    tft.drawString("Max:", 24, 175, GFXFF);
+
+    tft.drawString(stringHumiMin, 60, 155, GFXFF);
+    tft.drawString(stringHumiMax, 60, 175, GFXFF);
+
+    tft.drawString("%", 85, 155, GFXFF);
+    tft.drawString("%", 85, 175, GFXFF);
+
+    tft.setFreeFont(latoRegular10);
+
+    tft.drawString("3", 36, 125, GFXFF);
+    tft.drawString("9", 91, 125, GFXFF);
+    tft.drawString("15", 143, 125, GFXFF);
+    tft.drawString("21", 198, 125, GFXFF);
+
+    tft.fillRect(10, 110, 2, 6, humidityColor1);
+    tft.fillRect(38, 110, 1, 5, wifi_off2);
+    tft.fillRect(68, 110, 2, 6, humidityColor1);
+    tft.fillRect(93, 110, 1, 5, wifi_off2);
+    tft.fillRect(123, 110, 2, 6, humidityColor1);
+    tft.fillRect(147, 110, 1, 5, wifi_off2);
+    tft.fillRect(178, 110, 2, 6, humidityColor1);
+    tft.fillRect(203, 110, 1, 5, wifi_off2);
+    tft.fillRect(230, 110, 2, 6, humidityColor1);
+
+    tft.fillRectHGradient(10, 50, 220, 55, humidityColor1, humidityColor2);
+
+    statusBattery();
+    subMenu();
+}
+
+void presGraphStyleMode0() {
+    String stringPres = String(pressure);
+    String stringPresMin = String(pressureMin);
+    String stringPresMax = String(pressureMax);
+
+    tft.setTextDatum(ML_DATUM);
+    tft.setTextColor(greywhite);
+
+    tft.setFreeFont(latoBold24);
+
+    tft.drawString(stringPres, 150, 165, GFXFF);
+    tft.drawString("Hg", 190, 165, GFXFF);
+    tft.drawCircle(215, 160, 3, white);
+    tft.drawCircle(215, 160, 4, white);
+
+    tft.setFreeFont(latoRegular14);
+
+    tft.drawString("0", 7, 125, GFXFF);
+    tft.drawString("6", 65, 125, GFXFF);
+    tft.drawString("12", 115, 125, GFXFF);
+    tft.drawString("18", 170, 125, GFXFF);
+    tft.drawString("24", 223, 125, GFXFF);
+
+    tft.drawString("Min:", 24, 155, GFXFF);
+    tft.drawString("Max:", 24, 175, GFXFF);
+
+    tft.drawString(stringPresMin, 60, 155, GFXFF);
+    tft.drawString(stringPresMax, 60, 175, GFXFF);
+
+    tft.drawString("Hg", 85, 155, GFXFF);
+    tft.drawString("Hg", 85, 175, GFXFF);
+    tft.drawCircle(100, 150, 2, white);
+    tft.drawCircle(100, 170, 2, white);
+
+    tft.setFreeFont(latoRegular10);
+
+    tft.drawString("3", 36, 125, GFXFF);
+    tft.drawString("9", 91, 125, GFXFF);
+    tft.drawString("15", 143, 125, GFXFF);
+    tft.drawString("21", 198, 125, GFXFF);
+
+    tft.fillRect(10, 110, 2, 6, pressureColor1);
+    tft.fillRect(38, 110, 1, 5, wifi_off2);
+    tft.fillRect(68, 110, 2, 6, pressureColor1);
+    tft.fillRect(93, 110, 1, 5, wifi_off2);
+    tft.fillRect(123, 110, 2, 6, pressureColor1);
+    tft.fillRect(147, 110, 1, 5, wifi_off2);
+    tft.fillRect(178, 110, 2, 6, pressureColor1);
+    tft.fillRect(203, 110, 1, 5, wifi_off2);
+    tft.fillRect(230, 110, 2, 6, pressureColor1);
+
+    tft.fillRectHGradient(10, 50, 220, 55, pressureColor1, pressureColor2);
+
+    statusBattery();
+    subMenu();
 }
 
 // ------------------------------- FUNCAO RELOGIO OPERACIONAL -------------------------
@@ -2892,7 +2923,7 @@ void errorTime() {
 
 // ------------------------------- SIMBOLO CLIMATICOS -----------
 
-void cleanWeater() {
+void cleanWeather() {
     tft.drawCircle(163, 73, 14, white);
     tft.drawCircle(163, 73, 13, white);
     tft.drawCircle(163, 73, 12, white);
