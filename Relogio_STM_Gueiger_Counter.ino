@@ -39,9 +39,9 @@ PA0     Alimentacao LDR
 PA1     Pino DC ST7789
 PA2     Pino RST ST7789
 PA3     Pino BLK ST7789
-PA4     LDR Sensor
+PA4     Geiger Sensor
 PA5     Pino SCL ST7789 
-PA6     Geiger Sensor
+PA6     LDR Sensor
 PA7     Pino SDA ST7789
 PA8     Pino Nixie A
 PA9     Pino Nixie B
@@ -143,9 +143,9 @@ String months[12] = {
 
 
     // DADOS SENSOR GEIGER
-unsigned long processedCounts;  // Armazena dados de Counts por tempos de 100ms.
-unsigned long timerGeiger;      // Armazena o tempo de Contagem do Sensor.
-unsigned long counts = 0;       // Armazena Contagens Geiger
+unsigned long prevGraphGeiger;  // Armazena dados de Counts por Segundo
+int countsSecs = 0;             // Armazena Tempos do gueigerGraph 1 Segundo
+int counts;
 unsigned long events = 0;       // Armazena Eventos Geiger
 unsigned long cpm = 0;          // cpm = count * multiplier
 unsigned int multiplier;        // multiplier = 60000 / 15000
@@ -158,8 +158,6 @@ double sumCPM = 0;              // Double para calculo Contagens
 double sumUSV = 0;              // Double para calculo µSv/h 
 double uSv = 0;                 // Armazena dado de µSv/h
 double compareuSv;              // Armazena uSv do Display 
-byte countsCalc = 0;            // Armazena contagem da Função de 10x
-byte controller;                // Armazena contagem da Função de 20x
 int avgCPMz = avgCPM;
 
     // DADOS DESENHO MENU GEIGER
@@ -449,8 +447,8 @@ int* prt;           // CORRIGE LEITURA PARA ARQUITETURA ARM
 // ------------------------------ CONFIGURACAO DOS PINOS DE SENSORES E DISPLAY --------
 
 int ldrPinPower = PA0;          // Pino de alimentação do Sensor LDR
-int ldrSensor = PA4;            // Pino do Sensor LDR
-int geigerSensor = PA6;         // Pino do Sensor Geiger
+int ldrSensor = PA6;            // Pino do Sensor LDR
+int geigerSensor = PA4;         // Pino do Sensor Geiger
 
 int batteryLevel = PB0;         // Pino de Leitura da Bateria
 
@@ -724,10 +722,6 @@ void loop(void) {
                 Serial.println(secs);
             }
         }
-        // ------------------------------ CONVERTE VALORES EM STRING ------------------------
-
-
-
         switch (displayFlag) {
             case 1:      
                 if (displayStyleMode == 0) { geigerStyleMode0(); } break; // GEIGER
@@ -1106,7 +1100,7 @@ void loop(void) {
         } 
 
     // ------------------------------- HORARIO VIA MILLIS() OPERACIONAL -----------------------
-        secs = millis() / 100 + (long)hourBias * 3600 + (long)minuteBias * 60;
+        secs = millis() / 1000 + (long)hourBias * 3600 + (long)minuteBias * 60;
         secsBias = secs % 60;
         mins = (secs / 60) % 60;
         hours = (secs / 3600) % fuso;
@@ -1128,6 +1122,7 @@ void repetitionsIncrease() {
 void geigeImpulse() {
     counts ++;
     events ++;
+    countsSecs ++;
 }
 
 // ------------------------------- FUNCAO HIBERNAR OPERACIONAL ----------------------------
@@ -1486,10 +1481,8 @@ void subMenu() {
 // ------------------------------- FUNCAO DISPLAY GEIGER 
 
 void geigerStyleMode0() {
-    String stringuSv = String(uSv);
-
     if (uSv != compareuSv) {
-        tft.fillRect (140, 172, 60, 20, blackScript);
+        tft.fillRect (140, 172, 90, 20, blackScript);
         compareuSv = uSv;
     }
 
@@ -1502,7 +1495,9 @@ void geigerStyleMode0() {
     tft.drawString("Counts per second", 53, 149, GFXFF);
     tft.setFreeFont(latoBold24);
     tft.drawString("sieverts", 41, 180, GFXFF);
-    tft.drawString(stringuSv, 147, 180, GFXFF);
+    
+    processDataGeiger();
+    graphGeigerGenerator();
 
     tft.setFreeFont(latoRegular10);
     tft.drawString("2", 28, 80, GFXFF);
@@ -1518,9 +1513,6 @@ void geigerStyleMode0() {
     tft.drawString("100", 103, 77, GFXFF);
     tft.drawString("1K", 177, 77, GFXFF);
 
-    tft.fillRectHGradient(26, 97, 73, 23, geigerColor1, geigerColor2);
-    tft.fillRect(99, 97, 2, 40, geigerColor2);
-
     /*
     if (uSv <= 9) {
         tft.drawString("u", 170, 169, GFXFF);
@@ -1535,6 +1527,66 @@ void geigerStyleMode0() {
     */
     statusBattery();
     subMenu();   
+}
+
+void processDataGeiger() {
+    String stringuSv = String(uSv, 1);
+
+    if (uSv < 10) {
+        tft.setTextDatum(ML_DATUM);
+        tft.setTextColor(whiteScript);
+        tft.setFreeFont(latoBold24);
+        tft.drawString("n", 185, 180, GFXFF);
+    } else if (uSv < 100) {
+        tft.setTextDatum(ML_DATUM);
+        tft.setTextColor(whiteScript);
+        tft.setFreeFont(latoBold24);
+        tft.drawString("n", 200, 180, GFXFF);
+    } else if (uSv > 99) {
+        tft.setTextDatum(ML_DATUM);
+        tft.setTextColor(whiteScript);
+        tft.setFreeFont(latoBold24);
+        tft.drawString("n", 215, 180, GFXFF);
+    }
+    tft.drawString(stringuSv, 147, 180, GFXFF);
+}
+
+void graphGeigerGenerator() {   // incluir média para leitura.
+    unsigned long geigerGraphMillis = millis();
+    int pixelGraphGeiger;
+
+    if (geigerGraphMillis - prevGraphGeiger >= 1000) {
+        tft.fillRect(26, 97, 188, 23, blackScript);
+        prevGraphGeiger = geigerGraphMillis;
+        countsSecs = 0;
+    }
+
+    if (countsSecs < 2) {
+        pixelGraphGeiger = map(countsSecs, 1, 2, 1, 5);
+    } else if (countsSecs < 5) {
+        pixelGraphGeiger = map(countsSecs, 3, 5, 6, 15);
+    } else if (countsSecs < 10) {
+        pixelGraphGeiger = map(countsSecs, 6, 10, 16, 25);
+    } else if (countsSecs < 20) {
+        pixelGraphGeiger = map(countsSecs, 11, 20, 26, 45);
+    } else if (countsSecs < 50) {
+        pixelGraphGeiger = map(countsSecs, 21, 50, 46, 52);
+    } else if (countsSecs < 100) {
+        pixelGraphGeiger = map(countsSecs, 51, 100, 53, 80);
+    } else if (countsSecs < 200) {
+        pixelGraphGeiger = map(countsSecs, 101, 200, 81, 110);
+    } else if (countsSecs < 500) {
+        pixelGraphGeiger = map(countsSecs, 201, 500, 111, 138);
+    } else if (countsSecs < 1000) {
+        pixelGraphGeiger = map(countsSecs, 501, 1000, 139, 155);
+    } else if (countsSecs < 2000) {
+        pixelGraphGeiger = map(countsSecs, 1001, 2000, 156, 175);
+    } else {
+        pixelGraphGeiger = map(countsSecs, 2001, 2200, 176, 195);
+    }
+
+    //tft.fillRect(pixelGraphGeiger, 97, 2, 40, geigerColor2);
+    tft.fillRectHGradient(26, 97, pixelGraphGeiger, 23, geigerColor1, geigerColor2);
 }
 
 void dosimeterStyleMode0() {
@@ -1633,6 +1685,31 @@ void geigerGraphStyleMode0() {
 
     statusBattery();
     subMenu();
+}
+
+// ------------------------------- CONTADOR GEIGER MILLIS() OPERACIONAL -------------------
+
+void statusGeiger() {   
+    unsigned long geigerMillis = millis();
+
+    if (geigerMillis - prevGeiger >= integratingTime) {
+        avgCounts ++;
+
+        multiplier = oneMinute / integratingTime;
+        
+        cpm = counts * multiplier; // CPM * 60/15 = CPM * 4
+        uSv = (cpm / tubeGeiger);
+
+        sumCPM = (double)cpm + sumCPM;
+        sumUSV = uSv + sumUSV;
+
+        avgCPM = sumCPM / avgCounts;
+        avgUSV = sumUSV / avgCounts;
+
+
+        prevGeiger = geigerMillis;
+        counts = 0;
+    }
 }
 
 // ------------------------------- FUNCAO DISPLAY WEATHER 
@@ -2842,31 +2919,11 @@ void effectNixieSelected () {
     }
 }
 
-// ------------------------------- CONTADOR GEIGER MILLIS() OPERACIONAL -------------------
-
-void statusGeiger() {
-
-    unsigned long geigerMillis = millis();
-
-    if (geigerMillis - prevGeiger >= integratingTime) {
-        avgCounts ++;
-
-        multiplier = oneMinute / integratingTime;
-        
-        cpm = counts * multiplier; // CPM * 60/15 = CPM * 4
-        uSv = (cpm / tubeGeiger);
-
-        sumCPM = (double)cpm + sumCPM;
-        sumUSV = uSv + sumUSV;
-
-        avgCPM = sumCPM / avgCounts;
-        avgUSV = sumUSV / avgCounts;
 
 
-        prevGeiger = geigerMillis;
-        counts = 0;
-    }
-}
+
+
+
 
 void errorTime() {
     /*
