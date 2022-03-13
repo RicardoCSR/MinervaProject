@@ -21,7 +21,7 @@ Nixie_Clock - Extensor de Sensores de Sobrevivência
 
 Iniciando em 16/10/2021
 
-Projeto MC1 Tempus da paixão pelos clássicos tubos Nixie desenvolvidos na década de 50 aos modernos display LCD, da inspiração veio junto o desafio de unir o antigo ao novo agregando diversos sensores para a apresentação de informações para uso e sobrevivencia diário como:
+Projeto MC1 Tempus da paixão pelos clássicos tubos Nixie desenvolvidos na década de 50 aos modernos display LCD, da inspiração veio junto o desafio de unir o antigo ao novo agregando diversos sensores para a apresentação de informações para uso e sobrevivência diário como:
 
 - Pressão (mmHg)
 - Temperatura (ºC e F)
@@ -34,12 +34,30 @@ Projeto MC1 Tempus da paixão pelos clássicos tubos Nixie desenvolvidos na déc
 - Semana (Semana 39)
 - Modo de ajustes dos parâmetros 
 
-*Projeto em desenvolvimento, concluído 15% 29/10/2021
+Sendo organizados pelos Menus:
+Geiger                              - Apresenta Contagem por Segundo, Leitura Sieverts nSv/s
+Dosimeter                           - Apresenta valor Dosimetro, Tempo de atualização, faixa de risco de Sv/h
+Geiger GF                           - Apresenta gráfico dos valores apresentados nas 24 Horas do Geiger
+Weather                             - Apresenta Temperatura, Umidade, Pressão Atmosférica, mínima e máxima e previsão via Zambretti 
+Weather GF Temperature              - Apresenta gráfico dos valores apresentados nas 24 Horas do Temperatura
+Weather GF Humidity                 - Apresenta gráfico dos valores apresentados nas 24 Horas do Umidade
+Weather GF Atmosferic Pressure      - Apresenta gráfico dos valores apresentados nas 24 Horas do Pressão Atmosferica
+Calendar                            - Apresenta Calendário
+Timer                               - Apresenta Alarme, Contador e Tempo de Volta
+Ajust Time                          - Apresenta ajuste do Relógio
+Ajust Data                          - Apresenta ajuste da Data
+Ajust Bright                        - Apresenta ajuste de Brilho da Tela
 
-*Projeto em desenvolvimento, concluído 40% 29/12/2021
-Removido em software medição de Altitude (*faixa de erro acima de 10%).
+Ajustes Gráficos sendo:
+Nixie Settings                      - Apresenta ajuste de animação Nixie
+Battery Settings                    - Apresenta ajuste de bateria
+Custom Color                        - Apresenta ajuste de cores de menus
+Graphic Settings 1                  - Apresenta ajuste de linhas de gráfico
+Graphic Settings 2                  - Apresenta estilos gráfico
+Time Settings                       - Apresenta ajuste de tempo, 12H/24H H/M/S, H/M
+Background Settings                 - Apresenta estilo de Plano de Fundo
+Database                            - Apresenta valores de todas as variaveis presentes (USO DESENVOLVIMENTO).
 
-Modelagem e conceitos de dimensões finalizadas, componentes e materiais em 65% comprados e montados.
 
 Lista Terminais Utilizados STM32F401CCU6  26/02/2022
 
@@ -74,9 +92,9 @@ STM32F401CC
 - PA1     Pino DC ST7789
 - PA2     Pino RST ST7789
 - PA3     Pino BLK ST7789
-- PA4     LDR Sensor
+- PA4     Geiger Sensor
 - PA5     Pino SCL ST7789 
-- PA6     Geiger Sensor
+- PA6     LDR Sensor
 - PA7     Pino SDA ST7789
 - PA8     Pino Nixie A
 - PA9     Pino Nixie B
@@ -104,7 +122,6 @@ STM32F401CC
 - PC13    Leitura Bat EN
 - PC14    
 - PC15    
-
 
 ESP32S
 
@@ -142,7 +159,4 @@ ESP32S
 - GPIO36
 - GPIO39
 
-
 Detectado falha grave na execução conjunta dos modulos de Nixie e ST7789, não sendo possível a parada da execução sem a perda de dados comprometendo assim o funcionamento e o projeto, sendo então continuado a utilização do microcontrolador ARM STM32F401CC e adicionado com interação ao Microcontrolador ESP32, escolhido pela dimensão capacidade de armazenamento e poder de processamento tendo assim, novas opções e funcionalidade como rede Bluetooth e Wi-Fi.
-
-*Projeto em desenvolvimento, concluído 30% 02/03/2022
