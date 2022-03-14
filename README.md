@@ -21,7 +21,7 @@ Nixie_Clock - Extensor de Sensores de Sobrevivência
 
 Iniciando em 16/10/2021
 
-Projeto MC1 Tempus da paixão pelos clássicos tubos Nixie desenvolvidos na década de 50 aos modernos display LCD, da inspiração veio junto o desafio de unir o antigo ao novo agregando diversos sensores para a apresentação de informações para uso e sobrevivência diário como:
+Projeto Minerva da paixão pelos clássicos tubos Nixie desenvolvidos na década de 50 aos modernos display LCD, da inspiração veio junto o desafio de unir o antigo ao novo agregando diversos sensores para a apresentação de informações para uso e sobrevivência diário como:
 
 - Pressão (mmHg)
 - Temperatura (ºC e F)
