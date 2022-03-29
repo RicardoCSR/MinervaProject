@@ -143,8 +143,9 @@ String months[12] = {
 
 
     // DADOS SENSOR GEIGER
-unsigned long prevGraphGeiger;  // Armazena dados de Counts por Segundo
-int countsSecs = 0;             // Armazena Tempos do gueigerGraph 1 Segundo
+unsigned long prevGraphGeiger;  // Armazena tempo de contagem do countsSecs
+unsigned long prevGraphDosim;   // Armazena tempo de contagem do countsSecs
+int countsSecs = 0;             // Armazena contagens do gueigerGraph no periodo de 1 Segundo
 int counts;
 unsigned long events = 0;       // Armazena Eventos Geiger
 unsigned long cpm = 0;          // cpm = count * multiplier
@@ -154,8 +155,10 @@ int graphCounts;                // Armazena o valor de contagem para gráfico Pe
 double avgCounts = 0;           // Média de Contagens
 double avgCPM = 0;              // Média de Contagens por Minuto
 double avgUSV = 0;              // Média de µSv/h
+double avgSvHour = 0;           // Média de mSv/h
 double sumCPM = 0;              // Double para calculo Contagens
 double sumUSV = 0;              // Double para calculo µSv/h 
+double sumsvHour = 0;           // Double para calculo Media mSv/h
 double uSv = 0;                 // Armazena dado de µSv/h
 double compareuSv;              // Armazena uSv do Display 
 int avgCPMz = avgCPM;
@@ -488,6 +491,7 @@ uint16_t novemberColor = 0x3232;        //0x344698
 uint16_t decemberColor = 0x296F;        //0x31307E
 
 uint16_t nixieColor = 0xEAEA;           //0xF16057
+uint16_t dosimeterColor = 0xF234;       //0xFE48AA
 
 uint16_t wifi_level3 = 0x16BB;          //0x15D9E2
 uint16_t wifi_level2 = 0x053D;          //0x04A7F2
@@ -565,6 +569,7 @@ volatile int repetitions = 2000;
 
 #include <TFT_eSPI.h> 
 #include <SPI.h>
+#include "MapFloat.h"
 #include <Wire.h>
 #include "Adafruit_GFX.h"
 
@@ -1482,7 +1487,7 @@ void subMenu() {
 
 void geigerStyleMode0() {
     if (uSv != compareuSv) {
-        tft.fillRect (140, 172, 90, 20, blackScript);
+        tft.fillRect (140, 172, 90, 25, blackScript);
         compareuSv = uSv;
     }
 
@@ -1496,8 +1501,8 @@ void geigerStyleMode0() {
     tft.setFreeFont(latoBold24);
     tft.drawString("sieverts", 41, 180, GFXFF);
     
-    processDataGeiger();
-    graphGeigerGenerator();
+    processDataGeigerStyle0();
+    graphGeigerGeneratorStyle0();
 
     tft.setFreeFont(latoRegular10);
     tft.drawString("2", 28, 80, GFXFF);
@@ -1529,35 +1534,38 @@ void geigerStyleMode0() {
     subMenu();   
 }
 
-void processDataGeiger() {
+void processDataGeigerStyle0() {
     String stringuSv = String(uSv, 1);
 
     if (uSv < 10) {
         tft.setTextDatum(ML_DATUM);
         tft.setTextColor(whiteScript);
         tft.setFreeFont(latoBold24);
-        tft.drawString("n", 185, 180, GFXFF);
+        tft.drawString("u", 185, 180, GFXFF);
+        tft.fillRect(186, 185, 3, 10, whiteScript);
     } else if (uSv < 100) {
         tft.setTextDatum(ML_DATUM);
         tft.setTextColor(whiteScript);
         tft.setFreeFont(latoBold24);
-        tft.drawString("n", 200, 180, GFXFF);
+        tft.drawString("u", 200, 180, GFXFF);
+        tft.fillRect(201, 185, 3, 10, whiteScript);
     } else if (uSv > 99) {
         tft.setTextDatum(ML_DATUM);
         tft.setTextColor(whiteScript);
         tft.setFreeFont(latoBold24);
-        tft.drawString("n", 215, 180, GFXFF);
+        tft.drawString("u", 215, 180, GFXFF);
+        tft.fillRect(216, 185, 3, 10, whiteScript);
     }
     tft.drawString(stringuSv, 147, 180, GFXFF);
 }
 
-void graphGeigerGenerator() {   // incluir média para leitura.
+void graphGeigerGeneratorStyle0() {   // incluir média para leitura.
     unsigned long geigerGraphMillis = millis();
     int pixelGraphGeiger;
 
     if (geigerGraphMillis - prevGraphGeiger >= 1000) {
-        tft.fillRect(26, 97, 188, 23, blackScript);
         prevGraphGeiger = geigerGraphMillis;
+        tft.fillRect(26, 97, 187, 23, blackScript);
         countsSecs = 0;
     }
 
@@ -1581,8 +1589,10 @@ void graphGeigerGenerator() {   // incluir média para leitura.
         pixelGraphGeiger = map(countsSecs, 501, 1000, 139, 155);
     } else if (countsSecs < 2000) {
         pixelGraphGeiger = map(countsSecs, 1001, 2000, 156, 175);
+    } else if (countsSecs < 2200) {
+        pixelGraphGeiger = map(countsSecs, 2001, 2200, 176, 189);
     } else {
-        pixelGraphGeiger = map(countsSecs, 2001, 2200, 176, 195);
+        pixelGraphGeiger = 188;
     }
 
     //tft.fillRect(pixelGraphGeiger, 97, 2, 40, geigerColor2);
@@ -1590,20 +1600,29 @@ void graphGeigerGenerator() {   // incluir média para leitura.
 }
 
 void dosimeterStyleMode0() {
+    float svHour = avgUSV * 60;
+    svHour = svHour / 100;
     String stringcpm = String(cpm);
     String stringuSv = String(uSv);
+    if (svHour > 9.9) {
+        svHour = 9.9;
+    }
+    String stringsvHour = String(svHour, 1);
+    String stringavgSvHour = String (avgSvHour, 2);
 
     tft.drawRect(25, 76, 190, 25, whiteScript);
+
+    graphDosimeterStyle0();
 
     tft.setTextDatum(ML_DATUM);
     tft.setTextColor(greywhite);
     tft.setFreeFont(latoRegular14);
 
     tft.drawString(stringcpm, 60, 163, GFXFF);
-    tft.drawString(stringuSv, 74, 180, GFXFF);
+    tft.drawString(stringavgSvHour, 84, 180, GFXFF);
 
     tft.drawString("CPM:", 21, 163, GFXFF);
-    tft.drawString("Update", 21, 180, GFXFF);
+    tft.drawString("Average:", 21, 180, GFXFF);
     tft.drawString("0", 26, 60, GFXFF);
     tft.drawString("2", 60, 60, GFXFF);
     tft.drawString("4", 95, 60, GFXFF);
@@ -1614,33 +1633,59 @@ void dosimeterStyleMode0() {
     tft.setFreeFont(latoBold24);
 
     tft.drawString("Sieverts", 21, 120, GFXFF);
-    tft.drawString("Sv/h", 180, 120, GFXFF);
-    tft.drawString(stringuSv, 127, 120);
-
-    tft.fillRect(26, 77, 73, 23, geigerLevel3);
-    tft.fillRect(99, 77, 86, 23, geigerLevel2);
-    tft.fillRect(185, 77, 29, 23, geigerLevel1);
-
-
-
-    tft.fillRect(190, 77, 2, 30, blackScript);
-    tft.fillTriangle(167, 144, 189, 144, 179, 171, temperatureColor2);
-    tft.fillTriangle(147, 185, 175, 177, 161, 202, temperatureColor2);
-    tft.fillTriangle(210, 185, 183, 177, 196, 202, temperatureColor2);
-    tft.fillTriangle(179, 163, 168, 182, 190, 182, blackScript);
-    tft.fillCircle(179, 175, 5, temperatureColor2);
-
-
+    tft.drawString("mSv/h", 160, 120, GFXFF);
+    tft.drawString(stringsvHour, 118, 120);
 
     if (uSv != compareuSv) {
-        tft.fillRect (125, 110, 54, 24, blackScript);
-        tft.fillRect (60, 156, 30, 16, blackScript);
-        tft.fillRect (74, 175, 30, 16, blackScript);
+        tft.fillRect (110, 110, 54, 24, blackScript);
+        tft.fillRect (60, 156, 50, 16, blackScript);
+        tft.fillRect (80, 175, 40, 16, blackScript);
         compareuSv = uSv;
+        sumsvHour = (double)svHour + sumsvHour;
+        avgSvHour = (sumsvHour / (avgCounts / multiplier) / 4);
     }
 
-
+    subMenu();
     statusBattery();
+}
+
+void graphDosimeterStyle0() {
+    float svHour = avgUSV * 60;
+    svHour = svHour / 100;
+    unsigned long dosimeterGraphMillis = millis();
+    int pixelGraphDosimeter;
+
+    if (dosimeterGraphMillis - prevGraphDosim >= 15000) {
+        prevGraphDosim = dosimeterGraphMillis;
+        
+        tft.fillRect(26, 77, 73, 23, geigerLevel3);
+        tft.fillRect(99, 77, 86, 23, geigerLevel2);
+        tft.fillRect(185, 77, 29, 23, geigerLevel1);
+
+        if (svHour < 9.9) {
+            pixelGraphDosimeter = mapFloat(svHour, 0.00, 10.00, 26, 209);
+        } else {
+            pixelGraphDosimeter = 184;
+        }
+        tft.fillRect(pixelGraphDosimeter, 77, 5, 23, dosimeterColor);
+
+
+        if ((svHour > 4.00) && (svHour < 8.99)) {
+            tft.fillTriangle(167, 144, 189, 144, 179, 171, yellow_battery);
+            tft.fillTriangle(147, 185, 175, 177, 161, 202, yellow_battery);
+            tft.fillTriangle(210, 185, 183, 177, 196, 202, yellow_battery);
+            tft.fillTriangle(179, 163, 168, 182, 190, 182, blackScript);
+            tft.fillCircle(179, 175, 5, yellow_battery);
+        } else if (svHour > 9 ) {
+            tft.fillTriangle(167, 144, 189, 144, 179, 171, temperatureColor2);
+            tft.fillTriangle(147, 185, 175, 177, 161, 202, temperatureColor2);
+            tft.fillTriangle(210, 185, 183, 177, 196, 202, temperatureColor2);
+            tft.fillTriangle(179, 163, 168, 182, 190, 182, blackScript);
+            tft.fillCircle(179, 175, 5, temperatureColor2);
+        } else {
+            tft.fillRect(147, 144, 60, 60, blackScript);
+        }
+    }
 }
 
 void geigerGraphStyleMode0() {
@@ -1680,6 +1725,8 @@ void geigerGraphStyleMode0() {
     tft.fillRect(178, 183, 2, 6, redAjust);
     tft.fillRect(203, 183, 1, 5, wifi_off2);
     tft.fillRect(230, 183, 2, 6, redAjust);
+
+    
 
     //tft.fillRect(10, 85, 220, 85, sunColor);
 
