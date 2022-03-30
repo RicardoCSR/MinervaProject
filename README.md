@@ -9,7 +9,7 @@ STM32duino - IDE Arduino Ver.1 e Ver.2
 - Fontes TTL 
 https://github.com/FrankBoesing/fonts.git
 - Display TFT SPI/I2C
-https://github.com/FrankBoesing/TFT_eSPI_ext.git
+https://github.com/Bodmer/TFT_eSPI
 - FontConverter - 1
 https://rop.nl/truetype2gfx/
 - FontConverter - 2
