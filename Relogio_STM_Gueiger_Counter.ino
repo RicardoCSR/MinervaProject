@@ -718,6 +718,78 @@ void loop(void) {
 
     // ------------------------- COMANDO BANCO DE DADOS GEIGER -----------
 
+    if (minsCalcGeiger != mins) {
+        minsCalcGeiger = mins;
+        if (fuso == 1) {
+            switch(hours) {
+                case 0: bankGeiger = 0; break; 
+                case 1: bankGeiger = 10; break; 
+                case 2: bankGeiger = 20; break; 
+                case 3: bankGeiger = 30; break;
+                case 4: bankGeiger = 40; break;
+                case 5: bankGeiger = 50; break;
+                case 6: bankGeiger = 60; break;
+                case 7: bankGeiger = 70; break;
+                case 8: bankGeiger = 80; break;
+                case 9: bankGeiger = 90; break;
+                case 10: bankGeiger = 100; break;
+                case 11: bankGeiger = 110; break;
+                case 12: bankGeiger = 120; break;
+                case 13: bankGeiger = 130; break;
+                case 14: bankGeiger = 140; break;
+                case 15: bankGeiger = 150; break;
+                case 16: bankGeiger = 160; break;
+                case 17: bankGeiger = 170; break;
+                case 18: bankGeiger = 180; break;
+                case 19: bankGeiger = 190; break;
+                case 20: bankGeiger = 200; break;
+                case 21: bankGeiger = 210; break;
+                case 22: bankGeiger = 220; break;
+                case 23: bankGeiger = 230; break;
+            }
+        } else {
+            switch(hours) {
+                case 0: bankGeiger = 0; break; 
+                case 1: bankGeiger = 10; break; 
+                case 2: bankGeiger = 20; break; 
+                case 3: bankGeiger = 30; break;
+                case 4: bankGeiger = 40; break;
+                case 5: bankGeiger = 50; break;
+                case 6: bankGeiger = 60; break;
+                case 7: bankGeiger = 70; break;
+                case 8: bankGeiger = 80; break;
+                case 9: bankGeiger = 90; break;
+                case 10: bankGeiger = 100; break;
+                case 11: bankGeiger = 110; break;
+                case 12: bankGeiger = 120; break;
+                case 13: bankGeiger = 130; break;
+                case 14: bankGeiger = 140; break;
+                case 15: bankGeiger = 150; break;
+                case 16: bankGeiger = 160; break;
+                case 17: bankGeiger = 170; break;
+                case 18: bankGeiger = 180; break;
+                case 19: bankGeiger = 190; break;
+                case 20: bankGeiger = 200; break;
+                case 21: bankGeiger = 210; break;
+                case 22: bankGeiger = 220; break;
+                case 23: bankGeiger = 230; break;
+            }
+        }
+        switch(mins) {
+            case 0: bankGeiger = bankGeiger + 1; break;
+            case 6: bankGeiger = bankGeiger + 1; break;
+            case 12: bankGeiger = bankGeiger + 1; break;
+            case 18: bankGeiger = bankGeiger + 1; break;
+            case 24: bankGeiger = bankGeiger + 1; break;
+            case 30: bankGeiger = bankGeiger + 1; break;
+            case 36: bankGeiger = bankGeiger + 1; break;
+            case 42: bankGeiger = bankGeiger + 1; break;
+            case 48: bankGeiger = bankGeiger + 1; break;
+            case 54: bankGeiger = bankGeiger + 1; break;
+
+        }
+    }
+
     byte functGeiger = 0;
     if (minsCalcGeiger != mins) {
         minsCalcGeiger = mins;
@@ -728,7 +800,7 @@ void loop(void) {
         geigerCalc[bankGeiger] = avgUSV;
         bankGeiger = bankGeiger + 1;
     }
-    if (bankGeiger == 230) {
+    if (bankGeiger == 240) {
         tft.drawLine(0, 100, 10, 175, blackScript);
         bankGeiger = 0;
         writerGeiger = 0;
@@ -742,10 +814,31 @@ void loop(void) {
         }
     }
 
+    if (calcGeiger == 6) {
+        calcGeiger = 0;
+        geigerCalc[bankGeiger] = avgUSV;
+        bankGeiger = bankGeiger + 1;
+    }
+    if (bankGeiger == 240) {
+        tft.drawLine(0, 100, 0, 175, blackScript);
+        bankGeiger = 0;
+        writerGeiger = 0;
+    }
+    if (displayFlag == 3) {
+        if (bankGeiger != writerGeiger) {
+            writerGeiger = bankGeiger;
+            functGeiger = map(geigerCalc[writerGeiger], 1, 2000, 175, 100);
+            tft.drawLine(bankGeiger + 1, 100, 0, 175, blackScript);
+            tft.drawLine(bankGeiger, functGeiger, bankGeiger, 175, geigerColor1);
+        }
+    }
 
 
 
-    
+
+
+
+
 
     if (logostarted == 0) {
         startLogo();
