@@ -718,118 +718,94 @@ void loop(void) {
 
     // ------------------------- COMANDO BANCO DE DADOS GEIGER -----------
 
+// ------------------------- COMANDO BANCO DE DADOS GEIGER -----------
+
     if (minsCalcGeiger != mins) {
         minsCalcGeiger = mins;
         if (fuso == 1) {
             switch(hours) {
-                case 0: bankGeiger = 0; break; 
-                case 1: bankGeiger = 10; break; 
-                case 2: bankGeiger = 20; break; 
-                case 3: bankGeiger = 30; break;
-                case 4: bankGeiger = 40; break;
-                case 5: bankGeiger = 50; break;
-                case 6: bankGeiger = 60; break;
-                case 7: bankGeiger = 70; break;
-                case 8: bankGeiger = 80; break;
-                case 9: bankGeiger = 90; break;
-                case 10: bankGeiger = 100; break;
+                case 0: bankGeiger = 10; break; 
+                case 1: bankGeiger = 20; break; 
+                case 2: bankGeiger = 29; break; 
+                case 3: bankGeiger = 38; break;
+                case 4: bankGeiger = 47; break;
+                case 5: bankGeiger = 56; break;
+                case 6: bankGeiger = 65; break;
+                case 7: bankGeiger = 74; break;
+                case 8: bankGeiger = 83; break;
+                case 9: bankGeiger = 92; break;
+                case 10: bankGeiger = 101; break;
                 case 11: bankGeiger = 110; break;
-                case 12: bankGeiger = 120; break;
-                case 13: bankGeiger = 130; break;
-                case 14: bankGeiger = 140; break;
-                case 15: bankGeiger = 150; break;
-                case 16: bankGeiger = 160; break;
-                case 17: bankGeiger = 170; break;
-                case 18: bankGeiger = 180; break;
-                case 19: bankGeiger = 190; break;
-                case 20: bankGeiger = 200; break;
-                case 21: bankGeiger = 210; break;
-                case 22: bankGeiger = 220; break;
-                case 23: bankGeiger = 230; break;
+                case 12: bankGeiger = 119; break;
+                case 13: bankGeiger = 128; break;
+                case 14: bankGeiger = 137; break;
+                case 15: bankGeiger = 146; break;
+                case 16: bankGeiger = 155; break;
+                case 17: bankGeiger = 164; break;
+                case 18: bankGeiger = 173; break;
+                case 19: bankGeiger = 182; break;
+                case 20: bankGeiger = 191; break;
+                case 21: bankGeiger = 200; break;
+                case 22: bankGeiger = 210; break;
+                case 23: bankGeiger = 220; break;
             }
         } else {
             switch(hours) {
-                case 0: bankGeiger = 0; break; 
-                case 1: bankGeiger = 10; break; 
-                case 2: bankGeiger = 20; break; 
-                case 3: bankGeiger = 30; break;
-                case 4: bankGeiger = 40; break;
-                case 5: bankGeiger = 50; break;
-                case 6: bankGeiger = 60; break;
-                case 7: bankGeiger = 70; break;
-                case 8: bankGeiger = 80; break;
-                case 9: bankGeiger = 90; break;
-                case 10: bankGeiger = 100; break;
+                case 0: bankGeiger = 10; break; 
+                case 1: bankGeiger = 20; break; 
+                case 2: bankGeiger = 29; break; 
+                case 3: bankGeiger = 38; break;
+                case 4: bankGeiger = 47; break;
+                case 5: bankGeiger = 56; break;
+                case 6: bankGeiger = 65; break;
+                case 7: bankGeiger = 74; break;
+                case 8: bankGeiger = 83; break;
+                case 9: bankGeiger = 92; break;
+                case 10: bankGeiger = 101; break;
                 case 11: bankGeiger = 110; break;
-                case 12: bankGeiger = 120; break;
-                case 13: bankGeiger = 130; break;
-                case 14: bankGeiger = 140; break;
-                case 15: bankGeiger = 150; break;
-                case 16: bankGeiger = 160; break;
-                case 17: bankGeiger = 170; break;
-                case 18: bankGeiger = 180; break;
-                case 19: bankGeiger = 190; break;
-                case 20: bankGeiger = 200; break;
-                case 21: bankGeiger = 210; break;
-                case 22: bankGeiger = 220; break;
-                case 23: bankGeiger = 230; break;
+                case 12: bankGeiger = 119; break;
+                case 13: bankGeiger = 128; break;
+                case 14: bankGeiger = 137; break;
+                case 15: bankGeiger = 146; break;
+                case 16: bankGeiger = 155; break;
+                case 17: bankGeiger = 164; break;
+                case 18: bankGeiger = 173; break;
+                case 19: bankGeiger = 182; break;
+                case 20: bankGeiger = 191; break;
+                case 21: bankGeiger = 200; break;
+                case 22: bankGeiger = 210; break;
+                case 23: bankGeiger = 220; break;
             }
         }
         switch(mins) {
-            case 0: bankGeiger = bankGeiger + 1; break;
             case 6: bankGeiger = bankGeiger + 1; break;
-            case 12: bankGeiger = bankGeiger + 1; break;
-            case 18: bankGeiger = bankGeiger + 1; break;
-            case 24: bankGeiger = bankGeiger + 1; break;
-            case 30: bankGeiger = bankGeiger + 1; break;
-            case 36: bankGeiger = bankGeiger + 1; break;
-            case 42: bankGeiger = bankGeiger + 1; break;
-            case 48: bankGeiger = bankGeiger + 1; break;
-            case 54: bankGeiger = bankGeiger + 1; break;
-
+            case 13: bankGeiger = bankGeiger + 2; break;
+            case 19: bankGeiger = bankGeiger + 3; break;
+            case 25: bankGeiger = bankGeiger + 4; break;
+            case 31: bankGeiger = bankGeiger + 5; break;
+            case 37: bankGeiger = bankGeiger + 6; break;
+            case 43: bankGeiger = bankGeiger + 7; break;
+            case 49: bankGeiger = bankGeiger + 8; break;
+            case 54: bankGeiger = bankGeiger + 9; break;
         }
     }
 
     byte functGeiger = 0;
-    if (minsCalcGeiger != mins) {
-        minsCalcGeiger = mins;
-        calcGeiger ++;
-    }
-    if (calcGeiger == 6) {
-        calcGeiger = 0;
+    if (minsCalcGeiger != bankGeiger) {
+        minsCalcGeiger = bankGeiger;
         geigerCalc[bankGeiger] = avgUSV;
-        bankGeiger = bankGeiger + 1;
     }
     if (bankGeiger == 240) {
-        tft.drawLine(0, 100, 10, 175, blackScript);
-        bankGeiger = 0;
-        writerGeiger = 0;
-    }
-    if (displayFlag == 3) {
-        if (bankGeiger != writerGeiger) {
-            writerGeiger = bankGeiger;
-            functGeiger = map(geigerCalc[writerGeiger], 1, 2000, 100, 175);
-            tft.drawLine(0, 100, 00, 175, blackScript);
-            tft.drawLine(bankGeiger, functGeiger, bankGeiger, 175, geigerColor1);
-        }
-    }
-
-    if (calcGeiger == 6) {
-        calcGeiger = 0;
-        geigerCalc[bankGeiger] = avgUSV;
-        bankGeiger = bankGeiger + 1;
-    }
-    if (bankGeiger == 240) {
-        tft.drawLine(0, 100, 0, 175, blackScript);
-        bankGeiger = 0;
-        writerGeiger = 0;
+        tft.drawLine(10, 100, 10, 175, blackScript);
+        bankGeiger = 10;
+        writerGeiger = 10;
     }
     if (displayFlag == 3) {
         if (bankGeiger != writerGeiger) {
             writerGeiger = bankGeiger;
             functGeiger = map(geigerCalc[writerGeiger], 1, 2000, 175, 100);
-            tft.drawLine(bankGeiger + 1, 100, 0, 175, blackScript);
-            tft.drawLine(bankGeiger, functGeiger, bankGeiger, 175, geigerColor1);
+            tft.drawLine(bankGeiger + 1, 100, bankGeiger + 1, 175, blackScript);
+            tft.drawLine(bankGeiger, functGeiger - 50, bankGeiger, 175, geigerColor1);
         }
     }
 
@@ -1254,7 +1230,7 @@ void loop(void) {
         } 
 
     // ------------------------------- HORARIO VIA MILLIS() OPERACIONAL -----------------------
-        secs = millis() / 10 + (long)hourBias * 3600 + (long)minuteBias * 60;
+        secs = millis() / 2 + (long)hourBias * 3600 + (long)minuteBias * 60;
         secsBias = secs % 60;
         mins = (secs / 60) % 60;
         hours = (secs / 3600) % fuso;
@@ -1852,28 +1828,28 @@ void geigerGraphStyleMode0() {
     tft.drawLine(196, 54, 196, 62, whiteScript);
     tft.drawString("CPM", 13, 70, GFXFF);
     tft.drawString("mCPM", 136, 70, GFXFF);
-    tft.drawString("0", 0, 199, GFXFF);
-    tft.drawString("6", 55, 199, GFXFF);
-    tft.drawString("12", 110, 199, GFXFF);
+    tft.drawString("0", 7, 199, GFXFF);
+    tft.drawString("6", 65, 199, GFXFF);
+    tft.drawString("12", 115, 199, GFXFF);
     tft.drawString("18", 170, 199, GFXFF);
-    tft.drawString("24", 222, 199, GFXFF);
+    tft.drawString("24", 223, 199, GFXFF);
 
     tft.setFreeFont(latoRegular10);
 
-    tft.drawString("3", 27, 199, GFXFF);
-    tft.drawString("9", 87, 199, GFXFF);
-    tft.drawString("15", 144, 199, GFXFF);
-    tft.drawString("21", 204, 199, GFXFF);
+    tft.drawString("3", 36, 199, GFXFF);
+    tft.drawString("9", 91, 199, GFXFF);
+    tft.drawString("15", 143, 199, GFXFF);
+    tft.drawString("21", 198, 199, GFXFF);
 
-    tft.fillRect(0, 183, 2, 6, redAjust);
-    tft.fillRect(29, 183, 1, 5, wifi_off2);
-    tft.fillRect(58, 183, 2, 6, redAjust);
-    tft.fillRect(89, 183, 1, 5, wifi_off2);
-    tft.fillRect(118, 183, 2, 6, redAjust);
-    tft.fillRect(149, 183, 1, 5, wifi_off2);
+    tft.fillRect(10, 183, 2, 6, redAjust);
+    tft.fillRect(38, 183, 1, 5, wifi_off2);
+    tft.fillRect(68, 183, 2, 6, redAjust);
+    tft.fillRect(93, 183, 1, 5, wifi_off2);
+    tft.fillRect(123, 183, 2, 6, redAjust);
+    tft.fillRect(147, 183, 1, 5, wifi_off2);
     tft.fillRect(178, 183, 2, 6, redAjust);
-    tft.fillRect(209, 183, 1, 5, wifi_off2);
-    tft.fillRect(238, 183, 2, 6, redAjust);
+    tft.fillRect(203, 183, 1, 5, wifi_off2);
+    tft.fillRect(230, 183, 2, 6, redAjust);
 
     
 
