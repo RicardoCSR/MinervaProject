@@ -16,6 +16,8 @@ https://rop.nl/truetype2gfx/
 https://oleddisplay.squix.ch/#/home
 - RGB888 para RGB565
 https://trolsoft.ru/ru/articles/rgb565-color-picker
+- App (EM TESTE)
+https://thunkable.com/#/
 
 Nixie_Clock - Extensor de Sensores de Sobrevivência
 
