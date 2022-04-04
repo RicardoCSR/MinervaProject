@@ -51,22 +51,22 @@ PA12    anode Nixie B
 PA15    anode Nixie A
 
 PB0     Nivel Bateria
-PB1     
+PB1     Leitura Bat EN
 PB2     
-PB3     Pino SCL BME280 // TESTAR
+PB3     
 PB4      
-PB5     Pino SDA BME280 // TESTAR
+PB5     
 PB6     **USART TX1
 PB7     **USART RX1
-PB8     Buzzer
-PB9     
+PB8     Pino SCL BME280 // TESTAR
+PB9     Pino SDA BME280 // TESTAR
 PB10    
 PB12    Botao Hibernar
 PB13    Botao Menu
 PB14    Botao Up
 PB15    Botao Down
 
-PC13    Leitura Bat EN
+PC13    
 PC14    anode Nixie C
 PC15    anode Nixie D
 
@@ -206,47 +206,31 @@ int brightMedia[100] = {0};     // Armazena brightSensor coletado pelo LDR
 int brightSensor;               // Armazena Brilho coletado pelo LDR
 
     // DADOS SENSOR BME280
-unsigned long lastMillis;
-unsigned long int hum_raw,temp_raw,pres_raw;
-signed long int t_fine;
-uint16_t dig_T1;
- int16_t dig_T2;
- int16_t dig_T3;
-uint16_t dig_P1;
- int16_t dig_P2;
- int16_t dig_P3;
- int16_t dig_P4;
- int16_t dig_P5;
- int16_t dig_P6;
- int16_t dig_P7;
- int16_t dig_P8;
- int16_t dig_P9;
- int8_t  dig_H1;
- int16_t dig_H2;
- int8_t  dig_H3;
- int16_t dig_H4;
- int16_t dig_H5;
- int8_t  dig_H6;
-
 unsigned long timerBME;
-int temperature = 0;
-byte temperatureMin = 0;
-byte temperatureMax = 0;
-int humidity = 0;
+int temperature;
+int temperatureMin = 0;
+int temperatureMax = 0;
+byte humidity;
 byte humidityMin = 0;
 byte humidityMax = 0;
-int pressure = 0;
+int pressure;
 int pressureMin = 0;
 int pressureMax = 0;
 int fanrenheit = temperature * 1.8 + 32;
 int fanrenheitMin = temperature * 1.8 + 32;
 int fanrenheitMax = temperature * 1.8 + 32;
-byte positionTempMax = 0;
-byte positionTempMin = 0;
-byte positionHumiMax = 0;
-byte positionHumiMin = 0;
-byte positionPresMax = 0;
-byte positionPresMin = 0;
+byte temperatureGraphMin;
+byte temperatureGraphMax; 
+byte humidityGraphMin; 
+byte humidityGraphMax; 
+byte pressureGraphMin; 
+byte pressureGraphMax; 
+byte temperatureValueGraph;
+byte humidityValueGraph; 
+byte pressureValueGraph; 
+
+
+
 
     // DADOS ZAMBRETTI
 byte updateZambrettiHr = 0;
@@ -323,10 +307,11 @@ int compareArrow = 0;           // Armazena o dado da Seta no Display
 int battery = 0;                // Armazena o dado de Leitura da Bateria
 byte batteryPower;              // Armazena Leitura da Bateria
 float voltageBattery;           // Armazena Tensão de Entrada
+int chargeBattery = 0;          // Armazena leitura do Carregador
 
-    // NIVEL DE BATERIA E WIFI          CORRIGIR red red red red red red red red red
-byte statusMenu = 1;            // Armazena os dado de atualização
-byte compareStatusMenu = 0;     // Armazena os dados de atualização
+    // NIVEL DE BATERIA E WIFI   
+byte compareUpdateBattery;      // Armazena atualização de updateBattery
+byte compareUpdateWiFi;      // Armazena atualização de updateBattery
 
     // GERACAO DE GRAFICOS
 byte minsCalcGeiger = 0;        // Armazena Horario marcação gráfico Geiger
@@ -349,10 +334,10 @@ byte writerTemp = 0;            // Armazena dado da posição do Gráfico em nã
 byte writerHumi = 0;            // Armazena dado da posição do Gráfico em não uso
 byte writerPres = 0;            // Armazena dado da posição do Gráfico em não uso
 
-byte geigerCalc [220] = {0};    // Armazena dados de Geiger cada 16 minutos 
-byte tempCalc [220] = {0};      // Armazena dados de Temperatura cada 16 minutos  
-byte humiCalc [220] = {0};      // Armazena dados de Umidade cada 16 minutos
-byte presCalc [220] = {0};      // Armazena dados de Pressão Atmosferica cada 16 minutos
+byte geigerCalc [220] = {0};    // Armazena dados de Geiger
+byte tempCalc [220] = {0};      // Armazena dados de Temperatura 
+byte humiCalc [220] = {0};      // Armazena dados de Umidade 
+byte presCalc [220] = {0};      // Armazena dados de Pressão Atmosferica
 
 
 // ------------------------------ BANCO DE DADOS DE COMPARADORES -----------------------
@@ -369,8 +354,8 @@ byte calendarFill = 0;
 // calendarFill = 1 Processo de preenchimento da tela
 
 byte powerCharger = 1;          
-// powerCharger = 0 Porta de saida ativada
-// powerCharger = 1 Porta de saida desativada
+// powerCharger = 0 Carregador Conectado
+// powerCharger = 1 Carregador Desconectado
 
 byte flagArrow = 0;
 // flagArrow = 0 Tela com Seta em Modo triangleclear
@@ -430,19 +415,28 @@ byte triangleDisplay = 0;
 // triangleDisplay = 2 Nenhuma seta inferior ativa
 
 byte bmeFunctional = 0;
-// bmeFunctional = 0 BME280 não conectado
-// bmeFunctional = 1 BME280 conectado
+// bmeFunctional = 0 BME280 conectado
+// bmeFunctional = 1 BME280 não conectado
 // bmeFunctional = 2 BME280 não operacional
 
 byte geigerFunctional = 0;
 // geigerFunctional = 0 Geiger não conectado
 // geigerFunctional = 1 Geiger conectado
 
-byte wifiFuncional = 0;
-// wifiFuncional = 0 WiFi em alta potência
-// wifiFuncional = 1 WiFi em media potência
-// wifiFuncional = 2 WiFi em baixa potência
-// wifiFuncional = 3 WiFi sem Sinal
+byte updateBattery = 0;
+// updateBattery = 0 Apresentação Bateria Level 1
+// updateBattery = 1 Apresentação Bateria Level 2
+// updateBattery = 2 Apresentação Bateria Level 3
+// updateBattery = 3 Apresentação Bateria Level 4
+// updateBattery = 4 Apresentação Bateria Level 5
+// updateBattery = 5 Apresentação Bateria Level 6
+// updateBattery = 6 Apresentação Bateria Level 7
+
+byte updateWiFi = 0;
+// updateWiFi = 0 WiFi em alta potência
+// updateWiFi = 1 WiFi em media potência
+// updateWiFi = 2 WiFi em baixa potência
+// updateWiFi = 3 WiFi sem Sinal
 
 byte effectModeNixie = 0;
 // effectModeNixie = 0 Efeito desativado
@@ -464,10 +458,11 @@ byte batteryStyleMode = 0;
 // batteryStyleMode = 2 Apresentação Modo 3
 // batteryStyleMode = 3 Apresentação Modo 4
 
-
-
-
 byte weatherGraph = 0;
+// batteryStyleMode = 0 Aguardando Weather Graph
+// batteryStyleMode = 1 Weather Temperatura
+// batteryStyleMode = 2 Weather Umidade
+// batteryStyleMode = 3 Weather Pressão Atmosférica
 
 
 
@@ -480,6 +475,7 @@ int ldrSensor = PA6;            // Pino do Sensor LDR
 int geigerSensor = PA4;         // Pino do Sensor Geiger
 
 int batteryLevel = PB0;         // Pino de Leitura da Bateria
+int batteryCharger = PB1;       // Pino de Leitura Recarga Bateria
 
 int dspPinPower = PA3;          // Pino de BackLight do Display ST7789
 
@@ -531,18 +527,22 @@ uint16_t geigerLevel3 = 0x362F;         //0x39C87E
 uint16_t geigerLevel2 = 0xFF06;         //0xFFE437
 uint16_t geigerLevel1 = 0xD8E4;         //0xE02028
 
+uint16_t geigerColor;
 uint16_t geigerColor1 = 0xFDA0;         //0xFFB801
 uint16_t geigerColor2 = 0xDCA6;         //0xE49837
 
 uint16_t luxColor1 = 0xFF06;            //0xFFE437
 uint16_t luxColor2 = 0xFDA0;            //0xFFB801
 
+uint16_t temperatureColor;
 uint16_t temperatureColor1 = 0xEBE8;    //0xF18148
 uint16_t temperatureColor2 = 0xD12B;    //0xDE2662
 
+uint16_t humidityColor;
 uint16_t humidityColor1 = 0x25B9;       //0x25B7D0
 uint16_t humidityColor2 = 0x929A;       //0x9A54D8
 
+uint16_t pressureColor;
 uint16_t pressureColor1 = 0x76A7;       //0x76DA41
 uint16_t pressureColor2 = 0x1DF2;       //0x1EC099
 
@@ -586,6 +586,8 @@ volatile int repetitions = 2000;
 #define driverPinC PA10         // Pino Driver Catodo C
 #define driverPinD PA11         // Pino Driver Catodo D
 
+#define batteryCharger PB1      // Pino EN Bateria
+
 #define seaLevelPressure_HPA (1013.25)
 #define BME280_ADDRESS 0x76
 #define GFXFF 1
@@ -598,6 +600,8 @@ volatile int repetitions = 2000;
 #include "MapFloat.h"
 #include <Wire.h>
 #include "Adafruit_GFX.h"
+#include <EasyColor.h>
+#include <forcedClimate.h>
 
 #include "Imagens.h"
 
@@ -632,34 +636,19 @@ byte teste = 0;
 // ------------------------------- INSTANCIAS DAS BIBLIOTECAS --------------------------
 
     STM32RTC& rtc = STM32RTC::getInstance();
-    TFT_eSPI tft = TFT_eSPI();       // Could invoke custom library declaring width and height
+    TFT_eSPI tft = TFT_eSPI();      // Could invoke custom library declaring width and height
+    EasyColor rgb2rgb;                 //Conversão de e para RGB888/RGB565
+    ForcedClimate climateSensor = ForcedClimate(Wire, 0x77);
 
 void setup() {
 
-    uint8_t osrs_t = 1;             //Temperature oversampling x 1
-    uint8_t osrs_p = 1;             //Pressure oversampling x 1
-    uint8_t osrs_h = 1;             //Humidity oversampling x 1
-    uint8_t mode = 3;               //Normal mode
-    uint8_t t_sb = 5;               //Tstandby 1000ms
-    uint8_t filter = 0;             //Filter off 
-    uint8_t spi3w_en = 0;           //3-wire SPI Disable
-    
-    uint8_t ctrl_meas_reg = (osrs_t << 5) | (osrs_p << 2) | mode;
-    uint8_t config_reg    = (t_sb << 5) | (filter << 2) | spi3w_en;
-    uint8_t ctrl_hum_reg  = osrs_h;
-
-    Serial.begin(500000);
+    Serial.begin(9600);
     analogWrite (dspPinPower, 0);
 
     LowPower.begin();
     tft.init();
-
-    Wire.begin();
-    bmeFunctional = Wire.endTransmission();
-    writeReg(0xF2,ctrl_hum_reg);
-    writeReg(0xF4,ctrl_meas_reg);
-    writeReg(0xF5,config_reg);
-    readTrim(); 
+    Wire.begin(0x77);
+    climateSensor.begin();
 
     pinMode(BUTTON_UP, INPUT_PULLUP);
     pinMode(BUTTON_DOWN, INPUT_PULLUP);
@@ -676,6 +665,8 @@ void setup() {
     pinMode(driverPinC, OUTPUT);
     pinMode(driverPinD, OUTPUT);
 
+    pinMode(batteryCharger, INPUT);
+
     pinMode(geigerSensor, INPUT);
 
     attachInterrupt (digitalPinToInterrupt (geigerSensor), geigeImpulse, FALLING);
@@ -687,209 +678,507 @@ void setup() {
         fuso = 12;
     }
 
+    if(Wire.endTransmission() != 0) {
+        bmeFunctional = 1;
+    } else {
+        bmeFunctional = 0;
+    }
 }
 
 void loop(void) {
+    // ------------------------------- CONFIGURAÇÃO E SETUPS ----------------------------------
 
-    int upBtnPressed = digitalRead(BUTTON_UP);
-    int downBtnPressed = digitalRead(BUTTON_DOWN);
-    int modeBtnPressed = digitalRead(BUTTON_MODE);
-    int sleepBtnPressed = digitalRead(BUTTON_SLEEP);
-    unsigned long actualTime = millis();
-    unsigned long actualTimeBright = millis();
+        int upBtnPressed = digitalRead(BUTTON_UP);
+        int downBtnPressed = digitalRead(BUTTON_DOWN);
+        int modeBtnPressed = digitalRead(BUTTON_MODE);
+        int sleepBtnPressed = digitalRead(BUTTON_SLEEP);
+        unsigned long actualTime = millis();
+        unsigned long actualTimeBright = millis();
 
-    if (actualTimeBright - period >= 50) {
-        statusBright();
-        actualTimeBright = period;
-    }
-    statusGeiger();
-    readBMEData();
+        if (actualTimeBright - period >= 50) {
+            statusBright();
+            actualTimeBright = period;
+        }
+        statusGeiger();
+        readBME();
+        nixie();
 
-    battery = analogRead(batteryLevel);
-    batteryPower = map(battery, 0, 1023, 1, 255);
-    voltageBattery = analogRead(batteryLevel) * 3.301 / 1024;    // red red red red red red red red rd red red VERIFICAR CASAS APOS . 
-
-    if (counts > 0) {
-        geigerFunctional = 1;
-    } else {
-        geigerFunctional = 0;
-    }
-    
-
-    // ------------------------- COMANDO BANCO DE DADOS GEIGER -----------
-
-// ------------------------- COMANDO BANCO DE DADOS GEIGER -----------
-
-    if (minsCalcGeiger != mins) {
-        minsCalcGeiger = mins;
-        if (fuso == 1) {
-            switch(hours) {
-                case 0: bankGeiger = 10; break; 
-                case 1: bankGeiger = 20; break; 
-                case 2: bankGeiger = 29; break; 
-                case 3: bankGeiger = 38; break;
-                case 4: bankGeiger = 47; break;
-                case 5: bankGeiger = 56; break;
-                case 6: bankGeiger = 65; break;
-                case 7: bankGeiger = 74; break;
-                case 8: bankGeiger = 83; break;
-                case 9: bankGeiger = 92; break;
-                case 10: bankGeiger = 101; break;
-                case 11: bankGeiger = 110; break;
-                case 12: bankGeiger = 119; break;
-                case 13: bankGeiger = 128; break;
-                case 14: bankGeiger = 137; break;
-                case 15: bankGeiger = 146; break;
-                case 16: bankGeiger = 155; break;
-                case 17: bankGeiger = 164; break;
-                case 18: bankGeiger = 173; break;
-                case 19: bankGeiger = 182; break;
-                case 20: bankGeiger = 191; break;
-                case 21: bankGeiger = 200; break;
-                case 22: bankGeiger = 210; break;
-                case 23: bankGeiger = 220; break;
-            }
+    // ------------------------------- COMANDO BATERIA LEITURA OPERACIONAL---------------------
+        battery = analogRead(batteryLevel);
+        batteryPower = map(battery, 0, 1023, 1, 255);
+        voltageBattery = analogRead(batteryLevel) * 3.301 / 1024;   
+        chargeBattery = analogRead(batteryCharger);
+        if (chargeBattery > 200) {
+            powerCharger = 0;
+            updateBattery = 6;
         } else {
-            switch(hours) {
-                case 0: bankGeiger = 10; break; 
-                case 1: bankGeiger = 20; break; 
-                case 2: bankGeiger = 29; break; 
-                case 3: bankGeiger = 38; break;
-                case 4: bankGeiger = 47; break;
-                case 5: bankGeiger = 56; break;
-                case 6: bankGeiger = 65; break;
-                case 7: bankGeiger = 74; break;
-                case 8: bankGeiger = 83; break;
-                case 9: bankGeiger = 92; break;
-                case 10: bankGeiger = 101; break;
-                case 11: bankGeiger = 110; break;
-                case 12: bankGeiger = 119; break;
-                case 13: bankGeiger = 128; break;
-                case 14: bankGeiger = 137; break;
-                case 15: bankGeiger = 146; break;
-                case 16: bankGeiger = 155; break;
-                case 17: bankGeiger = 164; break;
-                case 18: bankGeiger = 173; break;
-                case 19: bankGeiger = 182; break;
-                case 20: bankGeiger = 191; break;
-                case 21: bankGeiger = 200; break;
-                case 22: bankGeiger = 210; break;
-                case 23: bankGeiger = 220; break;
+            powerCharger = 1;
+            if (batteryPower >= 213) {
+                updateBattery = 0;
+                updateWiFi = 0;         // TEST WITHOUT SERIAL CONNECTION
+            } else if ((batteryPower >= 171) && (batteryPower <= 212)) {
+                updateBattery = 1;
+                updateWiFi = 1;         // TEST WITHOUT SERIAL CONNECTION
+            } else if ((batteryPower >= 129) && (batteryPower <= 170)) {
+                updateBattery = 2;
+                updateWiFi = 2;         // TEST WITHOUT SERIAL CONNECTION
+            } else if ((batteryPower >= 87) && (batteryPower <= 128)) {
+                updateBattery = 3;
+                updateWiFi = 3;         // TEST WITHOUT SERIAL CONNECTION
+            } else if ((batteryPower >= 42) && (batteryPower <= 86)) {   
+                updateBattery = 4;
+            } else if ((batteryPower >= 0) && (batteryPower <= 41)) {
+                updateBattery = 5;
             }
         }
-        switch(mins) {
-            case 6: bankGeiger = bankGeiger + 1; break;
-            case 13: bankGeiger = bankGeiger + 2; break;
-            case 19: bankGeiger = bankGeiger + 3; break;
-            case 25: bankGeiger = bankGeiger + 4; break;
-            case 31: bankGeiger = bankGeiger + 5; break;
-            case 37: bankGeiger = bankGeiger + 6; break;
-            case 43: bankGeiger = bankGeiger + 7; break;
-            case 49: bankGeiger = bankGeiger + 8; break;
-            case 54: bankGeiger = bankGeiger + 9; break;
+
+    // ------------------------------- COMANDO LEITURA DE FUNCIONAMENTO GEIGER ----------------
+        if (counts > 0) {
+            geigerFunctional = 0;
+        } else {
+            geigerFunctional = 1;
         }
-    }
-
-    byte functGeiger = 0;
-    if (minsCalcGeiger != bankGeiger) {
-        minsCalcGeiger = bankGeiger;
-        geigerCalc[bankGeiger] = avgUSV;
-    }
-    if (bankGeiger == 240) {
-        tft.drawLine(10, 100, 10, 175, blackScript);
-        bankGeiger = 10;
-        writerGeiger = 10;
-    }
-    if (displayFlag == 3) {
-        if (bankGeiger != writerGeiger) {
-            writerGeiger = bankGeiger;
-            functGeiger = map(geigerCalc[writerGeiger], 1, 2000, 175, 100);
-            tft.drawLine(bankGeiger + 1, 100, bankGeiger + 1, 175, blackScript);
-            tft.drawLine(bankGeiger, functGeiger - 50, bankGeiger, 175, geigerColor1);
-        }
-    }
-
-
-
-
-
-
-
-
-    if (logostarted == 0) {
-        startLogo();
-        analogWrite(dspPinPower, 255);
-        if (actualTime - period >= logoTime * 1000) {
-            period = actualTime;
-            logostarted = 1;
-            tft.fillScreen (blackScript);
-            analogWrite(dspPinPower, 0);
-        }        
-    }
     
-    nixie();
+    // ------------------------------- COMANDO BANCO DE DADOS GEIGER OPERACIONAL --------------
 
-    if (logostarted == 1 && displayTFT > 0 && sleepMode == 0 && displayFlag > 0) {
-
-        if (mins != compareTimeMins) {           
-            tft.fillRect (182, 215, 50, 15, blackScript);
-            compareTimeMins = mins;
-        }
-        if (day != compareWeek) {
-            tft.fillRect (30, 215, 160, 15, blackScript);
-            compareWeek = day;
-        }
-        if (secsBias != compareTimeSecs) {
-            compareTimeSecs = secsBias;
-            if (displayFlag == 7) {
-                tft.fillRect (20, 35, 201, 80, blackScript);
-                tft.fillRect (158, 135, 70, 20, blackScript);
-                Serial.println("");
-                Serial.println(hours);
-                Serial.println(":");
-                Serial.println(mins);
-                Serial.println(":");
-                Serial.println(secs);
+        if (minsCalcGeiger != mins) {
+            minsCalcGeiger = mins;
+            if (fuso == 1) {
+                switch(hours) {
+                    case 0: bankGeiger = 11; break; 
+                    case 1: bankGeiger = 20; break; 
+                    case 2: bankGeiger = 29; break; 
+                    case 3: bankGeiger = 38; break;
+                    case 4: bankGeiger = 47; break;
+                    case 5: bankGeiger = 56; break;
+                    case 6: bankGeiger = 65; break;
+                    case 7: bankGeiger = 74; break;
+                    case 8: bankGeiger = 83; break;
+                    case 9: bankGeiger = 92; break;
+                    case 10: bankGeiger = 101; break;
+                    case 11: bankGeiger = 110; break;
+                    case 12: bankGeiger = 119; break;
+                    case 13: bankGeiger = 128; break;
+                    case 14: bankGeiger = 137; break;
+                    case 15: bankGeiger = 146; break;
+                    case 16: bankGeiger = 155; break;
+                    case 17: bankGeiger = 164; break;
+                    case 18: bankGeiger = 173; break;
+                    case 19: bankGeiger = 182; break;
+                    case 20: bankGeiger = 191; break;
+                    case 21: bankGeiger = 200; break;
+                    case 22: bankGeiger = 209; break;
+                    case 23: bankGeiger = 218; break;
+                }
+            } else {
+                switch(hours) {
+                    case 0: bankGeiger = 11; break; 
+                    case 1: bankGeiger = 20; break; 
+                    case 2: bankGeiger = 29; break; 
+                    case 3: bankGeiger = 38; break;
+                    case 4: bankGeiger = 47; break;
+                    case 5: bankGeiger = 56; break;
+                    case 6: bankGeiger = 65; break;
+                    case 7: bankGeiger = 74; break;
+                    case 8: bankGeiger = 83; break;
+                    case 9: bankGeiger = 92; break;
+                    case 10: bankGeiger = 101; break;
+                    case 11: bankGeiger = 110; break;
+                    case 12: bankGeiger = 119; break;
+                    case 13: bankGeiger = 128; break;
+                    case 14: bankGeiger = 137; break;
+                    case 15: bankGeiger = 146; break;
+                    case 16: bankGeiger = 155; break;
+                    case 17: bankGeiger = 164; break;
+                    case 18: bankGeiger = 173; break;
+                    case 19: bankGeiger = 182; break;
+                    case 20: bankGeiger = 191; break;
+                    case 21: bankGeiger = 200; break;
+                    case 22: bankGeiger = 209; break;
+                    case 23: bankGeiger = 218; break;
+                }
+            }
+            switch(mins) {
+                case 6: bankGeiger = bankGeiger + 0; break;
+                case 13: bankGeiger = bankGeiger + 1; break;
+                case 19: bankGeiger = bankGeiger + 2; break;
+                case 25: bankGeiger = bankGeiger + 3; break;
+                case 31: bankGeiger = bankGeiger + 4; break;
+                case 37: bankGeiger = bankGeiger + 5; break;
+                case 43: bankGeiger = bankGeiger + 6; break;
+                case 49: bankGeiger = bankGeiger + 7; break;
+                case 54: bankGeiger = bankGeiger + 8; break;
             }
         }
-        switch (displayFlag) {
-            case 1:      
-                if (displayStyleMode == 0) { geigerStyleMode0(); } break; // GEIGER
 
-            case 2:
-                if (displayStyleMode == 0) { dosimeterStyleMode0(); } break; // DOSIMETER
-
-            case 3:
-                if (displayStyleMode == 0) { geigerGraphStyleMode0(); } break; // GEIGER GF
-
-            case 4:
-                if (displayStyleMode == 0) { weatherStyleMode0(); } break; // WEATHER
-
-            case 5:
-                if (displayStyleMode == 0) { weatherGraphStyleMode0(); } break; // WEATHER GF TEMP
-
-            case 6:
-                if (displayStyleMode == 0) { calendarStyleMode0(); } break; // CALENDAR
-
-            case 7:
-                if (displayStyleMode == 0) { timerStyleMode0(); } break; // TIMER
-
-            case 8:
-                if (displayStyleMode == 0) { ajustTimeStyleMode0(); } break; // AJUST TIME
-
-            case 9:
-                if (displayStyleMode == 0) { ajustDataStyleMode0(); } break; // AJUST DATA
-
-            case 10: 
-                if (displayStyleMode == 0) { ajustBrightStyleMode0(); } break; // AJUST BRIGHT
-
-            case 11:
-            break; // SETTINGS 
-
-            default: 
-            tft.fillScreen(blackScript);
+        byte functGeiger = 0;
+        if (minsCalcGeiger != bankGeiger) {
+            minsCalcGeiger = bankGeiger;
+            geigerCalc[bankGeiger] = avgCPM;
         }
-    }
+        if (displayFlag == 3) {
+            if (bankGeiger != writerGeiger) {
+                writerGeiger = bankGeiger;
+                functGeiger = mapFloat(geigerCalc[writerGeiger], 0, 200, 175, 50);
+                if (cpm > 2000) {
+                    functGeiger = 50;
+                }
+                rgbColorGeiger();
+
+                tft.drawLine(bankGeiger, functGeiger, bankGeiger, 175, geigerColor);
+            }
+        }
+
+    // ------------------------------- COMANDO BANCO DE DADOS TEMP OPERACIONAL ----------------
+
+        if (minsCalcTemp != mins) {
+            minsCalcTemp = mins;
+            if (fuso == 1) {
+                switch(hours) {
+                    case 0: bankTemp = 11; break; 
+                    case 1: bankTemp = 20; break; 
+                    case 2: bankTemp = 29; break; 
+                    case 3: bankTemp = 38; break;
+                    case 4: bankTemp = 47; break;
+                    case 5: bankTemp = 56; break;
+                    case 6: bankTemp = 65; break;
+                    case 7: bankTemp = 74; break;
+                    case 8: bankTemp = 83; break;
+                    case 9: bankTemp = 92; break;
+                    case 10: bankTemp = 101; break;
+                    case 11: bankTemp = 110; break;
+                    case 12: bankTemp = 119; break;
+                    case 13: bankTemp = 128; break;
+                    case 14: bankTemp = 137; break;
+                    case 15: bankTemp = 146; break;
+                    case 16: bankTemp = 155; break;
+                    case 17: bankTemp = 164; break;
+                    case 18: bankTemp = 173; break;
+                    case 19: bankTemp = 182; break;
+                    case 20: bankTemp = 191; break;
+                    case 21: bankTemp = 200; break;
+                    case 22: bankTemp = 209; break;
+                    case 23: bankTemp = 218; break;
+                }
+            } else {
+                switch(hours) {
+                    case 0: bankTemp = 11; break; 
+                    case 1: bankTemp = 20; break; 
+                    case 2: bankTemp = 29; break; 
+                    case 3: bankTemp = 38; break;
+                    case 4: bankTemp = 47; break;
+                    case 5: bankTemp = 56; break;
+                    case 6: bankTemp = 65; break;
+                    case 7: bankTemp = 74; break;
+                    case 8: bankTemp = 83; break;
+                    case 9: bankTemp = 92; break;
+                    case 10: bankTemp = 101; break;
+                    case 11: bankTemp = 110; break;
+                    case 12: bankTemp = 119; break;
+                    case 13: bankTemp = 128; break;
+                    case 14: bankTemp = 137; break;
+                    case 15: bankTemp = 146; break;
+                    case 16: bankTemp = 155; break;
+                    case 17: bankTemp = 164; break;
+                    case 18: bankTemp = 173; break;
+                    case 19: bankTemp = 182; break;
+                    case 20: bankTemp = 191; break;
+                    case 21: bankTemp = 200; break;
+                    case 22: bankTemp = 209; break;
+                    case 23: bankTemp = 218; break;
+                }
+            }
+            switch(mins) {
+                case 6: bankTemp = bankTemp + 0; break;
+                case 13: bankTemp = bankTemp + 1; break;
+                case 19: bankTemp = bankTemp + 2; break;
+                case 25: bankTemp = bankTemp + 3; break;
+                case 31: bankTemp = bankTemp + 4; break;
+                case 37: bankTemp = bankTemp + 5; break;
+                case 43: bankTemp = bankTemp + 6; break;
+                case 49: bankTemp = bankTemp + 7; break;
+                case 54: bankTemp = bankTemp + 8; break;
+            }
+        }
+
+        byte functTemp = 0;
+        if (minsCalcTemp != bankTemp) {
+            minsCalcTemp = bankTemp;
+            tempCalc[bankTemp] = temperature;
+        }
+        if (displayFlag == 5 && weatherGraph == 1) {
+            if (bankTemp != writerTemp) {
+                writerTemp = bankTemp;
+                functTemp = mapFloat(tempCalc[writerTemp], -40, 80, 103, 43);
+                if (temperature > 80) {
+                    functTemp = 103;
+                }
+                if (temperature < -40) {
+                    functTemp = 43;
+                }
+                rgbColorTemp();
+
+                tft.drawLine(bankTemp, functTemp, bankTemp, 103, temperatureColor);
+            }
+        }
+
+    // ------------------------------- COMANDO BANCO DE DADOS HUMI OPERACIONAL ----------------
+
+        if (minsCalcHumi != mins) {
+            minsCalcHumi = mins;
+            if (fuso == 1) {
+                switch(hours) {
+                    case 0: bankHumi = 11; break; 
+                    case 1: bankHumi = 20; break; 
+                    case 2: bankHumi = 29; break; 
+                    case 3: bankHumi = 38; break;
+                    case 4: bankHumi = 47; break;
+                    case 5: bankHumi = 56; break;
+                    case 6: bankHumi = 65; break;
+                    case 7: bankHumi = 74; break;
+                    case 8: bankHumi = 83; break;
+                    case 9: bankHumi = 92; break;
+                    case 10: bankHumi = 101; break;
+                    case 11: bankHumi = 110; break;
+                    case 12: bankHumi = 119; break;
+                    case 13: bankHumi = 128; break;
+                    case 14: bankHumi = 137; break;
+                    case 15: bankHumi = 146; break;
+                    case 16: bankHumi = 155; break;
+                    case 17: bankHumi = 164; break;
+                    case 18: bankHumi = 173; break;
+                    case 19: bankHumi = 182; break;
+                    case 20: bankHumi = 191; break;
+                    case 21: bankHumi = 200; break;
+                    case 22: bankHumi = 209; break;
+                    case 23: bankHumi = 218; break;
+                }
+            } else {
+                switch(hours) {
+                    case 0: bankHumi = 11; break; 
+                    case 1: bankHumi = 20; break; 
+                    case 2: bankHumi = 29; break; 
+                    case 3: bankHumi = 38; break;
+                    case 4: bankHumi = 47; break;
+                    case 5: bankHumi = 56; break;
+                    case 6: bankHumi = 65; break;
+                    case 7: bankHumi = 74; break;
+                    case 8: bankHumi = 83; break;
+                    case 9: bankHumi = 92; break;
+                    case 10: bankHumi = 101; break;
+                    case 11: bankHumi = 110; break;
+                    case 12: bankHumi = 119; break;
+                    case 13: bankHumi = 128; break;
+                    case 14: bankHumi = 137; break;
+                    case 15: bankHumi = 146; break;
+                    case 16: bankHumi = 155; break;
+                    case 17: bankHumi = 164; break;
+                    case 18: bankHumi = 173; break;
+                    case 19: bankHumi = 182; break;
+                    case 20: bankHumi = 191; break;
+                    case 21: bankHumi = 200; break;
+                    case 22: bankHumi = 209; break;
+                    case 23: bankHumi = 218; break;
+                }
+            }
+            switch(mins) {
+                case 6: bankHumi = bankHumi + 0; break;
+                case 13: bankHumi = bankHumi + 1; break;
+                case 19: bankHumi = bankHumi + 2; break;
+                case 25: bankHumi = bankHumi + 3; break;
+                case 31: bankHumi = bankHumi + 4; break;
+                case 37: bankHumi = bankHumi + 5; break;
+                case 43: bankHumi = bankHumi + 6; break;
+                case 49: bankHumi = bankHumi + 7; break;
+                case 54: bankHumi = bankHumi + 8; break;
+            }
+        }
+
+        byte functHumi = 0;
+        if (minsCalcHumi != bankHumi) {
+            minsCalcHumi = bankHumi;
+            humiCalc[bankHumi] = humidity;
+        }
+        if (displayFlag == 5 && weatherGraph == 2) {
+            if (bankHumi != writerHumi) {
+                writerHumi = bankHumi;
+                functHumi = mapFloat(humiCalc[writerHumi], 0, 100, 103, 43);
+                if (humidity > 100) {
+                    functHumi = 43;
+                }
+                rgbColorHumi();
+
+                tft.drawLine(bankHumi, functHumi, bankHumi, 103, humidityColor);
+            }
+        }
+
+    // ------------------------------- COMANDO BANCO DE DADOS PRES OPERACIONAL ----------------
+
+        if (minsCalcPres != mins) {
+            minsCalcPres = mins;
+            if (fuso == 1) {
+                switch(hours) {
+                    case 0: bankPres = 11; break; 
+                    case 1: bankPres = 20; break; 
+                    case 2: bankPres = 29; break; 
+                    case 3: bankPres = 38; break;
+                    case 4: bankPres = 47; break;
+                    case 5: bankPres = 56; break;
+                    case 6: bankPres = 65; break;
+                    case 7: bankPres = 74; break;
+                    case 8: bankPres = 83; break;
+                    case 9: bankPres = 92; break;
+                    case 10: bankPres = 101; break;
+                    case 11: bankPres = 110; break;
+                    case 12: bankPres = 119; break;
+                    case 13: bankPres = 128; break;
+                    case 14: bankPres = 137; break;
+                    case 15: bankPres = 146; break;
+                    case 16: bankPres = 155; break;
+                    case 17: bankPres = 164; break;
+                    case 18: bankPres = 173; break;
+                    case 19: bankPres = 182; break;
+                    case 20: bankPres = 191; break;
+                    case 21: bankPres = 200; break;
+                    case 22: bankPres = 209; break;
+                    case 23: bankPres = 218; break;
+                }
+            } else {
+                switch(hours) {
+                    case 0: bankPres = 11; break; 
+                    case 1: bankPres = 20; break; 
+                    case 2: bankPres = 29; break; 
+                    case 3: bankPres = 38; break;
+                    case 4: bankPres = 47; break;
+                    case 5: bankPres = 56; break;
+                    case 6: bankPres = 65; break;
+                    case 7: bankPres = 74; break;
+                    case 8: bankPres = 83; break;
+                    case 9: bankPres = 92; break;
+                    case 10: bankPres = 101; break;
+                    case 11: bankPres = 110; break;
+                    case 12: bankPres = 119; break;
+                    case 13: bankPres = 128; break;
+                    case 14: bankPres = 137; break;
+                    case 15: bankPres = 146; break;
+                    case 16: bankPres = 155; break;
+                    case 17: bankPres = 164; break;
+                    case 18: bankPres = 173; break;
+                    case 19: bankPres = 182; break;
+                    case 20: bankPres = 191; break;
+                    case 21: bankPres = 200; break;
+                    case 22: bankPres = 209; break;
+                    case 23: bankPres = 218; break;
+                }
+            }
+            switch(mins) {
+                case 6: bankPres = bankPres + 0; break;
+                case 13: bankPres = bankPres + 1; break;
+                case 19: bankPres = bankPres + 2; break;
+                case 25: bankPres = bankPres + 3; break;
+                case 31: bankPres = bankPres + 4; break;
+                case 37: bankPres = bankPres + 5; break;
+                case 43: bankPres = bankPres + 6; break;
+                case 49: bankPres = bankPres + 7; break;
+                case 54: bankPres = bankPres + 8; break;
+            }
+        }
+
+        byte functPres = 0;
+        if (minsCalcPres != bankPres) {
+            minsCalcPres = bankPres;
+            presCalc[bankPres] = pressure;
+        }
+        if (displayFlag == 5 && weatherGraph == 3) {
+            if (bankPres != writerPres) {
+                writerPres = bankPres;
+                functPres = mapFloat(presCalc[writerPres], 300, 1100, 103, 43);
+                if (pressure > 1100) {
+                    functPres = 103;
+                }
+                if (pressure < 300) {
+                    functPres = 43;
+                }
+                rgbColorPres();
+
+                tft.drawLine(bankPres, functPres, bankPres, 103, pressureColor);
+            }
+        }
+
+    // ------------------------------- COMANDO MENUS E SELECAO --------------------------------
+
+        if (logostarted == 0) {
+            startLogo();
+            analogWrite(dspPinPower, 255);
+            if (actualTime - period >= logoTime * 1000) {
+                period = actualTime;
+                logostarted = 1;
+                tft.fillRect(0, 0, 240, 240, blackScript);
+                analogWrite(dspPinPower, 0);
+            }        
+        }
+
+        if (logostarted == 1 && displayTFT > 0 && sleepMode == 0 && displayFlag > 0) {
+
+            if (mins != compareTimeMins) {           
+                tft.fillRect (182, 215, 50, 15, blackScript);
+                compareTimeMins = mins;
+            }
+            if (day != compareWeek) {
+                tft.fillRect (30, 215, 160, 15, blackScript);
+                compareWeek = day;
+            }
+            if (secsBias != compareTimeSecs) {
+                compareTimeSecs = secsBias;
+                if (displayFlag == 7) {
+                    tft.fillRect (20, 35, 201, 80, blackScript);
+                    tft.fillRect (158, 135, 70, 20, blackScript);
+                    Serial.println("");
+                    Serial.println(hours);
+                    Serial.println(":");
+                    Serial.println(mins);
+                    Serial.println(":");
+                    Serial.println(secs);
+                }
+            }
+            switch (displayFlag) {
+                case 1:      
+                    if (displayStyleMode == 0) { geigerStyleMode0(); } break; // GEIGER
+
+                case 2:
+                    if (displayStyleMode == 0) { dosimeterStyleMode0(); } break; // DOSIMETER
+
+                case 3:
+                    if (displayStyleMode == 0) { geigerGraphStyleMode0(); } break; // GEIGER GF
+
+                case 4:
+                    if (displayStyleMode == 0) { weatherStyleMode0(); } break; // WEATHER
+
+                case 5:
+                    if (displayStyleMode == 0) { weatherGraphStyleMode0(); } break; // WEATHER GF TEMP
+
+                case 6:
+                    if (displayStyleMode == 0) { calendarStyleMode0(); } break; // CALENDAR
+
+                case 7:
+                    if (displayStyleMode == 0) { timerStyleMode0(); } break; // TIMER
+
+                case 8:
+                    if (displayStyleMode == 0) { ajustTimeStyleMode0(); } break; // AJUST TIME
+
+                case 9:
+                    if (displayStyleMode == 0) { ajustDataStyleMode0(); } break; // AJUST DATA
+
+                case 10: 
+                    if (displayStyleMode == 0) { ajustBrightStyleMode0(); } break; // AJUST BRIGHT
+
+                case 11:
+                break; // SETTINGS 
+
+                default: 
+                tft.fillRect(0, 35, 240, 205, blackScript);;
+            }
+        }
 
     // ------------------------------- FUNCAO MENU DISPLAY OPERACIONAL ------------------------
 
@@ -932,7 +1221,7 @@ void loop(void) {
             if (displayMode == 1) {
                 switch (displayTFT) {
                     case 1:
-                        if (geigerFunctional == 0) {
+                        if (geigerFunctional == 1) {
                             tft.setTextDatum(ML_DATUM);
                             tft.setTextColor(redScript);
                             tft.setFreeFont(latoRegular14);
@@ -955,7 +1244,7 @@ void loop(void) {
                         tft.drawString("SETTINGS", 60, 160, GFXFF);
                     break;
                     case 2:
-                        if (geigerFunctional == 0) {
+                        if (geigerFunctional == 1) {
                             tft.setTextDatum(ML_DATUM);
                             tft.setTextColor(redScript);
                             tft.setFreeFont(latoRegular14);
@@ -978,7 +1267,7 @@ void loop(void) {
                         tft.drawString("GEIGER", 60, 160, GFXFF);
                     break;
                     case 3:
-                        if (geigerFunctional == 0) {
+                        if (geigerFunctional == 1) {
                             tft.setTextDatum(ML_DATUM);
                             tft.setTextColor(redScript);
                             tft.setFreeFont(latoRegular14);
@@ -1001,7 +1290,7 @@ void loop(void) {
                         tft.drawString("DOSIMETER", 60, 160, GFXFF);
                     break;
                     case 4:
-                        if (bmeFunctional != 0) {
+                        if (bmeFunctional > 0) {
                             tft.setTextDatum(ML_DATUM);
                             tft.setTextColor(redScript);
                             tft.setFreeFont(latoRegular14);
@@ -1024,7 +1313,7 @@ void loop(void) {
                         tft.drawString("GEIGER GF", 60, 160, GFXFF);
                     break;
                     case 5:
-                        if (bmeFunctional != 0) {
+                        if (bmeFunctional > 0) {
                             tft.setTextDatum(ML_DATUM);
                             tft.setTextColor(redScript);
                             tft.setFreeFont(latoRegular14);
@@ -1198,7 +1487,7 @@ void loop(void) {
         }
 
         if (millis() - timerUp >= (pressingDuration / 2) && startedPressingUp == 1) {
-            tft.fillScreen(blackScript); 
+            tft.fillRect(0, 35, 240, 205, blackScript);
             upModeDisplay();  
             startedPressingUp = 0;
             displayFlag = 0;
@@ -1222,7 +1511,7 @@ void loop(void) {
         }
 
         if (millis() - timerDown >= (pressingDuration / 2) && startedPressingDown == 1) {
-            tft.fillScreen(blackScript); 
+            tft.fillRect(0, 35, 240, 205, blackScript);
             downModeDisplay();  
             startedPressingDown = 0;
             displayFlag = 0;
@@ -1240,9 +1529,53 @@ void loop(void) {
         if (time < 0 || time > 9999) {
             errorTime();
         } 
+
+    // ------------------------------- FUNCAO LEITURA SERIAL ----------------------
+        switch (Serial.read()) {
+            case '0': updateWiFi = 0; break;
+            case '1': updateWiFi = 1; break;
+            case '2': updateWiFi = 2; break;
+            case '3': updateWiFi = 3; break;
+        } if (!Serial) {
+            updateWiFi = 3;
+        }
 }
 
-// ------------------------------ FUNCAO COMANDOS GEIGER OPERACIONAL ----------------------
+// ------------------------------ FUNCAO RGB GRAFICO ESTILIZADO OPERACIONAL -------------------
+
+void rgbColorGeiger() {
+    byte rValue = map (writerGeiger, 10, 230, 255, 228);
+    byte gValue = map (writerGeiger, 10, 230, 184, 152);
+    byte bValue = map (writerGeiger, 10, 230, 152, 55);
+
+    geigerColor = rgb2rgb.RGB24toRGB16(rValue,gValue,bValue);
+}
+
+void rgbColorTemp() {
+    byte rValue = map (writerTemp, 10, 230, 241, 222);
+    byte gValue = map (writerTemp, 10, 230, 129, 38);
+    byte bValue = map (writerTemp, 10, 230, 72, 98);
+
+    temperatureColor = rgb2rgb.RGB24toRGB16(rValue,gValue,bValue);
+}
+
+void rgbColorHumi() {
+    byte rValue = map (writerHumi, 10, 230, 37, 154);
+    byte gValue = map (writerHumi, 10, 230, 183, 84);
+    byte bValue = map (writerHumi, 10, 230, 208, 216);
+
+    humidityColor = rgb2rgb.RGB24toRGB16(rValue,gValue,bValue);
+}
+
+void rgbColorPres() {
+    byte rValue = map (writerPres, 10, 230, 118, 30);
+    byte gValue = map (writerPres, 10, 230, 218, 192);
+    byte bValue = map (writerPres, 10, 230, 65, 153);
+
+    pressureColor = rgb2rgb.RGB24toRGB16(rValue,gValue,bValue);
+}
+
+// ------------------------------ FUNCAO COMANDOS GEIGER OPERACIONAL -------------------------
 
 void repetitionsIncrease() {
 
@@ -1255,7 +1588,7 @@ void geigeImpulse() {
     countsSecs ++;
 }
 
-// ------------------------------- FUNCAO HIBERNAR OPERACIONAL ----------------------------
+// ------------------------------- FUNCAO HIBERNAR OPERACIONAL -------------------------------
 
 void HibernMode() {
     startedPressingSleep = 0;
@@ -1271,19 +1604,6 @@ void HibernMode() {
 
 void enterHibernMode() {
     analogWrite(dspPinPower, 0);
-
-
-
-
-
-
-
-
-
-
-
-
-
     ldrPin = 1;
     LowPower.sleep();
 }
@@ -1297,246 +1617,248 @@ void exitHibernMode() {
     calendarFill = 0;
 }
 
-// ------------------------------ FUNCAO TELA ABERTURA RELOGIO OPERACIONAL ------------
+// ------------------------------ FUNCAO TELA ABERTURA RELOGIO OPERACIONAL -------------------
 
 void startLogo() {
     tft.setSwapBytes(true);
-    //tft.pushImage(0, 0, 240, 240, abertura);
+    tft.pushImage(0, 0, 240, 240, abertura);
 }
 
-// ------------------------------ FUNCAO DISPLAY MENUS OPERACIONAL --------------------
+// ------------------------------ FUNCAO DISPLAY MENUS OPERACIONAL ---------------------------
 
 void statusBattery() {
     String stringVoltageBattery = String(voltageBattery, 3);
-    if (statusMenu != compareStatusMenu) {
-        tft.fillRect(150, 7, 85, 25, blackScript);
-        if (batteryStyleMode == 0) {
-            tft.drawRoundRect (180, 10, 52, 22, 5, whiteScript);
-            tft.drawRoundRect (181, 11, 50, 20, 4, whiteScript);
 
-            if (powerCharger == 1) {
-                if (batteryPower >= 213) {
-                    tft.fillRoundRect (182, 12, 48, 18, 3, blue_battery);
-                } else if ((batteryPower >= 171) && (batteryPower <= 212)) {
-                    tft.fillRoundRect (190, 12, 40, 18, 3, green_battery);
-                } else if ((batteryPower >= 129) && (batteryPower <= 170)) {
-                    tft.fillRoundRect (200, 12, 30, 18, 3, yellow_battery);    
-                } else if ((batteryPower >= 87) && (batteryPower <= 128)) {
-                    tft.fillRoundRect (210, 12, 20, 18, 3, yellowed_battery);
-                    
-                } else if ((batteryPower >= 42) && (batteryPower <= 86)) {
-                    tft.fillRoundRect (215, 12, 15, 18, 3, orange_battery);
-                    
-                } else if ((batteryPower >= 0) && (batteryPower <= 41)) {
-                    tft.fillRoundRect (220, 12, 10, 18, 3, red_battery);
+    if (displayStyleMode == 0) {
+
+        //tft.fillRect(150, 7, 85, 25, blackScript);
+
+        if (updateBattery != compareUpdateBattery) {
+            tft.fillRoundRect (182, 12, 48, 18, 3, blackScript);
+            compareUpdateBattery = updateBattery;
+
+            if (batteryStyleMode == 0) {
+                tft.drawRoundRect (180, 10, 52, 22, 5, whiteScript);
+                tft.drawRoundRect (181, 11, 50, 20, 4, whiteScript);
+                if (powerCharger == 1) {
+                    if (batteryPower >= 213) {
+                        tft.fillRoundRect (182, 12, 48, 18, 3, blue_battery);
+                    } else if ((batteryPower >= 171) && (batteryPower <= 212)) {
+                        tft.fillRoundRect (190, 12, 40, 18, 3, green_battery);
+
+                    } else if ((batteryPower >= 129) && (batteryPower <= 170)) {
+                        tft.fillRoundRect (200, 12, 30, 18, 3, yellow_battery);    
+
+                    } else if ((batteryPower >= 87) && (batteryPower <= 128)) {
+                        tft.fillRoundRect (210, 12, 20, 18, 3, yellowed_battery);
+                        
+                    } else if ((batteryPower >= 42) && (batteryPower <= 86)) {
+                        tft.fillRoundRect (215, 12, 15, 18, 3, orange_battery);
+                        
+                    } else if ((batteryPower >= 0) && (batteryPower <= 41)) {
+                        tft.fillRoundRect (220, 12, 10, 18, 3, red_battery);
+                    }
+                } else {
+                    tft.fillRoundRect (182, 12, 48, 18, 3, charge_battery);
+                    tft.fillTriangle(194, 21, 207, 16, 207, 21, blackScript);
+                    tft.fillTriangle(204, 21, 204, 26, 217, 21, blackScript);
                 }
-            } else {
-                tft.fillRoundRect (182, 12, 48, 18, 3, charge_battery);
-                tft.fillTriangle(194, 21, 207, 16, 207, 21, blackScript);
-                tft.fillTriangle(204, 21, 204, 26, 217, 21, blackScript);
+            }
+
+            if (batteryStyleMode == 1) {
+                tft.drawRoundRect (180, 10, 52, 22, 5, whiteScript);
+                tft.drawRoundRect (181, 11, 50, 20, 4, whiteScript);
+
+                if (powerCharger == 1) {
+                    if (batteryPower >= 213) {
+                        tft.fillRoundRect (182, 12, 48, 18, 3, blue_battery);
+                    } else if ((batteryPower >= 171) && (batteryPower <= 212)) {
+                        tft.fillRoundRect (190, 12, 40, 18, 3, green_battery);
+                    } else if ((batteryPower >= 129) && (batteryPower <= 170)) {
+                        tft.fillRoundRect (200, 12, 30, 18, 3, yellow_battery);  
+                    } else if ((batteryPower >= 87) && (batteryPower <= 128)) {
+                        tft.fillRoundRect (210, 12, 20, 18, 3, yellowed_battery);
+                    } else if ((batteryPower >= 42) && (batteryPower <= 86)) {
+                        tft.fillRoundRect (215, 12, 15, 18, 3, orange_battery);
+                    } else if ((batteryPower >= 0) && (batteryPower <= 41)) {
+                        tft.fillRoundRect (220, 12, 10, 18, 3, red_battery);
+                    }
+                    tft.drawLine(190, 12, 190, 30, blackScript);
+                    tft.drawLine(200, 12, 200, 30, blackScript);
+                    tft.drawLine(210, 12, 210, 30, blackScript);
+                    tft.drawLine(220, 12, 220, 30, blackScript);
+                } else {
+                    tft.fillRoundRect (182, 12, 48, 18, 3, charge_battery);
+                    tft.fillTriangle(194, 21, 207, 16, 207, 21, blackScript);
+                    tft.fillTriangle(204, 21, 204, 26, 217, 21, blackScript);
+                }
+            }
+
+            if (batteryStyleMode == 2) {
+                if (powerCharger == 1) {
+                    tft.setTextDatum(TL_DATUM);
+                    tft.setFreeFont(latoRegular12);
+                    tft.setTextColor(whiteScript);
+                    if (batteryPower >= 213) {
+                        tft.drawRoundRect (180, 10, 52, 22, 5, blue_battery);
+                        tft.drawRoundRect (181, 11, 50, 20, 4, blue_battery);
+                        tft.drawString(stringVoltageBattery, 184, 15, GFXFF);
+                        tft.drawString("V", 221, 15, GFXFF);
+                    } else if ((batteryPower >= 171) && (batteryPower <= 212)) {
+                        tft.drawRoundRect (180, 10, 52, 22, 5, green_battery);
+                        tft.drawRoundRect (181, 11, 50, 20, 4, green_battery);
+                        tft.drawString(stringVoltageBattery, 184, 15, GFXFF);
+                        tft.drawString("V", 221, 15, GFXFF);
+                    } else if ((batteryPower >= 129) && (batteryPower <= 170)) {
+                        tft.drawRoundRect (180, 10, 52, 22, 5, yellow_battery);
+                        tft.drawRoundRect (181, 11, 50, 20, 4, yellow_battery);
+                        tft.drawString(stringVoltageBattery, 184, 15, GFXFF);  
+                        tft.drawString("V", 221, 15, GFXFF);
+                    } else if ((batteryPower >= 87) && (batteryPower <= 128)) {
+                        tft.drawRoundRect (180, 10, 52, 22, 5, yellowed_battery);
+                        tft.drawRoundRect (181, 11, 50, 20, 4, yellowed_battery);
+                        tft.drawString(stringVoltageBattery, 184, 15, GFXFF);
+                        tft.drawString("V", 221, 15, GFXFF);
+                    } else if ((batteryPower >= 42) && (batteryPower <= 86)) {
+                        tft.drawRoundRect (180, 10, 52, 22, 5, orange_battery);
+                        tft.drawRoundRect (181, 11, 50, 20, 4, orange_battery);
+                        tft.drawString(stringVoltageBattery, 184, 15, GFXFF);
+                        tft.drawString("V", 221, 15, GFXFF);
+                    } else if ((batteryPower >= 0) && (batteryPower <= 41)) {
+                        tft.drawRoundRect (180, 10, 52, 22, 5, red_battery);
+                        tft.drawRoundRect (181, 11, 50, 20, 4, red_battery);
+                        tft.drawString(stringVoltageBattery, 184, 15, GFXFF);
+                        tft.drawString("V", 221, 15, GFXFF);
+                    }
+                } else {
+                    tft.drawRoundRect (180, 10, 52, 22, 5, charge_battery);
+                    tft.drawRoundRect (181, 11, 50, 20, 4, charge_battery);
+                    tft.fillRoundRect (182, 12, 48, 18, 3, charge_battery);
+                    tft.fillTriangle(194, 21, 207, 16, 207, 21, blackScript);
+                    tft.fillTriangle(204, 21, 204, 26, 217, 21, blackScript);
+                }
+            }
+
+            if (batteryStyleMode == 3) {
+                if (powerCharger == 1) {
+                    if (batteryPower >= 213) {
+                        tft.drawRoundRect (180, 10, 52, 22, 5, blue_battery);
+                        tft.drawRoundRect (181, 11, 50, 20, 4, blue_battery);
+                        tft.fillRoundRect (182, 12, 48, 18, 3, blue_battery);
+                    } else if ((batteryPower >= 171) && (batteryPower <= 212)) {
+                        tft.drawRoundRect (180, 10, 52, 22, 5, green_battery);
+                        tft.drawRoundRect (181, 11, 50, 20, 4, green_battery);
+                        tft.fillRoundRect (190, 12, 40, 18, 3, green_battery);
+                    } else if ((batteryPower >= 129) && (batteryPower <= 170)) {
+                        tft.drawRoundRect (180, 10, 52, 22, 5, yellow_battery);
+                        tft.drawRoundRect (181, 11, 50, 20, 4, yellow_battery);
+                        tft.fillRoundRect (200, 12, 30, 18, 3, yellow_battery);    
+                    } else if ((batteryPower >= 87) && (batteryPower <= 128)) {
+                        tft.drawRoundRect (180, 10, 52, 22, 5, yellowed_battery);
+                        tft.drawRoundRect (181, 11, 50, 20, 4, yellowed_battery);
+                        tft.fillRoundRect (210, 12, 20, 18, 3, yellowed_battery);
+                        
+                    } else if ((batteryPower >= 42) && (batteryPower <= 86)) {
+                        tft.drawRoundRect (180, 10, 52, 22, 5, orange_battery);
+                        tft.drawRoundRect (181, 11, 50, 20, 4, orange_battery);
+                        tft.fillRoundRect (215, 12, 15, 18, 3, orange_battery);
+                        
+                    } else if ((batteryPower >= 0) && (batteryPower <= 41)) {
+                        tft.drawRoundRect (180, 10, 52, 22, 5, red_battery);
+                        tft.drawRoundRect (181, 11, 50, 20, 4, red_battery);
+                        tft.fillRoundRect (220, 12, 10, 18, 3, red_battery);
+                    }
+                } else {
+                    tft.drawRoundRect (180, 10, 52, 22, 5, charge_battery);
+                    tft.drawRoundRect (181, 11, 50, 20, 4, charge_battery);
+                    tft.fillRoundRect (182, 12, 48, 18, 3, charge_battery);
+                    tft.fillTriangle(194, 21, 207, 16, 207, 21, blackScript);
+                    tft.fillTriangle(204, 21, 204, 26, 217, 21, blackScript);
+                }
             }
         }
+    }
 
-        if (batteryStyleMode == 1) {
-            tft.drawRoundRect (180, 10, 52, 22, 5, whiteScript);
-            tft.drawRoundRect (181, 11, 50, 20, 4, whiteScript);
-
-            if (powerCharger == 1) {
-                if (batteryPower >= 213) {
-                    tft.fillRoundRect (182, 12, 48, 18, 3, blue_battery);
-                } else if ((batteryPower >= 171) && (batteryPower <= 212)) {
-                    tft.fillRoundRect (190, 12, 40, 18, 3, green_battery);
-                } else if ((batteryPower >= 129) && (batteryPower <= 170)) {
-                    tft.fillRoundRect (200, 12, 30, 18, 3, yellow_battery);  
-                } else if ((batteryPower >= 87) && (batteryPower <= 128)) {
-                    tft.fillRoundRect (210, 12, 20, 18, 3, yellowed_battery);
-                } else if ((batteryPower >= 42) && (batteryPower <= 86)) {
-                    tft.fillRoundRect (215, 12, 15, 18, 3, orange_battery);
-                } else if ((batteryPower >= 0) && (batteryPower <= 41)) {
-                    tft.fillRoundRect (220, 12, 10, 18, 3, red_battery);
+    if (updateWiFi != compareUpdateWiFi) {
+        tft.fillRect (148, 10, 28, 22, blackScript);
+        compareUpdateWiFi = updateWiFi;
+        if (updateWiFi == 0) {
+            for (byte radi = 21; radi > 15; radi --) {
+                for (int i = 230; i < 310; i++) {
+                    double radians = i * PI / 180;
+                    double px = 162 + radi * cos(radians);
+                    double py = 31 + radi * sin(radians);
+                    tft.drawPixel(px, py, wifi_level3);
                 }
-                tft.drawLine(190, 12, 190, 30, blackScript);
-                tft.drawLine(200, 12, 200, 30, blackScript);
-                tft.drawLine(210, 12, 210, 30, blackScript);
-                tft.drawLine(220, 12, 220, 30, blackScript);
-            } else {
-                tft.fillRoundRect (182, 12, 48, 18, 3, charge_battery);
-                tft.fillTriangle(194, 21, 207, 16, 207, 21, blackScript);
-                tft.fillTriangle(204, 21, 204, 26, 217, 21, blackScript);
+            }
+            for (byte radi = 15; radi > 8; radi --) {
+                for (int i = 230; i < 310; i++) {
+                    double radians = i * PI / 180;
+                    double px = 162 + radi * cos(radians);
+                    double py = 31 + radi * sin(radians);
+                    tft.drawPixel(px, py, wifi_level2);
+                }
+            }
+            for (byte radi = 8; radi > 0; radi --) {
+                for (int i = 230; i < 310; i++) {
+                    double radians = i * PI / 180;
+                    double px = 162 + radi * cos(radians);
+                    double py = 31 + radi * sin(radians);
+                    tft.drawPixel(px, py, wifi_level1);
+                }
+            }
+        } else if (updateWiFi == 1) {
+            for (byte radi = 15; radi > 8; radi --) {
+                for (int i = 230; i < 310; i++) {
+                    double radians = i * PI / 180;
+                    double px = 162 + radi * cos(radians);
+                    double py = 31 + radi * sin(radians);
+                    tft.drawPixel(px, py, wifi_level2);
+                }
+            }
+            for (byte radi = 8; radi > 0; radi --) {
+                for (int i = 230; i < 310; i++) {
+                    double radians = i * PI / 180;
+                    double px = 162 + radi * cos(radians);
+                    double py = 31 + radi * sin(radians);
+                    tft.drawPixel(px, py, wifi_level1);
+                }
+            }
+        } else if (updateWiFi == 2) {
+            for (byte radi = 8; radi > 0; radi --) {
+                for (int i = 230; i < 310; i++) {
+                    double radians = i * PI / 180;
+                    double px = 162 + radi * cos(radians);
+                    double py = 31 + radi * sin(radians);
+                    tft.drawPixel(px, py, wifi_level1);
+                }
+            }
+        } else if (updateWiFi == 3) {
+            for (byte radi = 21; radi > 15; radi --) {
+                for (int i = 230; i < 310; i++) {
+                    double radians = i * PI / 180;
+                    double px = 162 + radi * cos(radians);
+                    double py = 31 + radi * sin(radians);
+                    tft.drawPixel(px, py, wifi_off3);
+                }
+            }
+            for (byte radi = 15; radi > 8; radi --) {
+                for (int i = 230; i < 310; i++) {
+                    double radians = i * PI / 180;
+                    double px = 162 + radi * cos(radians);
+                    double py = 31 + radi * sin(radians);
+                    tft.drawPixel(px, py, wifi_off2);
+                }
+            }
+            for (byte radi = 8; radi > 0; radi --) {
+                for (int i = 230; i < 310; i++) {
+                    double radians = i * PI / 180;
+                    double px = 162 + radi * cos(radians);
+                    double py = 31 + radi * sin(radians);
+                    tft.drawPixel(px, py, wifi_off1);
+                }
             }
         }
-
-        if (batteryStyleMode == 2) {
-            if (powerCharger == 1) {
-                tft.setTextDatum(TL_DATUM);
-                tft.setFreeFont(latoRegular12);
-                tft.setTextColor(whiteScript);
-                if (batteryPower >= 213) {
-                    tft.drawRoundRect (180, 10, 52, 22, 5, blue_battery);
-                    tft.drawRoundRect (181, 11, 50, 20, 4, blue_battery);
-                    tft.drawString(stringVoltageBattery, 184, 15, GFXFF);
-                    tft.drawString("V", 221, 15, GFXFF);
-                } else if ((batteryPower >= 171) && (batteryPower <= 212)) {
-                    tft.drawRoundRect (180, 10, 52, 22, 5, green_battery);
-                    tft.drawRoundRect (181, 11, 50, 20, 4, green_battery);
-                    tft.drawString(stringVoltageBattery, 184, 15, GFXFF);
-                    tft.drawString("V", 221, 15, GFXFF);
-                } else if ((batteryPower >= 129) && (batteryPower <= 170)) {
-                    tft.drawRoundRect (180, 10, 52, 22, 5, yellow_battery);
-                    tft.drawRoundRect (181, 11, 50, 20, 4, yellow_battery);
-                    tft.drawString(stringVoltageBattery, 184, 15, GFXFF);  
-                    tft.drawString("V", 221, 15, GFXFF);
-                } else if ((batteryPower >= 87) && (batteryPower <= 128)) {
-                    tft.drawRoundRect (180, 10, 52, 22, 5, yellowed_battery);
-                    tft.drawRoundRect (181, 11, 50, 20, 4, yellowed_battery);
-                    tft.drawString(stringVoltageBattery, 184, 15, GFXFF);
-                    tft.drawString("V", 221, 15, GFXFF);
-                } else if ((batteryPower >= 42) && (batteryPower <= 86)) {
-                    tft.drawRoundRect (180, 10, 52, 22, 5, orange_battery);
-                    tft.drawRoundRect (181, 11, 50, 20, 4, orange_battery);
-                    tft.drawString(stringVoltageBattery, 184, 15, GFXFF);
-                    tft.drawString("V", 221, 15, GFXFF);
-                } else if ((batteryPower >= 0) && (batteryPower <= 41)) {
-                    tft.drawRoundRect (180, 10, 52, 22, 5, red_battery);
-                    tft.drawRoundRect (181, 11, 50, 20, 4, red_battery);
-                    tft.drawString(stringVoltageBattery, 184, 15, GFXFF);
-                    tft.drawString("V", 221, 15, GFXFF);
-                }
-            } else {
-                tft.drawRoundRect (180, 10, 52, 22, 5, charge_battery);
-                tft.drawRoundRect (181, 11, 50, 20, 4, charge_battery);
-                tft.fillRoundRect (182, 12, 48, 18, 3, charge_battery);
-                tft.fillTriangle(194, 21, 207, 16, 207, 21, blackScript);
-                tft.fillTriangle(204, 21, 204, 26, 217, 21, blackScript);
-            }
-        }
-
-        if (batteryStyleMode == 3) {
-            if (powerCharger == 1) {
-                if (batteryPower >= 213) {
-                    tft.drawRoundRect (180, 10, 52, 22, 5, blue_battery);
-                    tft.drawRoundRect (181, 11, 50, 20, 4, blue_battery);
-                    tft.fillRoundRect (182, 12, 48, 18, 3, blue_battery);
-                } else if ((batteryPower >= 171) && (batteryPower <= 212)) {
-                    tft.drawRoundRect (180, 10, 52, 22, 5, green_battery);
-                    tft.drawRoundRect (181, 11, 50, 20, 4, green_battery);
-                    tft.fillRoundRect (190, 12, 40, 18, 3, green_battery);
-                } else if ((batteryPower >= 129) && (batteryPower <= 170)) {
-                    tft.drawRoundRect (180, 10, 52, 22, 5, yellow_battery);
-                    tft.drawRoundRect (181, 11, 50, 20, 4, yellow_battery);
-                    tft.fillRoundRect (200, 12, 30, 18, 3, yellow_battery);    
-                } else if ((batteryPower >= 87) && (batteryPower <= 128)) {
-                    tft.drawRoundRect (180, 10, 52, 22, 5, yellowed_battery);
-                    tft.drawRoundRect (181, 11, 50, 20, 4, yellowed_battery);
-                    tft.fillRoundRect (210, 12, 20, 18, 3, yellowed_battery);
-                    
-                } else if ((batteryPower >= 42) && (batteryPower <= 86)) {
-                    tft.drawRoundRect (180, 10, 52, 22, 5, orange_battery);
-                    tft.drawRoundRect (181, 11, 50, 20, 4, orange_battery);
-                    tft.fillRoundRect (215, 12, 15, 18, 3, orange_battery);
-                    
-                } else if ((batteryPower >= 0) && (batteryPower <= 41)) {
-                    tft.drawRoundRect (180, 10, 52, 22, 5, red_battery);
-                    tft.drawRoundRect (181, 11, 50, 20, 4, red_battery);
-                    tft.fillRoundRect (220, 12, 10, 18, 3, red_battery);
-                }
-            } else {
-                tft.drawRoundRect (180, 10, 52, 22, 5, charge_battery);
-                tft.drawRoundRect (181, 11, 50, 20, 4, charge_battery);
-                tft.fillRoundRect (182, 12, 48, 18, 3, charge_battery);
-                tft.fillTriangle(194, 21, 207, 16, 207, 21, blackScript);
-                tft.fillTriangle(204, 21, 204, 26, 217, 21, blackScript);
-            }
-        }
-
-
-
-        if (wifiFuncional == 0) {
-                for (byte radi = 21; radi > 15; radi --) {
-                    for (int i = 230; i < 310; i++) {
-                        double radians = i * PI / 180;
-                        double px = 162 + radi * cos(radians);
-                        double py = 31 + radi * sin(radians);
-                        tft.drawPixel(px, py, wifi_level3);
-                    }
-                }
-                for (byte radi = 15; radi > 8; radi --) {
-                    for (int i = 230; i < 310; i++) {
-                        double radians = i * PI / 180;
-                        double px = 162 + radi * cos(radians);
-                        double py = 31 + radi * sin(radians);
-                        tft.drawPixel(px, py, wifi_level2);
-                    }
-                }
-                for (byte radi = 8; radi > 0; radi --) {
-                    for (int i = 230; i < 310; i++) {
-                        double radians = i * PI / 180;
-                        double px = 162 + radi * cos(radians);
-                        double py = 31 + radi * sin(radians);
-                        tft.drawPixel(px, py, wifi_level1);
-                    }
-                }
-            } else if (wifiFuncional == 1) {
-                for (byte radi = 15; radi > 8; radi --) {
-                    for (int i = 230; i < 310; i++) {
-                        double radians = i * PI / 180;
-                        double px = 162 + radi * cos(radians);
-                        double py = 31 + radi * sin(radians);
-                        tft.drawPixel(px, py, wifi_level2);
-                    }
-                }
-                for (byte radi = 8; radi > 0; radi --) {
-                    for (int i = 230; i < 310; i++) {
-                        double radians = i * PI / 180;
-                        double px = 162 + radi * cos(radians);
-                        double py = 31 + radi * sin(radians);
-                        tft.drawPixel(px, py, wifi_level1);
-                    }
-                }
-            } else if (wifiFuncional == 2) {
-                for (byte radi = 8; radi > 0; radi --) {
-                    for (int i = 230; i < 310; i++) {
-                        double radians = i * PI / 180;
-                        double px = 162 + radi * cos(radians);
-                        double py = 31 + radi * sin(radians);
-                        tft.drawPixel(px, py, wifi_level1);
-                    }
-                }
-            } else if (wifiFuncional == 3) {
-                for (byte radi = 15; radi > 8; radi --) {
-                    for (int i = 230; i < 310; i++) {
-                        double radians = i * PI / 180;
-                        double px = 162 + radi * cos(radians);
-                        double py = 31 + radi * sin(radians);
-                        tft.drawPixel(px, py, wifi_level2);
-                    }
-                }
-                for (byte radi = 21; radi > 15; radi --) {
-                    for (int i = 230; i < 310; i++) {
-                        double radians = i * PI / 180;
-                        double px = 162 + radi * cos(radians);
-                        double py = 31 + radi * sin(radians);
-                        tft.drawPixel(px, py, wifi_off3);
-                    }
-                }
-                for (byte radi = 15; radi > 8; radi --) {
-                    for (int i = 230; i < 310; i++) {
-                        double radians = i * PI / 180;
-                        double px = 162 + radi * cos(radians);
-                        double py = 31 + radi * sin(radians);
-                        tft.drawPixel(px, py, wifi_off2);
-                    }
-                }
-                for (byte radi = 8; radi > 0; radi --) {
-                    for (int i = 230; i < 310; i++) {
-                        double radians = i * PI / 180;
-                        double px = 162 + radi * cos(radians);
-                        double py = 31 + radi * sin(radians);
-                        tft.drawPixel(px, py, wifi_off1);
-                    }
-                }
-            }
-        compareStatusMenu = statusMenu;
     }
 }
 
@@ -1814,14 +2136,33 @@ void graphDosimeterStyle0() {
 }
 
 void geigerGraphStyleMode0() {
+    float svHour = avgUSV * 60;
+    String stringcpm = String(cpm);
+    String stringuSv = String(uSv);
+    String stringsvHour = String(svHour, 0);
+    String stringavgCPM = String(avgCPM, 0);
+
+
     if (uSv != compareuSv) {
         tft.fillRect (82, 61, 148, 32, blackScript);
+
+        tft.fillRect (73, 47, 35, 13, blackScript);
+        tft.fillRect (148, 47, 35, 13, blackScript);
+        tft.fillRect (48, 66, 45, 13, blackScript);
+        tft.fillRect (183, 66, 45, 13, blackScript);
         compareuSv = uSv;
     }
+
+    tft.drawLine(writerGeiger + 1, 50, writerGeiger + 1, 175, blackScript);
 
     tft.setTextDatum(ML_DATUM);
     tft.setTextColor(greywhite);
     tft.setFreeFont(latoRegular14);
+
+    tft.drawString(stringuSv, 75, 51, GFXFF);
+    tft.drawString(stringsvHour, 150, 51, GFXFF);
+    tft.drawString(stringcpm, 48, 70, GFXFF);
+    tft.drawString(stringavgCPM, 185, 70, GFXFF);
 
     tft.drawString("Sieverts", 13, 51, GFXFF);
     tft.drawString("uSh", 195, 51, GFXFF);
@@ -1829,10 +2170,10 @@ void geigerGraphStyleMode0() {
     tft.drawString("CPM", 13, 70, GFXFF);
     tft.drawString("mCPM", 136, 70, GFXFF);
     tft.drawString("0", 7, 199, GFXFF);
-    tft.drawString("6", 65, 199, GFXFF);
-    tft.drawString("12", 115, 199, GFXFF);
-    tft.drawString("18", 170, 199, GFXFF);
-    tft.drawString("24", 223, 199, GFXFF);
+    tft.drawString("6", 63, 199, GFXFF);
+    tft.drawString("12", 112, 199, GFXFF);
+    tft.drawString("18", 166, 199, GFXFF);
+    tft.drawString("24", 219, 199, GFXFF);
 
     tft.setFreeFont(latoRegular10);
 
@@ -1841,25 +2182,21 @@ void geigerGraphStyleMode0() {
     tft.drawString("15", 143, 199, GFXFF);
     tft.drawString("21", 198, 199, GFXFF);
 
-    tft.fillRect(10, 183, 2, 6, redAjust);
-    tft.fillRect(38, 183, 1, 5, wifi_off2);
-    tft.fillRect(68, 183, 2, 6, redAjust);
-    tft.fillRect(93, 183, 1, 5, wifi_off2);
-    tft.fillRect(123, 183, 2, 6, redAjust);
+    tft.fillRect(10, 183, 2, 6, redAjust);  
+    tft.fillRect(38, 183, 1, 5, wifi_off2); 
+    tft.fillRect(66, 183, 2, 6, redAjust);  
+    tft.fillRect(93, 183, 1, 5, wifi_off2); 
+    tft.fillRect(120, 183, 2, 6, redAjust); 
     tft.fillRect(147, 183, 1, 5, wifi_off2);
-    tft.fillRect(178, 183, 2, 6, redAjust);
+    tft.fillRect(174, 183, 2, 6, redAjust); 
     tft.fillRect(203, 183, 1, 5, wifi_off2);
-    tft.fillRect(230, 183, 2, 6, redAjust);
-
-    
-
-    //tft.fillRect(10, 85, 220, 85, sunColor);
+    tft.fillRect(227, 183, 2, 6, redAjust); 
 
     statusBattery();
     subMenu();
 }
 
-// ------------------------------- CONTADOR GEIGER MILLIS() OPERACIONAL -------------------
+// ------------------------------- CONTADOR GEIGER MILLIS() OPERACIONAL ---------------------
 
 void statusGeiger() {   
     unsigned long geigerMillis = millis();
@@ -1887,9 +2224,6 @@ void statusGeiger() {
 // ------------------------------- FUNCAO DISPLAY WEATHER 
 
 void weatherStyleMode0() {
-    String stringTemp = String(temperature);
-    String stringHumi = String(humidity);
-    String stringPres = String(pressure);
     String stringUpdZambMin = String(updateZambrettiMin);
     String stringUpdZambHr = String(updateZambrettiHr);    
     String stringTempMin = String(temperatureMin);
@@ -1916,11 +2250,11 @@ void weatherStyleMode0() {
     tft.drawRect(49, 152, 130, 20, whiteScript);
     tft.drawRect(49, 177, 130, 20, whiteScript);
 
-    tft.fillRectHGradient(87, 128, 36, 18, temperatureColor1, temperatureColor2);
-    tft.fillRectHGradient(76, 153, 67, 18, humidityColor1, humidityColor2);
-    tft.fillRectHGradient(105, 178, 18, 18, pressureColor1, pressureColor2);
+    tft.fillRectHGradient(temperatureGraphMin, 128, temperatureValueGraph, 18, temperatureColor1, temperatureColor2);
+    tft.fillRectHGradient(humidityGraphMax, 153, humidityValueGraph, 18, humidityColor1, humidityColor2);
+    tft.fillRectHGradient(pressureGraphMax, 178, pressureValueGraph, 18, pressureColor1, pressureColor2);
 
-    climateStyleMode0();
+    //climateStyleMode0();
     statusBattery();
     subMenu();
 }
@@ -1977,10 +2311,10 @@ void tempGraphStyleMode0() {
     tft.setFreeFont(latoRegular14);
 
     tft.drawString("0", 7, 125, GFXFF);
-    tft.drawString("6", 65, 125, GFXFF);
-    tft.drawString("12", 115, 125, GFXFF);
-    tft.drawString("18", 170, 125, GFXFF);
-    tft.drawString("24", 223, 125, GFXFF);
+    tft.drawString("6", 63, 125, GFXFF);
+    tft.drawString("12", 112, 125, GFXFF);
+    tft.drawString("18", 166, 125, GFXFF);
+    tft.drawString("24", 219, 125, GFXFF);
 
     tft.drawString("Min:", 24, 155, GFXFF);
     tft.drawString("Max:", 24, 175, GFXFF);
@@ -2002,15 +2336,15 @@ void tempGraphStyleMode0() {
 
     tft.fillRect(10, 110, 2, 6, temperatureColor1);
     tft.fillRect(38, 110, 1, 5, wifi_off2);
-    tft.fillRect(68, 110, 2, 6, temperatureColor1);
+    tft.fillRect(66, 110, 2, 6, temperatureColor1);
     tft.fillRect(93, 110, 1, 5, wifi_off2);
-    tft.fillRect(123, 110, 2, 6, temperatureColor1);
+    tft.fillRect(120, 110, 2, 6, temperatureColor1);
     tft.fillRect(147, 110, 1, 5, wifi_off2);
-    tft.fillRect(178, 110, 2, 6, temperatureColor1);
+    tft.fillRect(174, 110, 2, 6, temperatureColor1);
     tft.fillRect(203, 110, 1, 5, wifi_off2);
-    tft.fillRect(230, 110, 2, 6, temperatureColor1);
+    tft.fillRect(227, 110, 2, 6, temperatureColor1);
 
-    tft.fillRectHGradient(10, 50, 220, 55, temperatureColor1, temperatureColor2);
+    tft.drawLine(writerTemp + 1, 43, writerTemp + 1, 103, blackScript);
 
     statusBattery();
     subMenu();
@@ -2032,10 +2366,10 @@ void humiGraphStyleMode0() {
     tft.setFreeFont(latoRegular14);
 
     tft.drawString("0", 7, 125, GFXFF);
-    tft.drawString("6", 65, 125, GFXFF);
-    tft.drawString("12", 115, 125, GFXFF);
-    tft.drawString("18", 170, 125, GFXFF);
-    tft.drawString("24", 223, 125, GFXFF);
+    tft.drawString("6", 63, 125, GFXFF);
+    tft.drawString("12", 112, 125, GFXFF);
+    tft.drawString("18", 166, 125, GFXFF);
+    tft.drawString("24", 219, 125, GFXFF);
 
     tft.drawString("Min:", 24, 155, GFXFF);
     tft.drawString("Max:", 24, 175, GFXFF);
@@ -2055,15 +2389,15 @@ void humiGraphStyleMode0() {
 
     tft.fillRect(10, 110, 2, 6, humidityColor1);
     tft.fillRect(38, 110, 1, 5, wifi_off2);
-    tft.fillRect(68, 110, 2, 6, humidityColor1);
+    tft.fillRect(66, 110, 2, 6, humidityColor1);
     tft.fillRect(93, 110, 1, 5, wifi_off2);
-    tft.fillRect(123, 110, 2, 6, humidityColor1);
+    tft.fillRect(120, 110, 2, 6, humidityColor1);
     tft.fillRect(147, 110, 1, 5, wifi_off2);
-    tft.fillRect(178, 110, 2, 6, humidityColor1);
+    tft.fillRect(174, 110, 2, 6, humidityColor1);
     tft.fillRect(203, 110, 1, 5, wifi_off2);
-    tft.fillRect(230, 110, 2, 6, humidityColor1);
+    tft.fillRect(227, 110, 2, 6, humidityColor1);
 
-    tft.fillRectHGradient(10, 50, 220, 55, humidityColor1, humidityColor2);
+    tft.drawLine(writerHumi + 1, 43, writerHumi + 1, 103, blackScript);
 
     statusBattery();
     subMenu();
@@ -2081,16 +2415,14 @@ void presGraphStyleMode0() {
 
     tft.drawString(stringPres, 150, 165, GFXFF);
     tft.drawString("Hg", 190, 165, GFXFF);
-    tft.drawCircle(215, 160, 3, whiteScript);
-    tft.drawCircle(215, 160, 4, whiteScript);
 
     tft.setFreeFont(latoRegular14);
 
     tft.drawString("0", 7, 125, GFXFF);
-    tft.drawString("6", 65, 125, GFXFF);
-    tft.drawString("12", 115, 125, GFXFF);
-    tft.drawString("18", 170, 125, GFXFF);
-    tft.drawString("24", 223, 125, GFXFF);
+    tft.drawString("6", 63, 125, GFXFF);
+    tft.drawString("12", 112, 125, GFXFF);
+    tft.drawString("18", 166, 125, GFXFF);
+    tft.drawString("24", 219, 125, GFXFF);
 
     tft.drawString("Min:", 24, 155, GFXFF);
     tft.drawString("Max:", 24, 175, GFXFF);
@@ -2100,8 +2432,6 @@ void presGraphStyleMode0() {
 
     tft.drawString("Hg", 85, 155, GFXFF);
     tft.drawString("Hg", 85, 175, GFXFF);
-    tft.drawCircle(100, 150, 2, whiteScript);
-    tft.drawCircle(100, 170, 2, whiteScript);
 
     tft.setFreeFont(latoRegular10);
 
@@ -2112,15 +2442,15 @@ void presGraphStyleMode0() {
 
     tft.fillRect(10, 110, 2, 6, pressureColor1);
     tft.fillRect(38, 110, 1, 5, wifi_off2);
-    tft.fillRect(68, 110, 2, 6, pressureColor1);
+    tft.fillRect(66, 110, 2, 6, pressureColor1);
     tft.fillRect(93, 110, 1, 5, wifi_off2);
-    tft.fillRect(123, 110, 2, 6, pressureColor1);
+    tft.fillRect(120, 110, 2, 6, pressureColor1);
     tft.fillRect(147, 110, 1, 5, wifi_off2);
-    tft.fillRect(178, 110, 2, 6, pressureColor1);
+    tft.fillRect(174, 110, 2, 6, pressureColor1);
     tft.fillRect(203, 110, 1, 5, wifi_off2);
-    tft.fillRect(230, 110, 2, 6, pressureColor1);
+    tft.fillRect(227, 110, 2, 6, pressureColor1);
 
-    tft.fillRectHGradient(10, 50, 220, 55, pressureColor1, pressureColor2);
+    tft.drawLine(writerPres + 1, 43, writerPres + 1, 103, blackScript);
 
     statusBattery();
     subMenu();
@@ -2633,12 +2963,50 @@ void ajustBrightStyleMode0() {
     statusBattery();
 }
 
+// ------------------------------- FUNCAO BME280 ------------
 
+void readBME() {
+    if (millis() - timerBME >= 10000) {
+        timerBME = millis();
+        //tft.fillRect (82, 61, 148, 32, greenScript);
+        temperature = climateSensor.getTemperatureCelcius(true);
+        humidity = climateSensor.getRelativeHumidity(true);
+        pressure = climateSensor.getPressure(true);
+        if (temperatureMin == 0) {
+            temperatureMin = temperature;
+        } else if (temperatureMin > temperature) {
+            temperatureMin = temperature;
+        } 
+        if (temperatureMax < temperature) {
+            temperatureMax = temperature;
+        }
+        if (humidityMin == 0) {
+            humidityMin = humidity;
+        } else if (humidityMin > humidity) {
+            humidityMin = humidity;
+        } if (humidityMax < humidity) {
+            humidityMax = humidity;
+        }
+        if (pressureMin == 0) {
+            pressureMin = pressure;
+        } else if (pressureMin > pressure) {
+            pressureMin = pressure;
+        } if (pressureMax < pressure) {
+            pressureMax = pressure;
+        }
 
+        temperatureGraphMin = map(temperatureMin, -40, 85, 50, 128);
+        temperatureGraphMax = map(temperatureMax, -40, 85, 50, 128);
+        humidityGraphMin = map(humidityMin, 0, 100, 50, 128);
+        humidityGraphMax = map(humidityMax, 0, 100, 50, 128);
+        pressureGraphMin = map(pressureMin, 300, 1100, 50, 128);
+        pressureGraphMax = map(pressureMax, 300, 1100, 50, 128);   
 
-
-
-
+        temperatureValueGraph = temperatureMax - temperatureMin;
+        humidityValueGraph = humidityMax - humidityMin;
+        pressureValueGraph = pressureMax - pressureMin;
+    }
+}
 
 // ------------------------------- FUNCAO CONTROLE ENTRADA MENUS ----------------------
 
@@ -2676,37 +3044,37 @@ void selectFunctionDisplay() {
 
     if (sleepMode == 0) {
         if (displayTFT == 1 && displayMode == 1) {
-            tft.fillScreen(blackScript);
+            tft.fillRect(0, 35, 240, 205, blackScript);
             displayFlag = 1;
         } else if (displayTFT == 2 && displayMode == 1) {
-            tft.fillScreen(blackScript);
+            tft.fillRect(0, 35, 240, 205, blackScript);
             displayFlag = 2; 
         } else if (displayTFT == 3 && displayMode == 1) {
-            tft.fillScreen(blackScript);
+            tft.fillRect(0, 35, 240, 205, blackScript);
             displayFlag = 3;
         } else if (displayTFT == 4 && displayMode == 1) {
-            tft.fillScreen(blackScript);
+            tft.fillRect(0, 35, 240, 205, blackScript);
             displayFlag = 4;
         } else if (displayTFT == 5 && displayMode == 1) {
-            tft.fillScreen(blackScript);
+            tft.fillRect(0, 35, 240, 205, blackScript);
             displayFlag = 5;;
         } else if (displayTFT == 6 && displayMode == 1) {
-            tft.fillScreen(blackScript);
+            tft.fillRect(0, 35, 240, 205, blackScript);
             displayFlag = 6;
         } else if (displayTFT == 7 && displayMode == 1) {
-            tft.fillScreen(blackScript);
+            tft.fillRect(0, 35, 240, 205, blackScript);
             displayFlag = 7;
         } else if (displayTFT == 8 && displayMode == 1) {
-            tft.fillScreen(blackScript);
+            tft.fillRect(0, 35, 240, 205, blackScript);
             displayFlag = 8;
         } else if (displayTFT == 9 && displayMode == 1) {
-            tft.fillScreen(blackScript);
+            tft.fillRect(0, 35, 240, 205, blackScript);
             displayFlag = 9;
         } else if (displayTFT == 10 && displayMode == 1) { 
-            tft.fillScreen(blackScript);
+            tft.fillRect(0, 35, 240, 205, blackScript);
             displayFlag = 10;
         } else if (displayTFT == 11 && displayMode == 1) { 
-            tft.fillScreen(blackScript);
+            tft.fillRect(0, 35, 240, 205, blackScript);
             displayFlag = 11;
         } 
     }
@@ -2801,145 +3169,6 @@ void statusBright() {
         }
     }
 }
-
-// ------------------------------- FUNCAO LEITURA BME280 --------------------------------------
-
-void readBMEData() {
-    double temp_act = 0.0, press_act = 0.0,hum_act=0.0;
-    signed long int temp_cal;
-    unsigned long int press_cal,hum_cal;
-    if (millis() - timerBME >= updateBMEData) {
-        readData();
-        temp_cal = calibration_T(temp_raw);
-        press_cal = calibration_P(pres_raw);
-        hum_cal = calibration_H(hum_raw);
-        temperature = (double)temp_cal / 100.0;
-        pressure = (double)press_cal / 100.0;
-        humidity = (double)hum_cal / 1024.0;    
-        timerBME = millis();
-    }
-}
-
-void readTrim() {
-    uint8_t data[32],i=0;
-    Wire.beginTransmission(BME280_ADDRESS);
-    Wire.write(0x88);
-    Wire.endTransmission();
-    Wire.requestFrom(BME280_ADDRESS,24);
-    while(Wire.available()){
-        data[i] = Wire.read();
-        i++;
-    }
-    
-    Wire.beginTransmission(BME280_ADDRESS);
-    Wire.write(0xA1);
-    Wire.endTransmission();
-    Wire.requestFrom(BME280_ADDRESS,1);
-    data[i] = Wire.read();
-    i++;
-    
-    Wire.beginTransmission(BME280_ADDRESS);
-    Wire.write(0xE1);
-    Wire.endTransmission();
-    Wire.requestFrom(BME280_ADDRESS,7);
-    while(Wire.available()){
-        data[i] = Wire.read();
-        i++;    
-    }
-    dig_T1 = (data[1] << 8) | data[0];
-    dig_T2 = (data[3] << 8) | data[2];
-    dig_T3 = (data[5] << 8) | data[4];
-    dig_P1 = (data[7] << 8) | data[6];
-    dig_P2 = (data[9] << 8) | data[8];
-    dig_P3 = (data[11]<< 8) | data[10];
-    dig_P4 = (data[13]<< 8) | data[12];
-    dig_P5 = (data[15]<< 8) | data[14];
-    dig_P6 = (data[17]<< 8) | data[16];
-    dig_P7 = (data[19]<< 8) | data[18];
-    dig_P8 = (data[21]<< 8) | data[20];
-    dig_P9 = (data[23]<< 8) | data[22];
-    dig_H1 = data[24];
-    dig_H2 = (data[26]<< 8) | data[25];
-    dig_H3 = data[27];
-    dig_H4 = (data[28]<< 4) | (0x0F & data[29]);
-    dig_H5 = (data[30] << 4) | ((data[29] >> 4) & 0x0F);
-    dig_H6 = data[31];   
-}
-
-void writeReg(uint8_t reg_address, uint8_t data) {
-    Wire.beginTransmission(BME280_ADDRESS);
-    Wire.write(reg_address);
-    Wire.write(data);
-    Wire.endTransmission();    
-}
-
-void readData() {
-    int i = 0;
-    uint32_t data[8];
-    Wire.beginTransmission(BME280_ADDRESS);
-    Wire.write(0xF7);
-    Wire.endTransmission();
-    Wire.requestFrom(BME280_ADDRESS,8);
-    while(Wire.available()) {
-        data[i] = Wire.read();
-        i++;
-    }
-    pres_raw = (data[0] << 12) | (data[1] << 4) | (data[2] >> 4);
-    temp_raw = (data[3] << 12) | (data[4] << 4) | (data[5] >> 4);
-    hum_raw  = (data[6] << 8) | data[7];
-}
-
-
-signed long int calibration_T(signed long int adc_T) {
-    
-    signed long int var1, var2, T;
-    var1 = ((((adc_T >> 3) - ((signed long int)dig_T1<<1))) * ((signed long int)dig_T2)) >> 11;
-    var2 = (((((adc_T >> 4) - ((signed long int)dig_T1)) * ((adc_T>>4) - ((signed long int)dig_T1))) >> 12) * ((signed long int)dig_T3)) >> 14;
-    
-    t_fine = var1 + var2;
-    T = (t_fine * 5 + 128) >> 8;
-    return T; 
-}
-
-unsigned long int calibration_P(signed long int adc_P) {
-    signed long int var1, var2;
-    unsigned long int P;
-    var1 = (((signed long int)t_fine)>>1) - (signed long int)64000;
-    var2 = (((var1>>2) * (var1>>2)) >> 11) * ((signed long int)dig_P6);
-    var2 = var2 + ((var1*((signed long int)dig_P5))<<1);
-    var2 = (var2>>2)+(((signed long int)dig_P4)<<16);
-    var1 = (((dig_P3 * (((var1>>2)*(var1>>2)) >> 13)) >>3) + ((((signed long int)dig_P2) * var1)>>1))>>18;
-    var1 = ((((32768+var1))*((signed long int)dig_P1))>>15);
-    if (var1 == 0) {
-        return 0;
-    }    
-    P = (((unsigned long int)(((signed long int)1048576)-adc_P)-(var2>>12)))*3125;
-    if(P<0x80000000) {
-       P = (P << 1) / ((unsigned long int) var1);   
-    } else {
-        P = (P / (unsigned long int)var1) * 2;    
-    }
-    var1 = (((signed long int)dig_P9) * ((signed long int)(((P>>3) * (P>>3))>>13)))>>12;
-    var2 = (((signed long int)(P>>2)) * ((signed long int)dig_P8))>>13;
-    P = (unsigned long int)((signed long int)P + ((var1 + var2 + dig_P7) >> 4));
-    return P;
-}
-
-unsigned long int calibration_H(signed long int adc_H) {
-    signed long int v_x1;
-    
-    v_x1 = (t_fine - ((signed long int)76800));
-    v_x1 = (((((adc_H << 14) -(((signed long int)dig_H4) << 20) - (((signed long int)dig_H5) * v_x1)) + 
-              ((signed long int)16384)) >> 15) * (((((((v_x1 * ((signed long int)dig_H6)) >> 10) * 
-              (((v_x1 * ((signed long int)dig_H3)) >> 11) + ((signed long int) 32768))) >> 10) + (( signed long int)2097152)) * 
-              ((signed long int) dig_H2) + 8192) >> 14));
-   v_x1 = (v_x1 - (((((v_x1 >> 15) * (v_x1 >> 15)) >> 7) * ((signed long int)dig_H1)) >> 4));
-   v_x1 = (v_x1 < 0 ? 0 : v_x1);
-   v_x1 = (v_x1 > 419430400 ? 419430400 : v_x1);
-   return (unsigned long int)(v_x1 >> 12);   
-}
-
-
 
 // ------------------------------- FUNCAO NIXIE WRITER ------------------------------------
 void nixie() {
