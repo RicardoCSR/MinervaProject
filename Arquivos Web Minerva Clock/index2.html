@@ -1,0 +1,405 @@
+<!-- const char htmlPage1[] PROGMEM = R"=====( -->
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    
+    <title>Inicial</title>
+</head>
+
+
+<script type="text/javascript">
+function startTime() {
+    var today=new Date();
+    var h=today.getHours();
+    var m=today.getMinutes();
+    var s=today.getSeconds();
+    // adicione um zero na frente de números<10
+    m=checkTime(m);
+    s=checkTime(s);
+    document.getElementById('txt').innerHTML=h+":"+m;
+    t=setTimeout('startTime()',500);
+}
+    function checkTime(i) {
+        if (i<10) {
+            i="0" + i;
+        }
+        return i;
+    }
+
+const $menu = document.getElementById('menu');
+const $menuTrigger = document.getElementById('menu-trigger');
+let state = $menu.dataset.aberto;
+
+$menuTrigger.addEventListener('click', () => {
+    if(state == "false") {
+        state = "true";
+    } else {
+        state = "false";
+    }
+  
+    $menu.dataset.aberto = state;
+})
+
+</script>
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+.navbar {
+  overflow: hidden;
+  background-color: none; 
+}
+
+
+.subnav {
+  float: right;
+  overflow: hidden;
+}
+
+.light {
+    min-width: 82px;
+    background: transparent url('lua1.png') left center no-repeat;
+}
+
+.dark {
+    min-width: 82px;
+    background: transparent url('sol1.png') left center no-repeat;
+}
+
+
+.btn-grad {
+    background-image: linear-gradient(to right, #00d2ff 0%, #3a7bd5  51%, #00d2ff  100%)
+}
+.btn-grad {
+    margin: 10px;
+    padding: 15px 45px;
+    text-align: center;
+    text-transform: uppercase;
+    transition: 0.5s;
+    background-size: 200% auto;
+    color: white;            
+    box-shadow: 0 0 20px #eee;
+    border-radius: 10px;
+}
+
+.btn-grad:hover {
+    background-position: right center; /* change the direction of the change here */
+    color: #fff;
+    text-decoration: none;
+}
+
+
+.footer-container {
+    position: relative;
+    margin-top: 775px;
+    padding: 0;
+    border: 0;
+    float: right;
+    font-size: 16px;
+    font-weight: 400;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    color: white;
+    margin-right: 25px;
+    
+}
+
+.gitLink {
+    margin-left: 10px;
+    text-align: center;
+    position: relative;
+    padding: 5px 15px 5px 15px;
+    margin-top: 780px;
+    float: left;
+    background: transparent;
+    border: none;
+    color: white;
+    text-decoration: none;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-weight: bold;
+}
+
+.gitLink:hover {
+    margin-left: 10px;
+    text-align: center;
+    position: relative;
+    padding: 5px 15px 5px 15px;
+    margin-top: 780px;
+    float: left;
+    transition: background 1s;
+    background-color: rgba(0, 0, 0, 0.2);
+    border: none;
+    border-radius: 5px;
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.header {
+    position: relative;
+    background-color: rgba(0, 0, 0, 0.2);
+    width: 100%;
+    height: 90px;
+    list-style-type: none;
+}
+
+.header a {
+    padding: 10px;
+    float: left;
+}
+
+.timer-object2 {
+    position: relative;
+    margin-right: 100px;
+    float: right;
+    font-weight: 600;
+    font-size: 20px;
+    color: white;
+    text-align: right;
+    padding: 27px 16px;
+    text-decoration: none;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+
+}
+
+.header-right .timer-object1 {
+    position: relative;
+    width: 10%;
+    float: right;
+    font-weight: 600;
+    font-size: 20px;
+    color: white;
+    text-align: right;
+    margin-right: 10px;
+    padding: 16px 1px;
+    text-decoration: none;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+
+.header-right .subnavbtn {
+    background-color: #00d2ff;
+    width: 5%;
+    float: right;
+    background: transparent url('lua1.png') left center no-repeat;
+    font-weight: 600;
+    font-size: 20px;
+    color: white;
+    min-width: 115px;
+    border: none;
+    border-radius: 5px;
+    text-align: right;
+    text-decoration: none;
+
+    background-color: inherit;
+    cursor: pointer;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.subnavbtn {
+    width: 50px;
+    height: 50px;
+    padding-right: 15px;
+    position: absolute;
+    display: block;
+}
+
+.subnavbtn:hover {
+    transition: background 1s;
+    background-color: rgba(0, 0, 0, 0.2);
+	cursor: pointer;
+}
+
+
+.subnavbtn li a {
+    padding-left: 15px;
+    text-align: right;
+    color: white;
+    text-decoration: none;
+}
+
+.subnavbtn li a:hover {
+    border-radius: 5px;
+    transition: background 1s;
+	cursor: pointer;
+    color: white;
+}
+
+.timer-object1 button {
+    float: right;
+    margin-top: 6px;
+    margin-right: 20px;
+    height: 35px;
+    width: 125px;
+    font-size: 20px;
+    font-weight: 600;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    border: none;
+    border-radius: 5px;
+    background: transparent;
+}
+.timer-object1 button:hover {
+    transition: background 500ms;
+    background-color: rgba(0, 0, 0, 0.2);
+	cursor: pointer;
+}
+
+.timer-object1 img {
+    margin-top: 5px;
+    float: left;
+    margin-right: 5px;
+}
+
+.timer-object1:hover .drop-content{
+    margin-top: 5px;
+    display: list-item;
+}
+
+.menu-drop {
+    display: inline-block;
+    position: relative;
+}
+.drop-content {
+    margin-right: 25px;
+    display: none;
+    position: absolute;
+    z-index: 1;
+}
+.drop-content a {
+    align-items: center;
+    color: white;
+    margin-left: -3px;
+    padding: 5px 0px;
+    height: 30px;
+    width: 123px;
+    text-decoration: none;
+    border-radius: 5px;
+    display: block;
+}
+.drop-content a:hover {
+    transition: background 500ms;
+    background-color: rgba(0, 0, 0, 0.2);
+	cursor: pointer;
+}
+.menu-drop:hover .drop-content{
+    display: block;
+}
+
+.container {
+    display: flex;
+    justify-content: left;
+    width: 75%;
+    position: absolute;
+    margin-top: 250px;
+    left: 5%;
+}
+
+body .background {
+    position: absolute;
+    width: 100%;
+	height: 100%;
+    text-align: center;
+    /* adicionando imagem de fundo */
+    /*background: url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/123024/leopard2.jpg');*/
+    background-repeat: no-repeat;
+    object-fit:cover;
+    align-items: center;
+    background-color: #2c2c2c;
+}
+
+h1 {
+    padding-top: 00px;
+    font-size: 90px;
+    color: white;
+    font-family: "acta-display", serif;
+    font-weight: 400;
+    line-height: 100px;
+    letter-spacing: -1px;
+    margin: 20px 0 60px;
+    float: left;
+}
+
+.container .selection-button {
+    display: inline-block;
+    position: relative;
+    text-align: center;
+    height: 35px;
+    width: 120px;
+    font-size: 20px;
+    font-weight: 600;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    border: none;
+    border-radius: 5px;
+    background: transparent;
+    cursor: pointer;
+}
+.container .selection-button a:hover {
+    transition: background 500ms;
+    background-color: rgba(0, 0, 0, 0.2);
+	cursor: pointer;
+}
+
+</style>
+
+<body>
+    <img src="backgroundres.png" class="background">
+    <header>
+        <div class="header">
+            <a href="#"><img src="logo1.png"></a> 
+            <div class="header-right">
+                <div class="timer-object1">
+                    <span id="menu-trigger" class="menu-trigger">
+                        <i class="fa fa-plus"></i>
+                        <i class="fa fa-minus"></i>
+                    </span>
+                    <button type="button" name="drop" class="menu-menu"> Theme
+                        <img src="lua1.png">
+                        <div class="drop-content">
+                            <a href='#Sol'><img src="lua1.png"> Light</a>
+                            <a href='#Lua'><img src="lua1.png"> Dark</a>
+                        </div>
+                    </button>
+                </div>
+
+                
+                
+                <div class="timer-object2">
+                    <body onload="startTime()">
+                        <div id="txt"></div>
+                    </body>	
+                </div>
+            
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1>Minerva<br> Horologium</h1>
+        <button type="button" class="btn-grad"> Start </button>
+    </div>
+    <footer>
+        <div class="footer-container">
+            <p>(C) 2022 MuFox, Inc.</p>
+        </div>
+        <button type="button" class="gitLink"> GitHub<a href="https://github.com/RicardoCSR"></a></button>
+    </footer>
+</body>
+
+</html>
