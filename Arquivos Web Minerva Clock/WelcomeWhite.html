@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     
-    <title>Inicial</title>
+    <title>Welcome</title>
 </head>
 
 
@@ -81,42 +81,39 @@ html, body {
     background: transparent url('sol1.png') left center no-repeat;
 }
 
-.container-button{
-    height: 650px;
-    display: flex;
-    float: right;
+header {
     position: relative;
-    border: none;
-    margin-top: 10px;
-    text-align: center;
-    background: transparent;
 }
 
-.container-button button {
+.voltar {
+    width: 100px;
+    height: 100px;
     font-size: 40px;
     text-decoration: none;
-    width: 75px;
     background: transparent;
     border: none;
+    text-align: center;
 }
 
-.container-button button:hover {
-    border-radius: 20px 0px 0px 20px;
+.voltar button:hover {
+    border-radius: 50px;
     transition: background 1s;
     background-color: rgba(0, 0, 0, 0.5);
     color: rgb(209, 95, 2);   
     text-decoration: none;
 }
 
+
+
 .footer-container {
+    margin-top: 250px;
     position: relative;
-    margin-top: 775px;
     float: right;
     font-size: 16px;
     font-weight: 400;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    color: white;
-    margin-right: 10px;
+    color: black;
+    margin-right: 75px;
     
 }
 
@@ -126,10 +123,10 @@ html, body {
     text-align: center;
     position: relative;
     padding: 5px 15px 5px 15px;
-    margin-top: 780px;
+    margin-top: 250px;
     background: transparent;
     border: none;
-    color: white;
+    color: black;
     text-decoration: none;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     font-weight: bold;
@@ -140,13 +137,13 @@ html, body {
     text-align: center;
     position: relative;
     padding: 5px 15px 5px 15px;
-    margin-top: 780px;
+    margin-top: 250px;
     float: left;
     transition: background 1s;
     background-color: rgba(0, 0, 0, 0.2);
     border: none;
     border-radius: 5px;
-    color: white;
+    color: black;
     text-decoration: none;
     cursor: pointer;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -160,7 +157,7 @@ html, body {
 .gitLink a:link, a:visited  {
     display: inline-block;
     margin-bottom: 10;
-    color: white;
+    color: black;
     text-align: center;
     text-decoration: none;
 }
@@ -184,7 +181,7 @@ html, body {
     float: right;
     font-weight: 600;
     font-size: 20px;
-    color: white;
+    color: black;
     text-align: right;
     padding: 27px 16px;
     text-decoration: none;
@@ -198,7 +195,7 @@ html, body {
     float: right;
     font-weight: 600;
     font-size: 20px;
-    color: white;
+    color: black;
     text-align: right;
     margin-right: 10px;
     padding: 16px 1px;
@@ -213,7 +210,7 @@ html, body {
     background: transparent url('lua1.png') left center no-repeat;
     font-weight: 600;
     font-size: 20px;
-    color: white;
+    color: wblackhite;
     min-width: 115px;
     border: none;
     border-radius: 5px;
@@ -242,7 +239,7 @@ html, body {
 .subnavbtn li a {
     padding-left: 15px;
     text-align: right;
-    color: white;
+    color: black;
     text-decoration: none;
 }
 
@@ -250,7 +247,7 @@ html, body {
     border-radius: 5px;
     transition: background 1s;
 	cursor: pointer;
-    color: white;
+    color: black;
 }
 
 .timer-object1 button {
@@ -261,7 +258,7 @@ html, body {
     width: 125px;
     font-size: 20px;
     font-weight: 600;
-    color: white;
+    color: black;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     border: none;
     border-radius: 10px 10px 0px 0px;
@@ -299,7 +296,7 @@ html, body {
 
 .drop-content a {
     align-items: center;
-    color: white;
+    color: black;
     margin-left: -3px;
     padding: 5px 0px;
     height: 30px;
@@ -320,12 +317,72 @@ html, body {
 }
 
 .container {
-    display: flex;
-    justify-content: left;
-    width: 75%;
-    position: absolute;
-    margin-top: 250px;
-    left: 2%;
+    color: black;
+    text-align: center;
+    position: relative;
+    margin-top: 50px;
+}
+
+.count-page {
+    margin-top: 50px;
+    text-align: center;
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.count-page button {
+    width: 15px;
+    height: 15px;
+    background: black;
+    border-radius: 10px;
+    margin-right: 50px;
+    border: none;
+    text-align: center;
+    position: relative;
+}
+
+.button-pass {
+    margin-top: 50px;
+    text-align: center;
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+.button-pass button {
+    border-radius: 25px;
+    width: 50px;
+    height: 50px;
+    border-radius: 25px;
+    margin-right: 50px;
+    border: none;
+    text-align: center;
+    position: relative;
+}
+
+.button-pass img {
+    border-radius: 25px;
+    padding-top: 2px;
+    width: 45px;
+    height: 45px;
+}
+
+.button-pass button:hover {
+    transition: background 500ms;
+    background: black;
+    border-radius: 25px;
+    width: 50px;
+    height: 50px;
+    border-radius: 25px;
+    margin-right: 50px;
+    border: none;
+    text-align: center;
+    position: relative;
+}
+
+.unmarked{
+    color: black;
+    opacity: 0.2;
 }
 
 body .background {
@@ -338,26 +395,35 @@ body .background {
     background-repeat: no-repeat;
     object-fit:cover;
     align-items: center;
-    background-color: #2c2c2c;
+    background-color: #e6e6e6;
 }
 
 h1 {
     font-size: 90px;
-    color: white;
+    color: black;
     font-family: "acta-display", serif;
     font-weight: 400;
     line-height: 100px;
     letter-spacing: -1px;
-    margin: 20px 0 60px;
-    float: left;
 }
+h2 {
+    font-size: 24px;
+    color: black;
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-weight: 400;
+    line-height: 30px;
+    text-align: center;
+    letter-spacing: -1px;
+    margin-top: 0px;
+}
+
 </style>
 
 <body id="background-Color">
-    <img src="backgroundres.png" class="background">
+    <img src="" class="background">
     <header>
         <div class="header">
-            <a href="#"><img src="logo1.png"></a> 
+            <a href="indexWhite.html"><img src="logo1.png"></a> 
             <div class="header-right">
                 <div class="timer-object1">
                     <span id="menu-trigger" class="menu-trigger">
@@ -365,10 +431,10 @@ h1 {
                         <i class="fa fa-minus"></i>
                     </span>
                     <button type="button" name="drop" class="menu-menu"> Theme
-                        <img src="lua1.png">
+                        <img src="sol1.png">
                         <div class="drop-content">
-                            <span id="bright"><a href="IndexWhite.html"><img src="sol1.png"> Light</a></span>
-                            <span><a href="IndexBlack.html"><img src="lua1.png"> Dark</a></span>
+                            <span id="bright"><a href="WelcomeWhite.html"><img src="sol1.png"> Light</a></span>
+                            <span><a href="WelcomeBlack.html"><img src="lua1.png"> Dark</a></span>
                         </div>
                     </button>
                 </div>
@@ -383,14 +449,24 @@ h1 {
             
             </div>
         </div>
-    </header>
 
     <div class="container">
-        <h1>Minerva<br> Horologium</h1>
+        <h1>WELCOME</h1>
+        <h2>Minerva Project is be develop by the love of Nixie tube that<br> 
+            was started produced in the 50's to the modern LCD displays, inspiration of came <br>
+            with the challenger of unity old with new.</h2>
     </div>
-    <div class="container-button">
-        <button type="button"> <a href="WelcomeBlack.html"><img src="direito2.png"> </a></button>
+    <div class="count-page">
+        <a href="WelcomeWhite.html"><button class="marked" type="button"></button></a>
+        <a href="IndexWhite.html"><button class="unmarked" type="button"></button></a>
+        <a href="Welcome.html"><button class="unmarked" type="button"></button></a>
+        <a href="Welcome.html"><button class="unmarked" type="button"></button></a>
+        <a href="Welcome.html"><button class="unmarked" type="button"></button></a>
     </div>
+    <div class="button-pass">
+        <button class="voltar" type="button"> <a href="NameWhite.html"><img src="direito.png"> </a></button>
+    </div>
+    </header>
     <footer>
         <div class="footer-container">
             <p>(C) 2022 MuFox, Inc.</p>
