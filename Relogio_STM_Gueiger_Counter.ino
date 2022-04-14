@@ -155,7 +155,7 @@ int graphCounts;                // Armazena o valor de contagem para gráfico Pe
 double avgCounts = 0;           // Média de Contagens
 double avgCPM = 0;              // Média de Contagens por Minuto
 double avgUSV = 0;              // Média de µSv/h
-double avgSvHour = 0;           // Média de mSv/h
+double avgSvHour;               // Média de mSv/h
 double sumCPM = 0;              // Double para calculo Contagens
 double sumUSV = 0;              // Double para calculo µSv/h 
 double sumsvHour = 0;           // Double para calculo Media mSv/h
@@ -257,23 +257,6 @@ byte hourBias = 0;              // Byte para Long horas x fuso (12 ~ 24)
 byte minuteBias = 0;            // Byte para Long minutos x 60 
 byte secsBias = 0;              // Byte para Long segundos x 60
 unsigned long secs;             // Armazena Horario Segundos sem conversão
-
-    // DADOS NIXIE
-
-int numberArray[4] = {0};       // Armazena os Dados de flashNixie
-int flashNixie = 0;             // Armazena valor para Inserção no Driver
-int nixieCounts = 0;            // Armazena o Pino a ser acionado no Driver
-int nixieAnode = 0;             // Armazena o Pino a ser acionado no Optotransistor
-int speedEffect = 25;           // Taxa de atualização dos efeitos de 1 Nixie;
-
-float refreshNixie = 7;         // Armazena taxa de atualização do Nixie
-
-int lowerHours = hours % 10;
-int upperHours = hours - lowerHours;
-int lowerMins = mins % 10;
-int upperMins = mins - lowerMins;
-int lowerSeconds = secs % 10;
-int upperSeconds = secs - lowerSeconds;
 
     // DADOS TIMERS 
 unsigned long period = 0;       // Armazena periodo para comparador
@@ -465,9 +448,6 @@ byte weatherGraph = 0;
 // batteryStyleMode = 3 Weather Pressão Atmosférica
 
 
-
-int* prt;           // CORRIGE LEITURA PARA ARQUITETURA ARM
-
 // ------------------------------ CONFIGURACAO DOS PINOS DE SENSORES E DISPLAY --------
 
 int ldrPinPower = PA0;          // Pino de alimentação do Sensor LDR
@@ -478,16 +458,6 @@ int batteryLevel = PB0;         // Pino de Leitura da Bateria
 int batteryCharger = PB1;       // Pino de Leitura Recarga Bateria
 
 int dspPinPower = PA3;          // Pino de BackLight do Display ST7789
-
-int pinAnode0 = PA15;           // Pino Nixie Anodo Hora 1
-int pinAnode1 = PA12;           // Pino Nixie Anodo Hora 2
-int pinAnode2 = PB2;            // Pino Nixie Anodo Minuto 1
-int pinAnode3 = PB1;            // Pino Nixie Anodo Minuto 2
-
-int driverPinA = PA8;           // Pino Driver Catodo A
-int driverPinB = PA9;           // Pino Driver Catodo B
-int driverPinC = PA10;          // Pino Driver Catodo C
-int driverPinD = PA11;          // Pino Driver Catodo D
 
 // ------------------------------ CORES DISPLAY STY7789 -------------------------------
 
@@ -576,16 +546,6 @@ volatile int repetitions = 2000;
 #define BUTTON_UP PB14          // Sobe no Menu 
 #define BUTTON_DOWN PB15        // Desce no Menu 
 
-#define pinAnode0 PA15          // Pino Nixie Anodo Hora 1 
-#define pinAnode1 PA12          // Pino Nixie Anodo Hora 2
-#define pinAnode2 PC14          // Pino Nixie Anodo Minuto 1
-#define pinAnode3 PC15          // Pino Nixie Anodo Minuto 2
-
-#define driverPinA PA8          // Pino Driver Catodo A
-#define driverPinB PA9          // Pino Driver Catodo B
-#define driverPinC PA10         // Pino Driver Catodo C
-#define driverPinD PA11         // Pino Driver Catodo D
-
 #define batteryCharger PB1      // Pino EN Bateria
 
 #define seaLevelPressure_HPA (1013.25)
@@ -642,7 +602,8 @@ byte teste = 0;
 
 void setup() {
 
-    Serial.begin(9600);
+    Serial.begin(500000);
+    Serial.println("Inicializado");
     analogWrite (dspPinPower, 0);
 
     LowPower.begin();
@@ -654,16 +615,6 @@ void setup() {
     pinMode(BUTTON_DOWN, INPUT_PULLUP);
     pinMode(BUTTON_MODE, INPUT_PULLUP);
     pinMode(BUTTON_SLEEP, INPUT_PULLUP);
-
-    pinMode(pinAnode0, OUTPUT);
-    pinMode(pinAnode1, OUTPUT);
-    pinMode(pinAnode2, OUTPUT);
-    pinMode(pinAnode3, OUTPUT);
-
-    pinMode(driverPinA, OUTPUT);
-    pinMode(driverPinB, OUTPUT);
-    pinMode(driverPinC, OUTPUT);
-    pinMode(driverPinD, OUTPUT);
 
     pinMode(batteryCharger, INPUT);
 
@@ -701,7 +652,6 @@ void loop(void) {
         }
         statusGeiger();
         readBME();
-        nixie();
 
     // ------------------------------- COMANDO BATERIA LEITURA OPERACIONAL---------------------
         battery = analogRead(batteryLevel);
@@ -1621,7 +1571,7 @@ void exitHibernMode() {
 
 void startLogo() {
     tft.setSwapBytes(true);
-    tft.pushImage(0, 0, 240, 240, abertura);
+    //tft.pushImage(0, 0, 240, 240, abertura);
 }
 
 // ------------------------------ FUNCAO DISPLAY MENUS OPERACIONAL ---------------------------
@@ -2017,15 +1967,15 @@ void graphGeigerGeneratorStyle0() {   // incluir média para leitura.
     }
 
     if (countsSecs < 2) {
-        pixelGraphGeiger = map(countsSecs, 1, 2, 1, 5);
+        pixelGraphGeiger = map(countsSecs, 1, 5, 1, 2);
     } else if (countsSecs < 5) {
-        pixelGraphGeiger = map(countsSecs, 3, 5, 6, 15);
+        pixelGraphGeiger = map(countsSecs, 6, 15, 3, 5);
     } else if (countsSecs < 10) {
-        pixelGraphGeiger = map(countsSecs, 6, 10, 16, 25);
+        pixelGraphGeiger = map(countsSecs, 16, 25, 6, 10);
     } else if (countsSecs < 20) {
-        pixelGraphGeiger = map(countsSecs, 11, 20, 26, 45);
+        pixelGraphGeiger = map(countsSecs, 26, 45, 11, 20);
     } else if (countsSecs < 50) {
-        pixelGraphGeiger = map(countsSecs, 21, 50, 46, 52);
+        pixelGraphGeiger = map(countsSecs, 46, 52, 21, 50);
     } else if (countsSecs < 100) {
         pixelGraphGeiger = map(countsSecs, 51, 100, 53, 80);
     } else if (countsSecs < 200) {
@@ -3170,155 +3120,6 @@ void statusBright() {
     }
 }
 
-// ------------------------------- FUNCAO NIXIE WRITER ------------------------------------
-void nixie() {
-    if( upperSeconds >= 10)   upperSeconds = upperSeconds / 10;
-    if( upperMins >= 10)      upperMins = upperMins / 10;
-    if( upperHours >= 10)     upperHours = upperHours / 10;
-
-    effectNixieSelected();
-
-    // ------------ AJUSTAR AS VARIAVEIS AO PROGRAMA PADRÃO -----------------------
-
-    numberArray[0] = upperHours;
-    numberArray[1] = lowerHours;
-    numberArray[2] = upperMins;
-    numberArray[3] = lowerMins;
-
-    DisplayNumberString(numberArray);
-}
-
-// void DisplayNumberString (int* array)
-void DisplayNumberString (int* array) {
-    DisplayNumberSet(0,array[0]);   
-    DisplayNumberSet(1,array[1]);   
-    DisplayNumberSet(2,array[2]);   
-    DisplayNumberSet(3,array[3]);    
-}
-
-void DisplayNumberSet(int anod, int num1) {
-    int anodPin;
-    int a, b, c, d;
-
-    anodPin =  pinAnode0;   
-
-    switch(anod) {
-        case 0:    anodPin =  pinAnode0;    break;
-        case 1:    anodPin =  pinAnode1;    break;
-        case 2:    anodPin =  pinAnode2;    break;
-        case 3:    anodPin =  pinAnode3;    break;
-    }  
-
-    switch(num1) {
-        case 0: a = 0; b = 0; c = 0; d = 0; break;
-        case 1: a = 1; b = 0; c = 0; d = 0; break;
-        case 2: a = 0; b = 1; c = 0; d = 0; break;
-        case 3: a = 1; b = 1; c = 0; d = 0; break;
-        case 4: a = 0; b = 0; c = 1; d = 0; break;
-        case 5: a = 1; b = 0; c = 1; d = 0; break;
-        case 6: a = 0; b = 1; c = 1; d = 0; break;
-        case 7: a = 1; b = 1; c = 1; d = 0; break;
-        case 8: a = 0; b = 0; c = 0; d = 1; break;
-        case 9: a = 1; b = 0; c = 0; d = 1; break;
-    }  
-    
-    // ---------------------------------- CORRIGIR ---------------------------------
-
-    // ---------------------------------------------------------------------------
-
-    digitalWrite(anodPin, HIGH);   
-    //delay(refreshNixie);
-    digitalWrite(anodPin, LOW);
-}
-
-void effectNixieSelected () {
-    unsigned long nixieEffect = millis();
-
-    if (effectModeNixie == 1) {
-        if (compareTimeMins != mins) {
-            if (millis() - nixieEffect >= speedEffect) {
-                nixieEffect = millis();
-                nixieCounts ++; 
-                if (nixieAnode < 4) {
-                    if (nixieCounts <= 10) {
-                        switch (nixieCounts) {
-                            case 1: flashNixie = 6; break;
-                            case 2: flashNixie = 7; break;
-                            case 3: flashNixie = 5; break;
-                            case 4: flashNixie = 8; break;
-                            case 5: flashNixie = 4; break;
-                            case 6: flashNixie = 3; break;
-                            case 7: flashNixie = 9; break;
-                            case 8: flashNixie = 2; break;
-                            case 9: flashNixie = 0; break;
-                            case 10: flashNixie = 1; break;
-                        }
-                    }  
-                    numberArray[nixieAnode] = flashNixie;
-                    prt = &nixieAnode;
-                    DisplayNumberString(prt);
-                }
-                if (nixieCounts > 9) {
-                    nixieCounts = 0;
-                    numberArray[0] = upperHours; 
-                    numberArray[1] = lowerHours;
-                    numberArray[2] = upperMins;
-                    numberArray[3] = lowerMins;
-                    DisplayNumberString(prt);
-                    nixieAnode ++;
-                } 
-                if (nixieAnode == 4) {
-                    nixieAnode = 0;
-                    compareTimeMins = mins;
-                }
-            }
-        }
-    }
-    if (effectModeNixie == 2) {
-        if (compareTimeMins != mins) {
-            if (millis() - nixieEffect >= speedEffect) {
-                nixieEffect = millis();
-                nixieCounts ++; 
-                if (nixieAnode < 4) {
-                    if (nixieCounts <= 10) {
-                        switch (nixieCounts) {
-                            case 1: flashNixie = 9; break;
-                            case 2: flashNixie = 8; break;
-                            case 3: flashNixie = 7; break;
-                            case 4: flashNixie = 6; break;
-                            case 5: flashNixie = 5; break;
-                            case 6: flashNixie = 4; break;
-                            case 7: flashNixie = 3; break;
-                            case 8: flashNixie = 2; break;
-                            case 9: flashNixie = 1; break;
-                            case 10: flashNixie = 0; break;
-                        }
-                    }  
-                    numberArray[nixieAnode] = flashNixie;
-                    DisplayNumberString(prt);
-                }
-                if (nixieCounts > 9) {
-                    nixieCounts = 0;
-                    numberArray[0] = upperHours; 
-                    numberArray[1] = lowerHours;
-                    numberArray[2] = upperMins;
-                    numberArray[3] = lowerMins;
-                    DisplayNumberString(prt);
-                    nixieAnode ++;
-                } 
-                if (nixieAnode == 4) {
-                    nixieAnode = 0;
-                    compareTimeMins = mins;
-                }
-            }
-        }
-    } else {
-        numberArray[0] = upperHours;
-        numberArray[1] = lowerHours;
-        numberArray[2] = upperMins;
-        numberArray[3] = lowerMins;
-    }
-}
 
 
 
