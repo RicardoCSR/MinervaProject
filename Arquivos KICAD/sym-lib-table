@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name Projeto-Relogio-Pulso-2Displays-rescue)(type Legacy)(uri "${KIPRJMOD}/Projeto Relogio Pulso 2Displays-rescue.lib")(options "")(descr ""))
+)
