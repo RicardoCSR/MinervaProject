@@ -84,46 +84,65 @@ SN74141 : True Table // Podendo utilizar k155id1 ou SN74141
 - H, H, H, L N
 - H, H, H, H N
 
-ST7789 - Alimentação Ideal 3v3 possível 5V mas com aquecimento
+ILI9486_DRIVER - Alimentação Ideal 3v3
+TFT 8-BIT PARALLEL
 
-STM32F401CC
+STM32L476RG
 
 - R       Botao Hard Reset (Apenas para Desenvolvimento)
 
-- PA0     Alimentacao LDR
-- PA1     Pino DC ST7789
-- PA2     Pino RST ST7789
-- PA3     Pino BLK ST7789
-- PA4     Geiger Sensor
-- PA5     Pino SCL ST7789 
-- PA6     LDR Sensor
-- PA7     Pino SDA ST7789
-- PA8     Pino Nixie A
-- PA9     Pino Nixie B
-- PA10    Pino Nixie C
-- PA11    Pino Nixie D
-- PA12    anode Nixie B
-- PA15    anode Nixie A
+- PA0     TFT_RD
+- PA1     TFT_WD
+- PA2     
+- PA3     
+- PA4     TFT_DC
+- PA5     
+- PA6    
+- PA7     
+- PA8     TFT_D7
+- PA9     TFT_D1
+- PA10    TFT_D2
+- PA11    
+- PA12    
+- PA15    
 
-- PB0     Nivel Bateria
-- PB1     anode Nixie D
-- PB2     anode Nixie C
-- PB3     Pino SCL BME280 // EM TESTE
-- PB4      
-- PB5     Pino SDA BME280 // EM TESTE
-- PB6     **USART TX1
-- PB7     **USART RX1
-- PB8     Buzzer
+- PB0     TFT_CS
+- PB1    
+- PB2     
+- PB3     TFT_D3
+- PB4     TFT_D5
+- PB5     TFT_D4
+- PB6     
+- PB7     
+- PB8     
 - PB9     
-- PB10    
-- PB12    Botao Hibernar
-- PB13    Botao Menu
-- PB14    Botao Up
-- PB15    Botao Down
+- PB10    TFT_D6
+- PB12   
+- PB13    
+- PB14  
+- PB15   
 
-- PC13    Leitura Bat EN
+- PC0
+- PC1     TFT_RST
+- PC2
+- PC3
+- PC4
+- PC5
+- PC6
+- PC7     TFT_D0
+- PC8
+- PC9
+- PC10
+- PC11
+- PC12
+- PC13   
 - PC14    
 - PC15    
+
+- PD2
+
+- PH0
+- PH1
 
 ESP32S
 
@@ -161,4 +180,4 @@ ESP32S
 - GPIO36
 - GPIO39
 
-Detectado falha grave na execução conjunta dos modulos de Nixie e ST7789, não sendo possível a parada da execução sem a perda de dados comprometendo assim o funcionamento e o projeto, sendo então continuado a utilização do microcontrolador ARM STM32F401CC e adicionado com interação ao Microcontrolador ESP32, escolhido pela dimensão capacidade de armazenamento e poder de processamento tendo assim, novas opções e funcionalidade como rede Bluetooth e Wi-Fi.
+Detectado falha grave na execução conjunta dos modulos de Nixie e ILI9486, não sendo possível a parada da execução sem a perda de dados comprometendo assim o funcionamento e o projeto, sendo então continuado a utilização do microcontrolador ARM STM32F401CC e adicionado com interação ao Microcontrolador ESP32, escolhido pela dimensão capacidade de armazenamento e poder de processamento tendo assim, novas opções e funcionalidade como rede Bluetooth e Wi-Fi.
