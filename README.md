@@ -32,36 +32,31 @@ Projeto Minerva da paixão pelos clássicos tubos Nixie desenvolvidos na década
 - sieverts (µSv e mSv)
 - Hora/Data
 - Calendário Completo
+- Calculadora
+- Grandezas e Medidas
 - Estação do Ano (Primavera)
 - Semana (Semana 39)
 - Modo de ajustes dos parâmetros 
 
 Sendo organizados pelos Menus:
+
 Geiger                              - Apresenta Contagem por Segundo, Leitura Sieverts nSv/s
 Dosimeter                           - Apresenta valor Dosimetro, Tempo de atualização, faixa de risco de Sv/h
 Geiger GF                           - Apresenta gráfico dos valores apresentados nas 24 Horas do Geiger
-Weather                             - Apresenta Temperatura, Umidade, Pressão Atmosférica, mínima e máxima e previsão via Zambretti 
+Calendar                            - Apresenta Calendário
+Timer                               - Apresenta Alarme, Contador e Tempo de Volta
 Weather GF Temperature              - Apresenta gráfico dos valores apresentados nas 24 Horas do Temperatura
 Weather GF Humidity                 - Apresenta gráfico dos valores apresentados nas 24 Horas do Umidade
 Weather GF Atmosferic Pressure      - Apresenta gráfico dos valores apresentados nas 24 Horas do Pressão Atmosferica
-Calendar                            - Apresenta Calendário
-Timer                               - Apresenta Alarme, Contador e Tempo de Volta
-Ajust Time                          - Apresenta ajuste do Relógio
-Ajust Data                          - Apresenta ajuste da Data
-Ajust Bright                        - Apresenta ajuste de Brilho da Tela
-
-Ajustes Gráficos sendo:
+Weather                             - Apresenta Temperatura, Umidade, Pressão Atmosférica, mínima e máxima e previsão via 
+User                                - Apresenta Configurações básica de nome e imagem de Perfil
+Calculator                          - Apresenta Calculadora de Operação Simples (Modendo ser extender a outros modelos)
+Gerador de Sinais                   - Apresenta função de gerador de Sinais de 3.3V
 Nixie Settings                      - Apresenta ajuste de animação Nixie
-Battery Settings                    - Apresenta ajuste de bateria
-Custom Color                        - Apresenta ajuste de cores de menus
-Graphic Settings 1                  - Apresenta ajuste de linhas de gráfico
-Graphic Settings 2                  - Apresenta estilos gráfico
-Time Settings                       - Apresenta ajuste de tempo, 12H/24H H/M/S, H/M
-Background Settings                 - Apresenta estilo de Plano de Fundo
+WiFi Settings                       - Apresenta Configurações de Acesso a rede externa
+Settings                            - Apresenta Configurações de Ajuste da Tela
+
 Database                            - Apresenta valores de todas as variaveis presentes (USO DESENVOLVIMENTO).
-
-
-Lista Terminais Utilizados STM32F401CCU6  26/02/2022
 
 Componentes e suas caracteristicas
 
@@ -87,7 +82,7 @@ SN74141 : True Table // Podendo utilizar k155id1 ou SN74141
 ILI9486_DRIVER - Alimentação Ideal 3v3
 TFT 8-BIT PARALLEL
 
-STM32L476RG
+Lista Terminais Utilizados STM32L476RG  29/08/2022
 
 - R       Botao Hard Reset (Apenas para Desenvolvimento)
 
@@ -144,7 +139,7 @@ STM32L476RG
 - PH0
 - PH1
 
-ESP32S
+Lista Terminais Utilizados ESP32S  29/08/2022
 
 - R       Botao Hard Reset
 
@@ -180,4 +175,4 @@ ESP32S
 - GPIO36
 - GPIO39
 
-Detectado falha grave na execução conjunta dos modulos de Nixie e ILI9486, não sendo possível a parada da execução sem a perda de dados comprometendo assim o funcionamento e o projeto, sendo então continuado a utilização do microcontrolador ARM STM32F401CC e adicionado com interação ao Microcontrolador ESP32, escolhido pela dimensão capacidade de armazenamento e poder de processamento tendo assim, novas opções e funcionalidade como rede Bluetooth e Wi-Fi.
+*Projeto alterado para a Rev.3 sendo substituido o display ST7789 para o modelo ILI9486 de 480x320 em 8-Bit Paralelo pela velocidade de carregamento e estabilidade durante execuções e aplicações que envolvem banco de dados. O microcontrolador anterior STM32F401CCU6 substituido pelo modelo STM32L476RG de maior banda de memoria e expansão. Podendo ser substituido por um modelo mais economico.
