@@ -1,4 +1,4 @@
-/*
+ /*
 Lista Terminais Utilizados STM32F401CCU6
 
 BRANCO -    COMANDOS (BOTOES)
@@ -1244,7 +1244,92 @@ void dosimeterLoad() {
   tft.drawString("15", 274, 225, GFXFF);
   tft.drawString("21", 374, 225, GFXFF);
 
+  tft.drawString("Now:", 187, 245, GFXFF);
 } 
+
+void calendar() {
+  switch (month) {
+    case 1:
+      tft.fillRect(10, 75, 350, 185, januaryColor);
+      tft.fillRoundRect(10, 267, 100, 30, 5, decemberColor);
+      tft.fillRoundRect(115, 267, 140, 30, 5, januaryColor);
+      tft.fillRoundRect(260, 267, 100, 30, 5, februeryColor);
+    break;
+    case 2:
+      tft.fillRect(10, 75, 350, 185, februeryColor);
+      tft.fillRoundRect(10, 267, 100, 30, 5, januaryColor);
+      tft.fillRoundRect(115, 267, 140, 30, 5, februeryColor);
+      tft.fillRoundRect(260, 267, 100, 30, 5, marchColor);
+    break;
+    case 3:
+      tft.fillRect(10, 75, 350, 185, marchColor);
+      tft.fillRoundRect(10, 267, 100, 30, 5, februeryColor);
+      tft.fillRoundRect(115, 267, 140, 30, 5, marchColor);
+      tft.fillRoundRect(260, 267, 100, 30, 5, aprilColor);
+    break;
+    case 4:
+      tft.fillRect(10, 75, 350, 185, aprilColor);
+      tft.fillRoundRect(10, 267, 100, 30, 5, marchColor);
+      tft.fillRoundRect(115, 267, 140, 30, 5, aprilColor);
+      tft.fillRoundRect(260, 267, 100, 30, 5, mayColor);
+    break;
+    case 5:
+      tft.fillRect(10, 75, 350, 185, mayColor);
+      tft.fillRoundRect(10, 267, 100, 30, 5, aprilColor);
+      tft.fillRoundRect(115, 267, 140, 30, 5, mayColor);
+      tft.fillRoundRect(260, 267, 100, 30, 5, juneColor);
+    break;
+    case 6:
+      tft.fillRect(10, 75, 350, 185, juneColor);
+      tft.fillRoundRect(10, 267, 100, 30, 5, mayColor);
+      tft.fillRoundRect(115, 267, 140, 30, 5, juneColor);
+      tft.fillRoundRect(260, 267, 100, 30, 5, julyColor);
+    break;
+    case 7:
+      tft.fillRect(10, 75, 350, 185, julyColor);
+      tft.fillRoundRect(10, 267, 100, 30, 5, juneColor);
+      tft.fillRoundRect(115, 267, 140, 30, 5, julyColor);
+      tft.fillRoundRect(260, 267, 100, 30, 5, augustColor);
+    break;
+    case 8:
+      tft.fillRect(10, 75, 350, 185, augustColor);
+      tft.fillRoundRect(10, 267, 100, 30, 5, julyColor);
+      tft.fillRoundRect(115, 267, 140, 30, 5, augustColor);
+      tft.fillRoundRect(260, 267, 100, 30, 5, septemberColor);
+    break;
+    case 9:
+      tft.fillRect(10, 75, 350, 185, septemberColor);
+      tft.fillRoundRect(10, 267, 100, 30, 5, augustColor);
+      tft.fillRoundRect(115, 267, 140, 30, 5, septemberColor);
+      tft.fillRoundRect(260, 267, 100, 30, 5, octoberColor);
+    break;
+    case 10:
+      tft.fillRect(10, 75, 350, 185, octoberColor);
+      tft.fillRoundRect(10, 267, 100, 30, 5, septemberColor);
+      tft.fillRoundRect(115, 267, 140, 30, 5, octoberColor);
+      tft.fillRoundRect(260, 267, 100, 30, 5, novemberColor);
+    break;
+    case 11:
+      tft.fillRect(10, 75, 350, 185, novemberColor);
+      tft.fillRoundRect(10, 267, 100, 30, 5, octoberColor);
+      tft.fillRoundRect(115, 267, 140, 30, 5, novemberColor);
+      tft.fillRoundRect(260, 267, 100, 30, 5, decemberColor);
+    break;
+    case 12:
+      tft.fillRect(10, 75, 350, 185, decemberColor);
+      tft.fillRoundRect(10, 267, 100, 30, 5, novemberColor);
+      tft.fillRoundRect(115, 267, 140, 30, 5, decemberColor);
+      tft.fillRoundRect(260, 267, 100, 30, 5, januaryColor);
+    break;
+    default:
+      tft.fillRect(10, 75, 350, 185, whiteScript);
+      tft.fillRoundRect(10, 267, 100, 30, 5, whiteScript);
+      tft.fillRoundRect(115, 267, 140, 30, 5, whiteScript);
+      tft.fillRoundRect(260, 267, 100, 30, 5, whiteScript);
+  }
+
+
+}
 
 void telaMenu1() {
   tft.fillScreen(blackScript);
@@ -1336,6 +1421,15 @@ void telaMenu3() {
 
 void telaMenu4() {
   tft.fillScreen(blackScript);
+  i = 1;
+}
+  
+  calendar();
+  home();
+  superiorMenu();
+  wifiLevel();
+  batteryLevel();
+  lockLevel();
 }
 void telaMenu5() {
   tft.fillScreen(blackScript);
