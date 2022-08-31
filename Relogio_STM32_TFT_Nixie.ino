@@ -167,6 +167,9 @@ uint16_t decemberColor = 0x296F;        //0x31307E
 
 uint16_t nixieColor = 0xEAEA;           //0xF16057
 uint16_t dosimeterColor = 0xF234;       //0xFE48AA
+uint16_t highValueColor = 0xD94B;       //0xE1295F
+
+uint16_t middleTimeGraph = 0x7BEF;      //0x7E7E7E
 
 uint16_t wifi_level3 = 0x16BB;          //0x15D9E2
 uint16_t wifi_level2 = 0x053D;          //0x04A7F2
@@ -288,7 +291,7 @@ void loop(void) {
     unsigned long actualTime = millis();
 
   // ------------------------------- HORARIO VIA MILLIS() OPERACIONAL -----------------------
-    secs = millis() / 20 + (long)hourBias * 3600 + (long)minuteBias * 60;
+    secs = millis() / 10 + (long)hourBias * 3600 + (long)minuteBias * 60;
     secsBias = secs % 60;
     mins = (secs / 60) % 60;
     hours = (secs / 3600) % fuso;
@@ -504,14 +507,14 @@ void superiorMenu() {
 
   compareMins = mins;
 
-  if (day < 10) {
+  if ((day > 1) && (day < 10)) {
     tft.drawString("0", 77, 30, GFXFF);
     tft.drawString(stringDayMin, 92, 30, GFXFF);
   } else {
     tft.fillRect(77, 22, 28, 20, blackScript);
   }
 
-  if (month < 10) {
+  if ((month > 1) && (month < 10)) {
     tft.drawString("0", 110, 30, GFXFF);
     tft.drawString(stringMonthMin, 125, 30, GFXFF);
   } else {
@@ -520,14 +523,14 @@ void superiorMenu() {
 
   tft.drawString(stringYearMin, 143, 30, GFXFF);
 
-  if (hours < 10) {
+  if ((hours > 1) && (hours < 10)) {
     tft.drawString("0", 219, 30, GFXFF);
     tft.drawString(stringHourMin, 234, 30, GFXFF);
   } else {
     tft.fillRect(219, 22, 28, 20, blackScript);
   }
 
-  if (mins < 10) {
+  if ((mins > 1) && (mins < 10)) {
     tft.drawString("0", 252, 30, GFXFF);
     tft.drawString(stringMinMin, 267, 30, GFXFF);
   } else {
@@ -1014,7 +1017,6 @@ void dosimeter() {
   tft.drawString("10", 57, 95, GFXFF);
   tft.drawString("100", 172, 95, GFXFF);
   tft.drawString("1K", 286, 95, GFXFF);
-
 }
 
 void dosimeterAlarm() {
@@ -1022,7 +1024,7 @@ void dosimeterAlarm() {
   tft.pushImage(46, 205, 71, 71, icon1);
 }
 
-void dosimeterLoad() { // 198
+void dosimeterLoad() { 
   tft.drawPixel(33, 78, whiteScript);
   tft.drawLine(33, 86, 33, 88, whiteScript);
   tft.drawLine(33, 96, 33, 98, whiteScript);
@@ -1205,9 +1207,44 @@ void dosimeterLoad() { // 198
   tft.drawLine(433, 186, 433, 188, whiteScript);
   tft.drawPixel(433, 196, whiteScript);
 
+  tft.drawLine(32, 208, 32, 213, highValueColor);
+  tft.drawLine(33, 208, 33, 213, highValueColor);
 
+  tft.drawLine(132, 208, 132, 213, highValueColor);
+  tft.drawLine(133, 208, 133, 213, highValueColor);
 
-}
+  tft.drawLine(232, 208, 232, 213, highValueColor);
+  tft.drawLine(233, 208, 233, 213, highValueColor);
+
+  tft.drawLine(332, 208, 332, 213, highValueColor);
+  tft.drawLine(333, 208, 333, 213, highValueColor);
+
+  tft.drawLine(432, 208, 432, 213, highValueColor);
+  tft.drawLine(433, 208, 433, 213, highValueColor);
+
+  tft.drawLine(80, 208, 80, 212, middleTimeGraph);
+  tft.drawLine(181, 208, 181, 212, middleTimeGraph);
+  tft.drawLine(282, 208, 282, 212, middleTimeGraph);
+  tft.drawLine(382, 208, 382, 212, middleTimeGraph);
+
+  tft.setTextDatum(ML_DATUM);
+  tft.setTextColor(whiteScript);
+  tft.setFreeFont(latoRegular24);
+
+  tft.drawString("0", 26, 228, GFXFF);
+  tft.drawString("6", 125, 228, GFXFF);
+  tft.drawString("12", 220, 228, GFXFF);
+  tft.drawString("18", 318, 228, GFXFF);
+  tft.drawString("24", 418, 228, GFXFF);
+
+  tft.setFreeFont(latoRegular14);
+
+  tft.drawString("3", 76, 225, GFXFF);
+  tft.drawString("9", 178, 225, GFXFF);
+  tft.drawString("15", 274, 225, GFXFF);
+  tft.drawString("21", 374, 225, GFXFF);
+
+} 
 
 void telaMenu1() {
   tft.fillScreen(blackScript);
@@ -1252,6 +1289,7 @@ void telaMenu1() {
   batteryLevel();
   lockLevel();
 }
+
 void telaMenu2() {
   tft.fillScreen(blackScript);
   i = 1;
@@ -1280,12 +1318,13 @@ void telaMenu2() {
   wifiLevel();
   batteryLevel();
   lockLevel();
-
 }
+
 void telaMenu3() {
   tft.fillScreen(blackScript);
   i = 1;
 
+  tft.fillRoundRect(15, 267, 100, 30, 5, geigerColor1);
 
   dosimeterLoad();
   home();
@@ -1294,6 +1333,7 @@ void telaMenu3() {
   batteryLevel();
   lockLevel();
 }
+
 void telaMenu4() {
   tft.fillScreen(blackScript);
 }
