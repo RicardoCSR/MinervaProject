@@ -1559,6 +1559,23 @@ void date() {
   }
 }
 
+void seasons() {
+  if (((day >= 20) && (month > 2)) && ((day <21) && (month < 7))) {
+    tft.pushImage(377, 154, 75, 92, spring);
+  } else if (((day >= 21) && (month > 5)) && ((day <23) && (month < 9))) {
+    tft.pushImage(377, 154, 75, 92, summer);
+  } else if (((day >= 23) && (month > 8)) && ((day <22) && (month < 11))) {
+    tft.pushImage(377, 154, 75, 92, autumn);
+  } else if (((day >= 22) && (month > 11)) && ((day < 20) && (month < 4))) {
+    tft.pushImage(377, 154, 75, 92, winter);
+  }
+}
+
+Primavera: 20 de março a 21 de junho; 
+Verão: 21 de junho a 23 de setembro; 
+Outono: 22/23 de setembro a 22 de dezembro.
+inverno: 22 de dezembro a 20 de março; 
+
 void telaMenu1() {
   tft.fillScreen(blackScript);
   i = 1;
@@ -1651,7 +1668,13 @@ void telaMenu4() {
   tft.fillScreen(blackScript);
   i = 1;
   
+  tft.setTextDatum(MC_DATUM);
+  tft.setTextColor(blackScript);
+  tft.setFreeFont(latoRegular14);
+  tft.drawString("SEMANA", 365, 86, GFXFF);
+  tft.drawString("DIA", 396, 105, GFXFF);
 
+  seasons();
   calendar();
   date();
   home();
