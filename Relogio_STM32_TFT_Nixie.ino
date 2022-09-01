@@ -53,11 +53,11 @@ byte compareYear = 0;           // Armazena Data Menu de Ajuste Calendario
 byte hourBias = 0;              // Byte para Long horas x fuso (12 ~ 24)
 byte minuteBias = 0;            // Byte para Long minutos x 60 
 byte secsBias = 0;              // Byte para Long segundos x 60
-unsigned long secs;             // Armazena Horario Segundos sem conversão
+int secs;                       // Armazena Horario Segundos sem conversão
 
 // NIVEL DE BATERIA E WIFI   
 byte compareUpdateBattery;      // Armazena atualização de updateBattery
-byte compareUpdateWiFi;      // Armazena atualização de updateBattery
+byte compareUpdateWiFi;         // Armazena atualização de updateBattery
 
 
 // DADOS TIMERS
@@ -83,9 +83,9 @@ byte lockStyle = 0;
 // lockStyle = 1 Estilo 2 de Trava.
 // lockStyle = 2 Estilo 3 de Trava.
 
-byte day = 1;                   // Armazena dados de dia calendario
-byte month = 1;                 // Armazena dados de mes calendario
-int year = 2022;                // Armazena dados de ano calendario
+int day;                      // Armazena dados de dia calendario
+int month;                    // Armazena dados de mes calendario
+int year;                     // Armazena dados de ano calendario
 
 byte fuso = 1;                  
 //fuso = 0 12 Horas  
@@ -283,19 +283,111 @@ void setup() {
   Wire.begin(0x77);
   climateSensor.begin();
   tft.setRotation(3);
+
+  if (fuso == 1) {
+    fuso = 23;
+  } else {
+    fuso = 11;
+  }
+  Serial.print("Insira Hora: ");
+  while (hours == 0) {
+    if (Serial.available() > 0) {
+      hours = Serial.parseInt();
+      Serial.println(hours);
+    }
+  }
+  Serial.print("Insira Minuto: ");
+  while (mins == 0) {
+    if (Serial.available() > 0) {
+      mins = Serial.parseInt();
+      Serial.println(mins);
+    }
+  }
+  Serial.print("Insira Dia: ");
+  while (day == 0) {
+    if (Serial.available() > 0) {
+      day = Serial.parseInt();
+      Serial.println(day);
+    }
+  }
+
+  Serial.print("Insira Mês: ");
+  while (month == 0) {
+    if (Serial.available() > 0) {
+      month = Serial.parseInt();
+      Serial.println(month);
+    }
+  }
+
+  Serial.print("Insira Ano: ");
+  while (year == 0) {
+    if (Serial.available() > 0) {
+      year = Serial.parseInt();
+      Serial.println(year);
+    }
+  }
 }
 
 void loop(void) {
   // ---------------------- CONFIGURAÇÃO E SETUPS -----------
 
     unsigned long actualTime = millis();
-
+    unsigned long UtlTime;
   // ------------------------------- HORARIO VIA MILLIS() OPERACIONAL -----------------------
-    secs = millis() / 10 + (long)hourBias * 3600 + (long)minuteBias * 60;
+    /*
+    secs = millis() / 1000 + (long)hourBias * 3600 + (long)minuteBias * 60;
     secsBias = secs % 60;
     mins = (secs / 60) % 60;
     hours = (secs / 3600) % fuso;
     time = hours * 100 + mins;
+    */
+    if (millis() - UtlTime < 1000) {
+      UtlTime = millis();
+    } else {
+      secs = millis() / 1000 + (long)hourBias * 3600 + (long)minuteBias * 60;
+    }
+    if (secs > 59) {
+      secs = 0;
+      mins ++;
+      UtlTime = millis();
+
+      if (mins > 59) {
+        mins = 0;
+        hours ++;
+        if (hours > fuso) {
+          day ++;
+          hours = 0;
+          if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) {
+            if (day > 31) {
+              day = 1;
+              month ++;
+              if (month > 12) {
+                year ++;
+                month = 1;
+              }
+            }
+          } else if ( month == 2) {
+            if (year % 400 == 0) {
+              if (day > 29) {
+                day = 1;
+                month ++;
+              }
+            } else {
+              if (day > 28) {
+                day = 1;
+                month ++;
+              }
+            }
+          } else {
+            if (day > 30) {
+              day = 1;
+              month ++;
+            }
+          }
+        }
+      }
+    }
+
 
   // ---------------------- COMANDO DE LOGO ----------
 
@@ -328,17 +420,25 @@ void loop(void) {
     } 
 
   // ---------------------- ATUALIZA RELOGIO -----------
-    if (mins != compareMins) {
+    if (secs != compareSecs) {
+      compareSecs = secs;
+      Serial.print(day);
+      Serial.print("/");
+      Serial.print(month);
+      Serial.print("/");
+      Serial.print(year);
+      Serial.print("     ");
       Serial.print(hours);
       Serial.print(":");
-      Serial.println(mins);
-      superiorMenu();
+      Serial.print(mins);
+      Serial.print(":");
+      Serial.println(secs);  
     }
 
   // ---------------------- ACESSO A PAGINA white white white white white --------------
     if (actualTime - period >= 5 * 1000) {
       period = actualTime;
-      telaMenu = 3;
+      telaMenu = 4;
     }  
 
     if (i == 0) {
@@ -1250,85 +1350,213 @@ void dosimeterLoad() {
 void calendar() {
   switch (month) {
     case 1:
+      tft.setTextDatum(MC_DATUM);
+      tft.setTextColor(whiteScript);
+      tft.setFreeFont(latoRegular14);
+
       tft.fillRect(10, 75, 350, 185, januaryColor);
       tft.fillRoundRect(10, 267, 100, 30, 5, decemberColor);
       tft.fillRoundRect(115, 267, 140, 30, 5, januaryColor);
       tft.fillRoundRect(260, 267, 100, 30, 5, februeryColor);
+      tft.drawString("DECEMBER", 60, 280, GFXFF);
+      tft.drawString("JANUARY", 187, 280, GFXFF);
+      tft.drawString("FEBRUERY", 310, 280, GFXFF);
     break;
     case 2:
+      tft.setTextDatum(MC_DATUM);
+      tft.setTextColor(whiteScript);
+      tft.setFreeFont(latoRegular14);
+
       tft.fillRect(10, 75, 350, 185, februeryColor);
       tft.fillRoundRect(10, 267, 100, 30, 5, januaryColor);
       tft.fillRoundRect(115, 267, 140, 30, 5, februeryColor);
       tft.fillRoundRect(260, 267, 100, 30, 5, marchColor);
+      tft.drawString("JANUARY", 60, 280, GFXFF);
+      tft.drawString("FEBRUERY", 187, 280, GFXFF);
+      tft.drawString("MARCH", 310, 280, GFXFF);
     break;
     case 3:
+      tft.setTextDatum(MC_DATUM);
+      tft.setTextColor(whiteScript);
+      tft.setFreeFont(latoRegular14);
+
       tft.fillRect(10, 75, 350, 185, marchColor);
       tft.fillRoundRect(10, 267, 100, 30, 5, februeryColor);
       tft.fillRoundRect(115, 267, 140, 30, 5, marchColor);
       tft.fillRoundRect(260, 267, 100, 30, 5, aprilColor);
+      tft.drawString("FEBRUERY", 60, 280, GFXFF);
+      tft.drawString("MARCH", 187, 280, GFXFF);
+      tft.drawString("APRIL", 310, 280, GFXFF);
     break;
     case 4:
+      tft.setTextDatum(MC_DATUM);
+      tft.setTextColor(whiteScript);
+      tft.setFreeFont(latoRegular14);
+
       tft.fillRect(10, 75, 350, 185, aprilColor);
       tft.fillRoundRect(10, 267, 100, 30, 5, marchColor);
       tft.fillRoundRect(115, 267, 140, 30, 5, aprilColor);
       tft.fillRoundRect(260, 267, 100, 30, 5, mayColor);
+      tft.drawString("MARCH", 60, 280, GFXFF);
+      tft.drawString("APRIL", 187, 280, GFXFF);
+      tft.drawString("MAY", 310, 280, GFXFF);
     break;
     case 5:
+      tft.setTextDatum(MC_DATUM);
+      tft.setTextColor(whiteScript);
+      tft.setFreeFont(latoRegular14);
+
       tft.fillRect(10, 75, 350, 185, mayColor);
       tft.fillRoundRect(10, 267, 100, 30, 5, aprilColor);
       tft.fillRoundRect(115, 267, 140, 30, 5, mayColor);
       tft.fillRoundRect(260, 267, 100, 30, 5, juneColor);
+      tft.drawString("APRIL", 60, 280, GFXFF);
+      tft.drawString("MAY", 187, 280, GFXFF);
+      tft.drawString("JUNE", 310, 280, GFXFF);
     break;
     case 6:
+      tft.setTextDatum(MC_DATUM);
+      tft.setTextColor(whiteScript);
+      tft.setFreeFont(latoRegular14);
+
       tft.fillRect(10, 75, 350, 185, juneColor);
       tft.fillRoundRect(10, 267, 100, 30, 5, mayColor);
       tft.fillRoundRect(115, 267, 140, 30, 5, juneColor);
       tft.fillRoundRect(260, 267, 100, 30, 5, julyColor);
+      tft.drawString("MAY", 60, 280, GFXFF);
+      tft.drawString("JUNE", 187, 280, GFXFF);
+      tft.drawString("JULY", 310, 280, GFXFF);
     break;
     case 7:
+      tft.setTextDatum(MC_DATUM);
+      tft.setTextColor(whiteScript);
+      tft.setFreeFont(latoRegular14);
+
       tft.fillRect(10, 75, 350, 185, julyColor);
       tft.fillRoundRect(10, 267, 100, 30, 5, juneColor);
       tft.fillRoundRect(115, 267, 140, 30, 5, julyColor);
       tft.fillRoundRect(260, 267, 100, 30, 5, augustColor);
+      tft.drawString("JUNE", 60, 280, GFXFF);
+      tft.drawString("JULY", 187, 280, GFXFF);
+      tft.drawString("AUGUST", 310, 280, GFXFF);
     break;
     case 8:
+      tft.setTextDatum(MC_DATUM);
+      tft.setTextColor(whiteScript);
+      tft.setFreeFont(latoRegular14);
+
       tft.fillRect(10, 75, 350, 185, augustColor);
       tft.fillRoundRect(10, 267, 100, 30, 5, julyColor);
       tft.fillRoundRect(115, 267, 140, 30, 5, augustColor);
       tft.fillRoundRect(260, 267, 100, 30, 5, septemberColor);
+      tft.drawString("JULY", 60, 280, GFXFF);
+      tft.drawString("AUGUST", 187, 280, GFXFF);
+      tft.drawString("SEPTEMBER", 310, 280, GFXFF);
     break;
     case 9:
+      tft.setTextDatum(MC_DATUM);
+      tft.setTextColor(whiteScript);
+      tft.setFreeFont(latoRegular14);
+
       tft.fillRect(10, 75, 350, 185, septemberColor);
       tft.fillRoundRect(10, 267, 100, 30, 5, augustColor);
       tft.fillRoundRect(115, 267, 140, 30, 5, septemberColor);
       tft.fillRoundRect(260, 267, 100, 30, 5, octoberColor);
+      tft.drawString("AUGUST", 60, 280, GFXFF);
+      tft.drawString("SEPTEMBER", 187, 280, GFXFF);
+      tft.drawString("OCTOBER", 310, 280, GFXFF);
     break;
     case 10:
+      tft.setTextDatum(MC_DATUM);
+      tft.setTextColor(whiteScript);
+      tft.setFreeFont(latoRegular14);
+
       tft.fillRect(10, 75, 350, 185, octoberColor);
       tft.fillRoundRect(10, 267, 100, 30, 5, septemberColor);
       tft.fillRoundRect(115, 267, 140, 30, 5, octoberColor);
       tft.fillRoundRect(260, 267, 100, 30, 5, novemberColor);
+      tft.drawString("SEPTEMBER", 60, 280, GFXFF);
+      tft.drawString("OCTOBER", 187, 280, GFXFF);
+      tft.drawString("NOVEMBER", 310, 280, GFXFF);
     break;
     case 11:
+      tft.setTextDatum(MC_DATUM);
+      tft.setTextColor(whiteScript);
+      tft.setFreeFont(latoRegular14);
+
       tft.fillRect(10, 75, 350, 185, novemberColor);
       tft.fillRoundRect(10, 267, 100, 30, 5, octoberColor);
       tft.fillRoundRect(115, 267, 140, 30, 5, novemberColor);
       tft.fillRoundRect(260, 267, 100, 30, 5, decemberColor);
+      tft.drawString("OCTOBER", 60, 280, GFXFF);
+      tft.drawString("NOVEMBER", 187, 280, GFXFF);
+      tft.drawString("DECEMBER", 310, 280, GFXFF);
     break;
     case 12:
+      tft.setTextDatum(MC_DATUM);
+      tft.setTextColor(whiteScript);
+      tft.setFreeFont(latoRegular14);
+
       tft.fillRect(10, 75, 350, 185, decemberColor);
       tft.fillRoundRect(10, 267, 100, 30, 5, novemberColor);
       tft.fillRoundRect(115, 267, 140, 30, 5, decemberColor);
       tft.fillRoundRect(260, 267, 100, 30, 5, januaryColor);
+      tft.drawString("NOVEMBER", 60, 280, GFXFF);
+      tft.drawString("DECEMBER", 187, 280, GFXFF);
+      tft.drawString("JANUARY", 310, 280, GFXFF);
     break;
     default:
-      tft.fillRect(10, 75, 350, 185, whiteScript);
+      tft.setTextDatum(MC_DATUM);
+      tft.setTextColor(whiteScript);
+      tft.setFreeFont(latoRegular14);
+
+      tft.drawRoundRect(10, 75, 350, 185, 5, whiteScript);
       tft.fillRoundRect(10, 267, 100, 30, 5, whiteScript);
       tft.fillRoundRect(115, 267, 140, 30, 5, whiteScript);
       tft.fillRoundRect(260, 267, 100, 30, 5, whiteScript);
+      tft.drawString("UNKNOWN", 60, 280, GFXFF);
+      tft.drawString("UNKNOWN", 187, 280, GFXFF);
+      tft.drawString("UNKNOWN", 310, 280, GFXFF);
+  }
+}
+
+void date() {
+  String stringDay = String(day);
+  String stringMonth = String(month);
+  String stringYear = String(year);
+
+  tft.setTextDatum(MC_DATUM);
+  tft.setTextColor(blackScript);
+  tft.setFreeFont(latoRegular14);
+
+  tft.drawString("S", 154, 92, GFXFF);
+  tft.drawString("M", 182, 92, GFXFF);
+  tft.drawString("T", 215, 92, GFXFF);
+  tft.drawString("W", 241, 92, GFXFF);
+  tft.drawString("T", 275, 92, GFXFF);
+  tft.drawString("F", 304, 92, GFXFF);
+  tft.drawString("S", 332, 92, GFXFF);
+
+  tft.setTextColor(whiteScript);
+  tft.setFreeFont(latoRegular24);
+
+  tft.drawString(stringYear, 55, 236, GFXFF);
+
+  tft.setFreeFont(latoBold48);
+
+  if (day < 10) {
+    tft.drawString("0", 40, 105, GFXFF);
+    tft.drawString(stringDay, 70, 105, GFXFF);
+  } else {
+    tft.drawString(stringDay, 40, 105, GFXFF);
   }
 
-
+  if (month < 10) {
+    tft.drawString("0", 40, 175, GFXFF);
+    tft.drawString(stringMonth, 70, 175, GFXFF);
+  } else {
+    tft.drawString(stringMonth, 40, 175, GFXFF);
+  }
 }
 
 void telaMenu1() {
@@ -1422,15 +1650,17 @@ void telaMenu3() {
 void telaMenu4() {
   tft.fillScreen(blackScript);
   i = 1;
-}
   
+
   calendar();
+  date();
   home();
   superiorMenu();
   wifiLevel();
   batteryLevel();
   lockLevel();
 }
+
 void telaMenu5() {
   tft.fillScreen(blackScript);
 }
