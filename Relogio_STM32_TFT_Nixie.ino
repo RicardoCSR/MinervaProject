@@ -225,6 +225,21 @@ uint16_t blueScript = 0x0B35;           //0x0B69B1
 
 uint16_t profile = 0xEC71;              //0xEF9090
 
+uint16_t icon_1 = 0xEB84;               //0xF67423
+uint16_t icon_2 = 0xED23;               //0xF1A71F
+uint16_t icon_3 = 0xE2E9;               //0xEB6052
+uint16_t icon_4 = 0x5DD1;               //0x5FBC8D
+uint16_t icon_5 = 0xE0CB;               //0xE91B5B
+uint16_t icon_6 = 0xEA69;               //0xEB6052 CORRIGIR
+uint16_t icon_7 = 0x566B;               //0x58D160
+uint16_t icon_8 = 0x3559;               //0x33ACD1
+uint16_t icon_9 = 0xDCA6;               //0xE49837
+uint16_t icon_10 = 0x16BB;              //0x15D9E2
+uint16_t icon_11 = 0x14D1;              //0x189B8D
+uint16_t icon_12 = 0xB8EC;              //0xBE1D69
+uint16_t icon_13 = 0x31C7;              //0x343A40
+uint16_t icon_14 = 0x929A;              //0x9A54D8
+uint16_t icon_15 = 0x634C;              //0x6A6A6A
 
 uint16_t icon12 = 0xB8EC;               //0xBE1D69
 
@@ -254,8 +269,9 @@ uint16_t icon12 = 0xB8EC;               //0xBE1D69
 #define latoRegular12 &Lato_Regular_12
 #define latoRegular10 &Lato_Regular_10
 
-#define GFXFF 1
 byte i = 0;
+
+#define GFXFF 1
   // TL_DATUM = Top left (default)
   // TC_DATUM = Top centre
   // TR_DATUM = Top right
@@ -438,59 +454,58 @@ void loop(void) {
   // ---------------------- ACESSO A PAGINA white white white white white --------------
     if (actualTime - period >= 5 * 1000) {
       period = actualTime;
-      telaMenu = 4;
     }  
-
+    telaMenu = 4;
     if (i == 0) {
-    switch (telaMenu) {
-      case 1:
-        telaMenu1();
-      break;
-      case 2:
-        telaMenu2();
-      break;
-      case 3:
-        telaMenu3();
-      break;
-      case 4:
-        telaMenu4();
-      break;
-      case 5:
-        telaMenu5();
-      break;
-      case 6:
-        telaMenu6();
-      break;
-      case 7:
-        telaMenu7();
-      break;
-      case 8:
-        telaMenu8();
-      break;
-      case 9:
-        telaMenu9();
-      break;
-      case 10:
-        telaMenu10();
-      break;
-      case 11:
-        telaMenu11();
-      break;
-      case 12:
-        telaMenu12();
-      break;
-      case 13:
-        telaMenu13();
-      break;
-      case 14:
-        telaMenu14();
-      break;
-      case 15:
-        telaMenu15();
-      break;
-      default:
-        defaultSetup();
-    }
+      switch (telaMenu) {
+        case 1:
+          telaMenu1();
+        break;
+        case 2:
+          telaMenu2();
+        break;
+        case 3:
+          telaMenu3();
+        break;
+        case 4:
+          telaMenu4();
+        break;
+        case 5:
+          telaMenu5();
+        break;
+        case 6:
+          telaMenu6();
+        break;
+        case 7:
+          telaMenu7();
+        break;
+        case 8:
+          telaMenu8();
+        break;
+        case 9:
+          telaMenu9();
+        break;
+        case 10:
+          telaMenu10();
+        break;
+        case 11:
+          telaMenu11();
+        break;
+        case 12:
+          telaMenu12();
+        break;
+        case 13:
+          telaMenu13();
+        break;
+        case 14:
+          telaMenu14();
+        break;
+        case 15:
+          telaMenu15();
+        break;
+        default:
+          defaultSetup();
+      }
     }
 
 
@@ -512,22 +527,35 @@ void defaultSetup() {
   if (screenLoad == 0) {
     tft.fillScreen(blackScript);
     tft.setSwapBytes(true);
+    tft.fillRoundRect(43,67, 71, 71, 10, icon_1);
     tft.pushImage(43, 67, 71, 71, icon1);
+    tft.fillRoundRect(124,67, 71, 71, 10, icon_2);
     tft.pushImage(124, 67, 71, 71, icon2);
+    tft.fillRoundRect(205,67, 71, 71, 10, icon_3);
     tft.pushImage(205, 67, 71, 71, icon3);
+    tft.fillRoundRect(286,67, 71, 71, 10, icon_4);
     tft.pushImage(286, 67, 71, 71, icon4);
+    tft.fillRoundRect(367,67, 71, 71, 10, icon_5);
     tft.pushImage(367, 67, 71, 71, icon5);
 
+    tft.fillRoundRect(43,147, 71, 71, 10, icon_6);
     tft.pushImage(43, 147, 71, 71, icon6);
+    tft.fillRoundRect(124,147, 71, 71, 10, icon_7);
     tft.pushImage(124, 147, 71, 71, icon7);
+    tft.fillRoundRect(205,147, 71, 71, 10, icon_8);
     tft.pushImage(205, 147, 71, 71, icon8);
+    tft.fillRoundRect(286,147, 71, 71, 10, icon_9);
     tft.pushImage(286, 147, 71, 71, icon9);
+    tft.fillRoundRect(367,147, 71, 71, 10, icon_10);
     tft.pushImage(367, 147, 71, 71, icon10);
 
+    tft.fillRoundRect(43,227, 71, 71, 10, icon_11);
     tft.pushImage(43, 227, 71, 71, icon11);
-    tft.fillRoundRect(124, 227, 71, 71, 10, icon12);
+    tft.fillRoundRect(204, 227, 71, 71, 10, icon_13);
     tft.pushImage(205, 227, 71, 71, icon13);
+    tft.fillRoundRect(286,227, 71, 71, 10, icon_14);
     tft.pushImage(286, 227, 71, 71, icon14);
+    tft.fillRoundRect(367,227, 71, 71, 10, icon_15);
     tft.pushImage(367, 227, 71, 71, icon15);
 
     superiorMenu();
@@ -1560,21 +1588,25 @@ void date() {
 }
 
 void seasons() {
-  if (((day >= 20) && (month > 2)) && ((day <21) && (month < 7))) {
-    tft.pushImage(377, 154, 75, 92, spring);
-  } else if (((day >= 21) && (month > 5)) && ((day <23) && (month < 9))) {
-    tft.pushImage(377, 154, 75, 92, summer);
-  } else if (((day >= 23) && (month > 8)) && ((day <22) && (month < 11))) {
-    tft.pushImage(377, 154, 75, 92, autumn);
-  } else if (((day >= 22) && (month > 11)) && ((day < 20) && (month < 4))) {
-    tft.pushImage(377, 154, 75, 92, winter);
+  if ((day >= 20) && (month > 2)) {
+    if ((day <21) && (month < 7)) {
+      tft.pushImage(377, 154, 75, 92, spring);
+    } 
+  } else if ((day >= 21) && (month > 5)) {
+    if ((day <23) && (month < 9)) {
+      tft.pushImage(377, 154, 75, 92, summer);
+    }
+  } else if ((day >= 23) && (month > 8)) {
+    if ((day <22) && (month < 11)) {
+      tft.pushImage(377, 154, 75, 92, autumn);
+    }
+  } else if ((day >= 22) && (month > 11)) {
+    if ((day < 20) && (month < 4)) {
+      tft.pushImage(377, 154, 75, 92, winter);
+    }
   }
 }
 
-Primavera: 20 de março a 21 de junho; 
-Verão: 21 de junho a 23 de setembro; 
-Outono: 22/23 de setembro a 22 de dezembro.
-inverno: 22 de dezembro a 20 de março; 
 
 void telaMenu1() {
   tft.fillScreen(blackScript);
@@ -1673,7 +1705,7 @@ void telaMenu4() {
   tft.setFreeFont(latoRegular14);
   tft.drawString("SEMANA", 365, 86, GFXFF);
   tft.drawString("DIA", 396, 105, GFXFF);
-
+  tft.pushImage(377, 154, 80, 92, spring);
   seasons();
   calendar();
   date();
