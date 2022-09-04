@@ -10,7 +10,6 @@ LARANJA -   SPI
 ROXO -      GEIGER     
 AZUL -      NIXIE
 
-
 Caracteristica
 
 SN74141 : True Table
@@ -48,7 +47,7 @@ byte compareHour = 0;           // Armazena Horario Menu de Ajuste Relogio
 
 byte compareDay = 0;            // Armazena Data Menu de Ajuste Calendario
 byte compareMonth = 0;          // Armazena Data Menu de Ajuste Calendario
-byte compareYear = 0;           // Armazena Data Menu de Ajuste Calendario
+int compareYear = 0;            // Armazena Data Menu de Ajuste Calendario
 
 byte hourBias = 0;              // Byte para Long horas x fuso (12 ~ 24)
 byte minuteBias = 0;            // Byte para Long minutos x 60 
@@ -62,6 +61,7 @@ byte compareUpdateWiFi;         // Armazena atualização de updateBattery
 
 // DADOS TIMERS
 unsigned long period = 0;
+unsigned long UtlTime;
 
 // VALORES AJUSTAVEIS PELO USUÁRIO
 byte logoTime = 3;
@@ -248,7 +248,6 @@ uint16_t icon12 = 0xB8EC;               //0xBE1D69
 
 
 #include "STM32LowPower.h"
-#include <STM32RTC.h>
 
 #include <TFT_eSPI.h> 
 #include <SPI.h>
@@ -289,8 +288,7 @@ byte i = 0;
   // R_BASELINE = Right character baseline
 
 // ------------------------------- INSTANCIAS DAS BIBLIOTECAS --------------------------
-
-    STM32RTC& rtc = STM32RTC::getInstance();
+    
     TFT_eSPI tft = TFT_eSPI();      // Could invoke custom library declaring width and height
     EasyColor rgb2rgb;                 //Conversão de e para RGB888/RGB565
     ForcedClimate climateSensor = ForcedClimate(Wire, 0x77);
@@ -309,7 +307,13 @@ void setup() {
     fuso = 11;
   }
 
-  
+  UtlTime = 0;
+  mins = 0;
+  hours = 0;
+  day = 0;
+  month = 0;
+  year = 0;
+
   Serial.print("Insira Hora: ");
   while (hours == 0) {
     if (Serial.available() > 0) {
@@ -352,56 +356,54 @@ void setup() {
 }
 
 void loop(void) {
-  // ---------------------- CONFIGURAÇÃO E SETUPS -----------
-
-    unsigned long actualTime = millis();
-    unsigned long UtlTime;
   // ------------------------------- HORARIO VIA MILLIS() OPERACIONAL -----------------------
-    /*
-    secs = millis() / 1000 + (long)hourBias * 3600 + (long)minuteBias * 60;
-    secsBias = secs % 60;
-    mins = (secs / 60) % 60;
-    hours = (secs / 3600) % fuso;
-    time = hours * 100 + mins;
-    */
-    if (millis() - UtlTime < 0) {
+
+    if(millis() - UtlTime < 0) {
       UtlTime = millis();
     } else {
-      secs = int((millis()) - UtlTime)/1000;
+      secs = int((millis() - UtlTime) / 1000);
     }
-    if (secs > 59) {
+    if(secs > 59) {
       secs = 0;
       mins ++;
       UtlTime = millis();
-      if (mins > 59) {
-        mins = 0;
+
+      if(mins > 59) {
         hours ++;
-        if (hours > fuso) {
+        mins = 0;
+        if(hours > 23) {
           day ++;
           hours = 0;
-          if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) {
-            if (day > 31) {
+          if( month ==1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) {
+            if(day > 31) {
               day = 1;
               month ++;
-              if (month > 12) {
+              if(month > 12) {
                 year ++;
                 month = 1;
               }
             }
-          } else if ( month == 2) {
-            if (year % 400 == 0) {
-              if (day > 29) {
+          }
+          else if(month == 2) {
+            if(year%400 == 0) {
+              if(day > 29) {
+                day = 1;
+                month ++;
+              }
+            }
+            else if((year%4==0) && (year%100!=0)) {
+              if(day > 29) {
                 day = 1;
                 month ++;
               }
             } else {
-              if (day > 28) {
+              if(day>28) {
                 day = 1;
                 month ++;
               }
             }
           } else {
-            if (day > 30) {
+            if(day > 30) {
               day = 1;
               month ++;
             }
@@ -410,14 +412,13 @@ void loop(void) {
       }
     }
 
-
   // ---------------------- COMANDO DE LOGO ----------
 
     if (logoStarted == 0) {
       logoStarted = 1;
       startLogo();
-      if (actualTime - period >= logoTime * 1000) {
-        period = actualTime;
+      if (UtlTime - period >= logoTime * 1000) {
+        period = UtlTime;
         if ((backgroundSetup == 1) || (backgroundSetup == 3)) {
           tft.fillRect(0, 0, 480, 320, whiteScript);
         } else {
@@ -442,6 +443,64 @@ void loop(void) {
     } 
 
   // ---------------------- ATUALIZA RELOGIO -----------
+    String stringHour = String(hours);
+    String stringMin = String(mins);
+    String stringDay = String(day);
+    String stringMonth = String(month);
+    String stringYear = String(year);
+
+    String stringHourMin = String(hours - 1);
+    String stringMinMin = String(mins - 1);
+    String stringDayMin = String(day - 1);
+    String stringMonthMin = String(month - 1);
+    String stringYearMin = String(year - 1);
+
+    if (hours != compareHour) {
+      compareHour = hours;
+      tft.setTextDatum(ML_DATUM);
+      tft.setTextColor(blackScript);
+      tft.setFreeFont(latoRegular24);
+      if ((hours > 1) && (hours < 10)) {
+        tft.drawString("0", 219, 30, GFXFF);
+        tft.drawString(stringHourMin, 234, 30, GFXFF);
+      } else {
+        tft.fillRect(219, 22, 28, 20, blackScript);
+      }
+
+      tft.setTextColor(whiteScript);  
+
+      if (hours < 10) {
+        tft.drawString("0", 219, 30, GFXFF);
+        tft.drawString(stringHour, 234, 30, GFXFF);
+      } else {
+        tft.drawString(stringHour, 219, 30, GFXFF);
+      }
+    }
+
+    if (mins != compareMins) {
+      compareMins = mins;
+      tft.setTextDatum(ML_DATUM);
+      tft.setTextColor(blackScript);
+      tft.setFreeFont(latoRegular24);
+      if ((mins > 1) && (mins < 10)) {
+        tft.drawString("0", 252, 30, GFXFF);
+        tft.drawString(stringMinMin, 267, 30, GFXFF);
+      } else {
+        tft.fillRect(252, 22, 28, 20, blackScript);
+      }
+
+      tft.setTextColor(whiteScript);  
+
+      if (mins < 10) {
+        tft.drawString("0", 252, 30, GFXFF);
+        tft.drawString(":", 246, 30, GFXFF);
+        tft.drawString(stringMin, 267, 30, GFXFF);
+      } else {
+        tft.drawString(":", 246, 30, GFXFF);
+        tft.drawString(stringMin, 252, 30, GFXFF);
+      }
+    }
+
     if (secs != compareSecs) {
       compareSecs = secs;
       Serial.print(day);
@@ -457,11 +516,67 @@ void loop(void) {
       Serial.println(secs);  
     }
 
+    if (day != compareDay) {
+      compareDay = day;
+      tft.setTextDatum(ML_DATUM);
+      tft.setTextColor(blackScript);
+      tft.setFreeFont(latoRegular24);
+      if ((day > 1) && (day < 10)) {
+        tft.drawString("0", 77, 30, GFXFF);
+        tft.drawString(stringDayMin, 92, 30, GFXFF);
+      } else {
+        tft.fillRect(77, 22, 28, 20, blackScript);
+      }
+
+      tft.setTextColor(whiteScript);  
+
+      if (day < 10) {
+        tft.drawString("0", 77, 30, GFXFF);
+        tft.drawString(stringDay, 92, 30, GFXFF);
+      } else {
+        tft.drawString(stringDay, 77, 30, GFXFF);
+      }
+    }
+
+    if (month != compareMonth) {
+      compareMonth = month;
+      tft.setTextDatum(ML_DATUM);
+      tft.setTextColor(blackScript);
+      tft.setFreeFont(latoRegular24);
+      if ((month > 1) && (month < 10)) {
+        tft.drawString("0", 110, 30, GFXFF);
+        tft.drawString(stringMonthMin, 125, 30, GFXFF);
+      } else {
+        tft.fillRect(110, 22, 28, 20, blackScript);
+      }
+
+      tft.setTextColor(whiteScript);  
+
+      if (month < 10) {
+        tft.drawString("0", 110, 30, GFXFF);
+        tft.drawString(stringMonth, 125, 30, GFXFF);
+      } else {
+        tft.drawString(stringMonth, 110, 30, GFXFF);
+      }
+    }
+
+    if (year != compareYear) {
+      compareYear = year;
+      tft.setTextDatum(ML_DATUM);
+      tft.setTextColor(blackScript);
+      tft.setFreeFont(latoRegular24);
+      tft.drawString(stringYearMin, 143, 30, GFXFF);
+
+      tft.setTextColor(whiteScript);  
+
+      tft.drawString(stringYear, 143, 30, GFXFF);
+    }
+
   // ---------------------- ACESSO A PAGINA white white white white white --------------
     if (UtlTime - period >= 5 * 1000) {
       period = UtlTime;
     }  
-    telaMenu = 15;
+    i = 1;
     if (i == 0) {
       switch (telaMenu) {
         case 1:
@@ -520,6 +635,7 @@ void loop(void) {
 
 
 }
+// ------------------------ ATUALIZACAO VISUAL DATA E HORA --------
 
 
 // ------------------------ TELA DE ABERTURA -------------
@@ -564,7 +680,6 @@ void defaultSetup() {
     tft.fillRoundRect(367,227, 71, 71, 10, icon_15);
     tft.pushImage(367, 227, 71, 71, icon15);
 
-    superiorMenu();
     wifiLevel();
     batteryLevel();
     lockLevel();
@@ -619,99 +734,6 @@ void lockLevel() {
         break;
       default:
         lockStyle1();
-  }
-}
-
-void superiorMenu() {
-  String stringHour = String(hours);
-  String stringMin = String(mins);
-  String stringDay = String(day);
-  String stringMonth = String(month);
-  String stringYear = String(year);
-
-  String stringHourMin = String(hours - 1);
-  String stringMinMin = String(mins - 1);
-  String stringDayMin = String(day - 1);
-  String stringMonthMin = String(month - 1);
-  String stringYearMin = String(year - 1);
-
-  tft.setTextDatum(ML_DATUM);
-  tft.setTextColor(blackScript);
-  tft.setFreeFont(latoRegular24);
-
-  compareMins = mins;
-
-  if ((day > 1) && (day < 10)) {
-    tft.drawString("0", 77, 30, GFXFF);
-    tft.drawString(stringDayMin, 92, 30, GFXFF);
-  } else {
-    tft.fillRect(77, 22, 28, 20, blackScript);
-  }
-
-  if ((month > 1) && (month < 10)) {
-    tft.drawString("0", 110, 30, GFXFF);
-    tft.drawString(stringMonthMin, 125, 30, GFXFF);
-  } else {
-    tft.fillRect(110, 22, 28, 20, blackScript);
-  }
-
-  tft.drawString(stringYearMin, 143, 30, GFXFF);
-
-  if ((hours > 1) && (hours < 10)) {
-    tft.drawString("0", 219, 30, GFXFF);
-    tft.drawString(stringHourMin, 234, 30, GFXFF);
-  } else {
-    tft.fillRect(219, 22, 28, 20, blackScript);
-  }
-
-  if ((mins > 1) && (mins < 10)) {
-    tft.drawString("0", 252, 30, GFXFF);
-    tft.drawString(stringMinMin, 267, 30, GFXFF);
-  } else {
-    tft.fillRect(252, 22, 28, 20, blackScript);
-  }
-
-
-
-
-
-
-
-  tft.setTextColor(whiteScript);  
-
-  if (day < 10) {
-    tft.drawString("0", 77, 30, GFXFF);
-    tft.drawString(stringDay, 92, 30, GFXFF);
-  } else {
-    tft.drawString(stringDay, 77, 30, GFXFF);
-  }
-
-  if (month < 10) {
-    tft.drawString("0", 110, 30, GFXFF);
-    tft.drawString(stringMonth, 125, 30, GFXFF);
-  } else {
-    tft.drawString(stringMonth, 110, 30, GFXFF);
-  }
-
-  tft.drawString(stringYear, 143, 30, GFXFF);
-
-
-  if (hours < 10) {
-    tft.drawString("0", 219, 30, GFXFF);
-    tft.drawString(stringHour, 234, 30, GFXFF);
-  } else {
-    tft.drawString(stringHour, 219, 30, GFXFF);
-  }
-
-  if (mins < 10) {
-    tft.drawString("0", 252, 30, GFXFF);
-    tft.drawString(":", 246, 30, GFXFF);
-    tft.drawString(stringMin, 267, 30, GFXFF);
-  } else {
-    tft.drawString(":", 246, 30, GFXFF);
-    tft.drawString(stringMin, 252, 30, GFXFF);
-
-
   }
 }
 
@@ -2326,7 +2348,6 @@ void telaMenu1() {
   geigerLoad();
   geigerAlarm();
   home();
-  superiorMenu();
   wifiLevel();
   batteryLevel();
   lockLevel();
@@ -2356,7 +2377,6 @@ void telaMenu2() {
   dosimeter();
   dosimeterAlarm();
   home();
-  superiorMenu();
   wifiLevel();
   batteryLevel();
   lockLevel();
@@ -2375,7 +2395,6 @@ void telaMenu3() {
 
   dosimeterLoad();
   home();
-  superiorMenu();
   wifiLevel();
   batteryLevel();
   lockLevel();
@@ -2390,7 +2409,6 @@ void telaMenu4() {
   calendar();
   date();
   home();
-  superiorMenu();
   wifiLevel();
   batteryLevel();
   lockLevel();
@@ -2414,7 +2432,6 @@ void telaMenu6() {
 
   temperatureLoad();
   home();
-  superiorMenu();
   wifiLevel();
   batteryLevel();
   lockLevel();
@@ -2434,7 +2451,6 @@ void telaMenu7() {
 
   pressureLoad();
   home();
-  superiorMenu();
   wifiLevel();
   batteryLevel();
   lockLevel();
@@ -2454,7 +2470,6 @@ void telaMenu8() {
 
   humidityLoad();
   home();
-  superiorMenu();
   wifiLevel();
   batteryLevel();
   lockLevel();
@@ -2503,7 +2518,6 @@ void telaMenu13() {
   tft.drawString("2", 389, 130, GFXFF);
 
   home();
-  superiorMenu();
   wifiLevel();
   batteryLevel();
   lockLevel();
@@ -2535,11 +2549,11 @@ void telaMenu14() {
   tft.drawCircle(421, 167, 14, whiteScript);
 
   home();
-  superiorMenu();
   wifiLevel();
   batteryLevel();
   lockLevel();
 }
+
 void telaMenu15() {
   tft.fillScreen(blackScript);
   i = 1;
@@ -2562,7 +2576,7 @@ void telaMenu15() {
 
   compareMins = mins;
 
-  tft.fillRect(33, 107, 22, 22, profileColor);
+  tft.fillRect(33, 107, 20, 20, profileColor);
 
   if ((day > 1) && (day < 10)) {
     tft.drawString("0", 61, 116, GFXFF);
@@ -2658,8 +2672,8 @@ void telaMenu15() {
   tft.fillTriangle(273, 212, 245, 212, 245, 240, blackScript);
 
   home();
-  superiorMenu();
   wifiLevel();
   batteryLevel();
   lockLevel();
 }
+
