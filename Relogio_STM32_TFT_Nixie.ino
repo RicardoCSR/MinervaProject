@@ -254,8 +254,6 @@ uint16_t icon12 = 0xB8EC;               //0xBE1D69
 #include "MapFloat.h"
 #include <Wire.h>
 #include "Adafruit_GFX.h"
-#include <EasyColor.h>
-#include <forcedClimate.h>
 
 #include "Imagens.h"
 
@@ -290,15 +288,11 @@ byte i = 0;
 // ------------------------------- INSTANCIAS DAS BIBLIOTECAS --------------------------
     
     TFT_eSPI tft = TFT_eSPI();      // Could invoke custom library declaring width and height
-    EasyColor rgb2rgb;                 //Conversão de e para RGB888/RGB565
-    ForcedClimate climateSensor = ForcedClimate(Wire, 0x77);
 
 void setup() {
   Serial.begin(115200);
   Serial.println("Sistema Inicializado");
   tft.init();
-  Wire.begin(0x77);
-  climateSensor.begin();
   tft.setRotation(3);
 
   if (fuso == 1) {
