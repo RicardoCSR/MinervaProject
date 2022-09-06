@@ -437,6 +437,7 @@ void loop(void) {
     } 
 
   // ---------------------- ATUALIZA RELOGIO -----------
+
     String stringHour = String(hours);
     String stringMin = String(mins);
     String stringDay = String(day);
@@ -448,7 +449,7 @@ void loop(void) {
     String stringDayMin = String(day - 1);
     String stringMonthMin = String(month - 1);
     String stringYearMin = String(year - 1);
-
+    
     if (hours != compareHour) {
       compareHour = hours;
       tft.setTextDatum(ML_DATUM);
@@ -460,9 +461,7 @@ void loop(void) {
       } else {
         tft.fillRect(219, 22, 28, 20, blackScript);
       }
-
       tft.setTextColor(whiteScript);  
-
       if (hours < 10) {
         tft.drawString("0", 219, 30, GFXFF);
         tft.drawString(stringHour, 234, 30, GFXFF);
@@ -470,7 +469,6 @@ void loop(void) {
         tft.drawString(stringHour, 219, 30, GFXFF);
       }
     }
-
     if (mins != compareMins) {
       compareMins = mins;
       tft.setTextDatum(ML_DATUM);
@@ -482,9 +480,7 @@ void loop(void) {
       } else {
         tft.fillRect(252, 22, 28, 20, blackScript);
       }
-
       tft.setTextColor(whiteScript);  
-
       if (mins < 10) {
         tft.drawString("0", 252, 30, GFXFF);
         tft.drawString(":", 246, 30, GFXFF);
@@ -493,21 +489,6 @@ void loop(void) {
         tft.drawString(":", 246, 30, GFXFF);
         tft.drawString(stringMin, 252, 30, GFXFF);
       }
-    }
-
-    if (secs != compareSecs) {
-      compareSecs = secs;
-      Serial.print(day);
-      Serial.print("/");
-      Serial.print(month);
-      Serial.print("/");
-      Serial.print(year);
-      Serial.print("     ");
-      Serial.print(hours);
-      Serial.print(":");
-      Serial.print(mins);
-      Serial.print(":");
-      Serial.println(secs);  
     }
 
     if (day != compareDay) {
@@ -566,11 +547,26 @@ void loop(void) {
       tft.drawString(stringYear, 143, 30, GFXFF);
     }
 
+    if (secs != compareSecs) {
+      compareSecs = secs;
+      Serial.print(day);
+      Serial.print("/");
+      Serial.print(month);
+      Serial.print("/");
+      Serial.print(year);
+      Serial.print("     ");
+      Serial.print(hours);
+      Serial.print(":");
+      Serial.print(mins);
+      Serial.print(":");
+      Serial.println(secs);  
+    }
+
   // ---------------------- ACESSO A PAGINA white white white white white --------------
     if (UtlTime - period >= 5 * 1000) {
       period = UtlTime;
     }  
-    i = 1;
+    telaMenu = 11;
     if (i == 0) {
       switch (telaMenu) {
         case 1:
@@ -2477,6 +2473,75 @@ void telaMenu10() {
 }
 void telaMenu11() {
   tft.fillScreen(blackScript);
+  i = 1;
+
+  tft.fillRect(13, 68, 450, 40, icon_15);
+
+  tft.setTextDatum(MC_DATUM);
+  tft.setTextColor(whiteScript);
+  tft.setFreeFont(latoRegular24);
+
+  tft.drawString("7", 23, 171, GFXFF); 
+  tft.drawString("8", 64, 171, GFXFF); 
+  tft.drawString("9", 105, 171, GFXFF); 
+
+  tft.drawString("4", 23, 211, GFXFF); 
+  tft.drawString("5", 64, 211, GFXFF); 
+  tft.drawString("6", 105, 211, GFXFF); 
+
+  tft.drawString("1", 23, 251, GFXFF); 
+  tft.drawString("2", 64, 251, GFXFF); 
+  tft.drawString("3", 105, 251, GFXFF); 
+
+  tft.drawString("e", 23, 291, GFXFF); 
+  tft.drawString("0", 64, 291, GFXFF); 
+  tft.drawString(".", 105, 291, GFXFF); 
+
+  tft.drawString("sin", 225, 129, GFXFF); 
+  tft.drawString("cos", 225, 171, GFXFF); 
+  tft.drawString("tan", 225, 211, GFXFF); 
+  tft.drawString(")", 225, 251, GFXFF); 
+
+  tft.drawString("dec", 273, 129, GFXFF); 
+  tft.drawString("bin", 273, 171, GFXFF); 
+  tft.drawString("hex", 273, 211, GFXFF); 
+  tft.drawString(",", 273, 251, GFXFF); 
+
+  tft.setTextColor(icon_1);
+
+  tft.drawString("AC", 23, 131, GFXFF); 
+  tft.drawString("x", 64, 131, GFXFF); 
+  tft.drawString("%", 105, 131, GFXFF); 
+
+  tft.drawString("-", 146, 131, GFXFF);  
+  tft.drawString("x", 146, 171, GFXFF); 
+  tft.drawString("-", 146, 211, GFXFF); 
+  tft.drawString("+", 146, 251, GFXFF); 
+
+  tft.setTextColor(blackScript);
+
+  tft.drawString("=", 146, 291, GFXFF); 
+
+  tft.drawCircle(277, 292, 15, icon_1);
+  tft.drawCircle(327, 292, 15, icon_1);
+  tft.drawCircle(377, 292, 15, icon_1);
+
+  tft.drawCircle(327, 252, 15, icon_1);
+  tft.drawCircle(377, 252, 15, icon_1);
+
+  tft.drawCircle(327, 212, 15, icon_1);
+  tft.drawCircle(377, 212, 15, icon_1);
+
+  tft.drawCircle(327, 172, 15, icon_7);
+  tft.drawCircle(377, 172, 15, icon_7);
+
+  tft.drawCircle(327, 132, 15, icon_7);
+  tft.drawCircle(377, 132, 15, icon_7);
+
+  home();
+  wifiLevel();
+  batteryLevel();
+  lockLevel();
 }
 void telaMenu12() {
   tft.fillScreen(blackScript);
