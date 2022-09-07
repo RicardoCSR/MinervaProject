@@ -91,6 +91,34 @@ byte fuso = 1;
 //fuso = 0 12 Horas  
 //fuso = 1 24 Horas
 
+// GERACAO DE GRAFICOS
+byte minsCalcGeiger = 0;        // Armazena Horario marcação gráfico Geiger
+byte minsCalcTemp = 0;          // Armazena Horario marcação gráfico Temperatura
+byte minsCalcHumi = 0;          // Armazena Horario marcação gráfico Umidade
+byte minsCalcPres = 0;          // Armazena Horario marcação gráfico Pressão Atmosferica
+
+byte calcGeiger = 0;            // Armazena dado de Contagem para geigerCalc
+byte calcTemp = 0;              // Armazena dado de Contagem para tempCalc
+byte calcHumi = 0;              // Armazena dado de Contagem para humiCalc
+byte calcPres = 0;              // Armazena dado de Contagem para presCalc
+
+byte bankGeiger = 0;            // Armazena dado da posição do Gráfico em uso
+byte bankTemp = 0;              // Armazena dado da posição do Gráfico em uso
+byte bankHumi = 0;              // Armazena dado da posição do Gráfico em uso
+byte bankPres = 0;              // Armazena dado da posição do Gráfico em uso
+
+byte writerGeiger = 0;          // Armazena dado da posição do Gráfico em não uso
+byte writerTemp = 0;            // Armazena dado da posição do Gráfico em não uso
+byte writerHumi = 0;            // Armazena dado da posição do Gráfico em não uso
+byte writerPres = 0;            // Armazena dado da posição do Gráfico em não uso
+
+byte geigerCalc [220] = {0};    // Armazena dados de Geiger
+byte tempCalc [220] = {0};      // Armazena dados de Temperatura 
+byte humiCalc [220] = {0};      // Armazena dados de Umidade 
+byte presCalc [220] = {0};      // Armazena dados de Pressão Atmosferica
+
+
+
 // BANCO DE DADOS DE COMPARADORES
 byte logoStarted = 0;
 // logoStarted = 0 Tela de Abertura ativado.
@@ -255,6 +283,8 @@ uint16_t icon12 = 0xB8EC;               //0xBE1D69
 #include <Wire.h>
 #include "Adafruit_GFX.h"
 
+#include <EasyColor.h>
+
 #include "Imagens.h"
 
 #include "Lato_Bold_48.h"
@@ -288,6 +318,7 @@ byte i = 0;
 // ------------------------------- INSTANCIAS DAS BIBLIOTECAS --------------------------
     
     TFT_eSPI tft = TFT_eSPI();      // Could invoke custom library declaring width and height
+    EasyColor rgb2rgb;                 //Conversão de e para RGB888/RGB565
 
 void setup() {
   Serial.begin(115200);
@@ -355,7 +386,7 @@ void loop(void) {
     if(millis() - UtlTime < 0) {
       UtlTime = millis();
     } else {
-      secs = int((millis() - UtlTime) / 1000);
+      secs = int((millis() - UtlTime) / 100);
     }
     if(secs > 59) {
       secs = 0;
@@ -436,117 +467,7 @@ void loop(void) {
         defaultSetup();
     } 
 
-  // ---------------------- ATUALIZA RELOGIO -----------
-
-    String stringHour = String(hours);
-    String stringMin = String(mins);
-    String stringDay = String(day);
-    String stringMonth = String(month);
-    String stringYear = String(year);
-
-    String stringHourMin = String(hours - 1);
-    String stringMinMin = String(mins - 1);
-    String stringDayMin = String(day - 1);
-    String stringMonthMin = String(month - 1);
-    String stringYearMin = String(year - 1);
-    
-    if (hours != compareHour) {
-      compareHour = hours;
-      tft.setTextDatum(ML_DATUM);
-      tft.setTextColor(blackScript);
-      tft.setFreeFont(latoRegular24);
-      if ((hours > 1) && (hours < 10)) {
-        tft.drawString("0", 219, 30, GFXFF);
-        tft.drawString(stringHourMin, 234, 30, GFXFF);
-      } else {
-        tft.fillRect(219, 22, 28, 20, blackScript);
-      }
-      tft.setTextColor(whiteScript);  
-      if (hours < 10) {
-        tft.drawString("0", 219, 30, GFXFF);
-        tft.drawString(stringHour, 234, 30, GFXFF);
-      } else {
-        tft.drawString(stringHour, 219, 30, GFXFF);
-      }
-    }
-    if (mins != compareMins) {
-      compareMins = mins;
-      tft.setTextDatum(ML_DATUM);
-      tft.setTextColor(blackScript);
-      tft.setFreeFont(latoRegular24);
-      if ((mins > 1) && (mins < 10)) {
-        tft.drawString("0", 252, 30, GFXFF);
-        tft.drawString(stringMinMin, 267, 30, GFXFF);
-      } else {
-        tft.fillRect(252, 22, 28, 20, blackScript);
-      }
-      tft.setTextColor(whiteScript);  
-      if (mins < 10) {
-        tft.drawString("0", 252, 30, GFXFF);
-        tft.drawString(":", 246, 30, GFXFF);
-        tft.drawString(stringMin, 267, 30, GFXFF);
-      } else {
-        tft.drawString(":", 246, 30, GFXFF);
-        tft.drawString(stringMin, 252, 30, GFXFF);
-      }
-    }
-
-    if (day != compareDay) {
-      compareDay = day;
-      tft.setTextDatum(ML_DATUM);
-      tft.setTextColor(blackScript);
-      tft.setFreeFont(latoRegular24);
-      if ((day > 1) && (day < 10)) {
-        tft.drawString("0", 77, 30, GFXFF);
-        tft.drawString(stringDayMin, 92, 30, GFXFF);
-      } else {
-        tft.fillRect(77, 22, 28, 20, blackScript);
-      }
-
-      tft.setTextColor(whiteScript);  
-
-      if (day < 10) {
-        tft.drawString("0", 77, 30, GFXFF);
-        tft.drawString(stringDay, 92, 30, GFXFF);
-      } else {
-        tft.drawString(stringDay, 77, 30, GFXFF);
-      }
-    }
-
-    if (month != compareMonth) {
-      compareMonth = month;
-      tft.setTextDatum(ML_DATUM);
-      tft.setTextColor(blackScript);
-      tft.setFreeFont(latoRegular24);
-      if ((month > 1) && (month < 10)) {
-        tft.drawString("0", 110, 30, GFXFF);
-        tft.drawString(stringMonthMin, 125, 30, GFXFF);
-      } else {
-        tft.fillRect(110, 22, 28, 20, blackScript);
-      }
-
-      tft.setTextColor(whiteScript);  
-
-      if (month < 10) {
-        tft.drawString("0", 110, 30, GFXFF);
-        tft.drawString(stringMonth, 125, 30, GFXFF);
-      } else {
-        tft.drawString(stringMonth, 110, 30, GFXFF);
-      }
-    }
-
-    if (year != compareYear) {
-      compareYear = year;
-      tft.setTextDatum(ML_DATUM);
-      tft.setTextColor(blackScript);
-      tft.setFreeFont(latoRegular24);
-      tft.drawString(stringYearMin, 143, 30, GFXFF);
-
-      tft.setTextColor(whiteScript);  
-
-      tft.drawString(stringYear, 143, 30, GFXFF);
-    }
-
+  // ---------------------- ATUALIZA RELOGIO SERIAL OPERACIONAL -----------
     if (secs != compareSecs) {
       compareSecs = secs;
       Serial.print(day);
@@ -566,7 +487,7 @@ void loop(void) {
     if (UtlTime - period >= 5 * 1000) {
       period = UtlTime;
     }  
-    telaMenu = 11;
+    telaMenu = 3;
     if (i == 0) {
       switch (telaMenu) {
         case 1:
@@ -619,14 +540,203 @@ void loop(void) {
       }
     }
 
+  // ------------------------ ATUALIZACAO VISUAL DATA E HORA OPERACIONAL --------
 
+  if (i == 1) {
+    compareHour = 0;
+    compareMins = 0;
+    compareDay = 0;
+    compareMonth = 0;
+    compareYear = 0;
+    i = 2;
+  }
+  
+  String stringHour = String(hours);
+  String stringMin = String(mins);
+  String stringDay = String(day);
+  String stringMonth = String(month);
+  String stringYear = String(year);
 
+  String stringHourMin = String(hours - 1);
+  String stringMinMin = String(mins - 1);
+  String stringDayMin = String(day - 1);
+  String stringMonthMin = String(month - 1);
+  String stringYearMin = String(year - 1);
+  
+  if (hours != compareHour) {
+    compareHour = hours;
+    tft.setTextDatum(ML_DATUM);
+    tft.setTextColor(blackScript);
+    tft.setFreeFont(latoRegular24);
+    if ((hours > 1) && (hours < 10)) {
+      tft.drawString("0", 219, 30, GFXFF);
+      tft.drawString(stringHourMin, 234, 30, GFXFF);
+    } else {
+      tft.fillRect(219, 22, 28, 20, blackScript);
+    }
+    tft.setTextColor(whiteScript);  
+    if (hours < 10) {
+      tft.drawString("0", 219, 30, GFXFF);
+      tft.drawString(stringHour, 234, 30, GFXFF);
+    } else {
+      tft.drawString(stringHour, 219, 30, GFXFF);
+    }
+  }
+  if (mins != compareMins) {
+    compareMins = mins;
+    tft.setTextDatum(ML_DATUM);
+    tft.setTextColor(blackScript);
+    tft.setFreeFont(latoRegular24);
+    if ((mins > 1) && (mins < 10)) {
+      tft.drawString("0", 252, 30, GFXFF);
+      tft.drawString(stringMinMin, 267, 30, GFXFF);
+    } else {
+      tft.fillRect(252, 22, 28, 20, blackScript);
+    }
+    tft.setTextColor(whiteScript);  
+    if (mins < 10) {
+      tft.drawString("0", 252, 30, GFXFF);
+      tft.drawString(":", 246, 30, GFXFF);
+      tft.drawString(stringMin, 267, 30, GFXFF);
+    } else {
+      tft.drawString(":", 246, 30, GFXFF);
+      tft.drawString(stringMin, 252, 30, GFXFF);
+    }
+  }
 
+  if (day != compareDay) {
+    compareDay = day;
+    tft.setTextDatum(ML_DATUM);
+    tft.setTextColor(blackScript);
+    tft.setFreeFont(latoRegular24);
+    if ((day > 1) && (day < 10)) {
+      tft.drawString("0", 77, 30, GFXFF);
+      tft.drawString(stringDayMin, 92, 30, GFXFF);
+    } else {
+      tft.fillRect(77, 22, 28, 20, blackScript);
+    }
 
+    tft.setTextColor(whiteScript);  
+
+    if (day < 10) {
+      tft.drawString("0", 77, 30, GFXFF);
+      tft.drawString(stringDay, 92, 30, GFXFF);
+    } else {
+      tft.drawString(stringDay, 77, 30, GFXFF);
+    }
+  }
+
+  if (month != compareMonth) {
+    compareMonth = month;
+    tft.setTextDatum(ML_DATUM);
+    tft.setTextColor(blackScript);
+    tft.setFreeFont(latoRegular24);
+    if ((month > 1) && (month < 10)) {
+      tft.drawString("0", 110, 30, GFXFF);
+      tft.drawString(stringMonthMin, 125, 30, GFXFF);
+    } else {
+      tft.fillRect(110, 22, 28, 20, blackScript);
+    }
+
+    tft.setTextColor(whiteScript);  
+
+    if (month < 10) {
+      tft.drawString("0", 110, 30, GFXFF);
+      tft.drawString(stringMonth, 125, 30, GFXFF);
+    } else {
+      tft.drawString(stringMonth, 110, 30, GFXFF);
+    }
+  }
+
+  if (year != compareYear) {
+    compareYear = year;
+    tft.setTextDatum(ML_DATUM);
+    tft.setTextColor(blackScript);
+    tft.setFreeFont(latoRegular24);
+    tft.drawString(stringYearMin, 143, 30, GFXFF);
+
+    tft.setTextColor(whiteScript);  
+
+    tft.drawString(stringYear, 143, 30, GFXFF);
+  }
+
+  // ------------------------ ATUALIZA POSICAO GRAFICO GEIGER -------
+    if (minsCalcGeiger != mins) {
+      minsCalcGeiger = mins;
+      switch(hours) {
+        //33 - 433 X
+        //78 - 196 Y
+        case 0: bankGeiger = 32; break; 
+        case 1: bankGeiger = 48; break; 
+        case 2: bankGeiger = 64; break; 
+        case 3: bankGeiger = 82; break;
+        case 4: bankGeiger = 98; break;
+        case 5: bankGeiger = 114; break;
+        case 6: bankGeiger = 132; break;
+        case 7: bankGeiger = 148; break;
+        case 8: bankGeiger = 164; break;
+        case 9: bankGeiger = 182; break;
+        case 10: bankGeiger = 198; break;
+        case 11: bankGeiger = 214; break;
+        case 12: bankGeiger = 232; break;
+        case 13: bankGeiger = 248; break;
+        case 14: bankGeiger = 264; break;
+        case 15: bankGeiger = 282; break;
+        case 16: bankGeiger = 298; break;
+        case 17: bankGeiger = 314; break;
+        case 18: bankGeiger = 332; break;
+        case 19: bankGeiger = 348; break;
+        case 20: bankGeiger = 364; break;
+        case 21: bankGeiger = 382; break;
+        case 22: bankGeiger = 398; break;
+        case 23: bankGeiger = 414; break;
+      }
+    }
+    switch(mins) {
+      case 3: bankGeiger = bankGeiger + 0; break;
+      case 6: bankGeiger = bankGeiger + 1; break;
+      case 10: bankGeiger = bankGeiger + 2; break;
+      case 13: bankGeiger = bankGeiger + 3; break;
+      case 16: bankGeiger = bankGeiger + 4; break;
+      case 19: bankGeiger = bankGeiger + 5; break;
+      case 22: bankGeiger = bankGeiger + 6; break;
+      case 25: bankGeiger = bankGeiger + 7; break;
+      case 28: bankGeiger = bankGeiger + 8; break;
+      case 31: bankGeiger = bankGeiger + 9; break;
+      case 36: bankGeiger = bankGeiger + 10; break;
+      case 37: bankGeiger = bankGeiger + 11; break;
+      case 40: bankGeiger = bankGeiger + 12; break;
+      case 43: bankGeiger = bankGeiger + 13; break;
+      case 46: bankGeiger = bankGeiger + 14; break;
+      case 49: bankGeiger = bankGeiger + 15; break;
+      case 53: bankGeiger = bankGeiger + 16; break;
+      case 56: bankGeiger = bankGeiger + 17; break;
+    }
+
+    byte functGeiger = 0;
+    if (minsCalcGeiger != bankGeiger) {
+      minsCalcGeiger = bankGeiger;
+      geigerCalc[bankGeiger] = random(0, 200);
+    }
+    if (telaMenu == 3) {
+      if (bankGeiger != writerGeiger) {
+        writerGeiger = bankGeiger;
+        functGeiger = mapFloat(geigerCalc[writerGeiger], 0, 200, 78, 196); 
+      }
+      rgbColorGeiger();
+      tft.drawPixel(bankGeiger, functGeiger, geigerColor);
+
+    }
 
 }
-// ------------------------ ATUALIZACAO VISUAL DATA E HORA --------
 
+void rgbColorGeiger() {
+    byte rValue = map (writerGeiger, 33, 433, 255, 228);
+    byte gValue = map (writerGeiger, 33, 433, 184, 152);
+    byte bValue = map (writerGeiger, 33, 433, 1, 55);
+
+    geigerColor = rgb2rgb.RGB24toRGB16(rValue,gValue,bValue);
+}
 
 // ------------------------ TELA DE ABERTURA -------------
 void startLogo() {
@@ -2271,20 +2381,23 @@ void date() {
 }
 
 void seasons() {
-  if (day >= 20 && month > 2) {
-    if (day <21 && month < 7) {
-      tft.pushImage(377, 154, 75, 92, spring);
+  if (day >= 22 && month >= 3) {
+    if (day <= 21 && month <= 6) {
+      tft.pushImage(377, 154, 75, 92, autumn);
     } 
-  } else if (day >= 21 && month > 5) {
-    if (day <23 && month < 9) {
+  }  
+  if (day >= 22 && month == 12) {
+    if (day <= 21 && month <= 3) {
       tft.pushImage(377, 154, 75, 92, summer);
     }
-  } else if (day >= 23 && month > 8) {
-    if (day <22 && month < 11) {
-      tft.pushImage(377, 154, 75, 92, autumn);
+  }  
+  if (day >= 24 && month >= 9) {
+    if (day <= 21 && month <= 12) {
+      tft.pushImage(377, 154, 75, 92, spring);
     }
-  } else if (day >= 22 && month > 11) {
-    if (day < 20 && month < 4) {
+  }  
+  if (day >= 22 && month >= 6) {
+    if (day <= 23 && month <= 9) {
       tft.pushImage(377, 154, 75, 92, winter);
     }
   }
@@ -2388,13 +2501,13 @@ void telaMenu3() {
   wifiLevel();
   batteryLevel();
   lockLevel();
+
 }
 
 void telaMenu4() {
   tft.fillScreen(blackScript);
   i = 1;
   
-  tft.pushImage(377, 154, 80, 92, spring);
   seasons();
   calendar();
   date();
@@ -2457,7 +2570,6 @@ void telaMenu8() {
   tft.drawString("Min:", 165, 265, GFXFF);
   tft.drawString("Max:", 165, 285, GFXFF);
 
-
   humidityLoad();
   home();
   wifiLevel();
@@ -2497,6 +2609,11 @@ void telaMenu11() {
   tft.drawString("0", 64, 291, GFXFF); 
   tft.drawString(".", 105, 291, GFXFF); 
 
+  tft.drawString("x", 175, 129, GFXFF); 
+  tft.drawString("x", 175, 171, GFXFF); 
+  tft.drawString("x", 175, 211, GFXFF); 
+  tft.drawString("(", 178, 251, GFXFF); 
+
   tft.drawString("sin", 225, 129, GFXFF); 
   tft.drawString("cos", 225, 171, GFXFF); 
   tft.drawString("tan", 225, 211, GFXFF); 
@@ -2523,20 +2640,31 @@ void telaMenu11() {
   tft.drawString("=", 146, 291, GFXFF); 
 
   tft.drawCircle(277, 292, 15, icon_1);
+  tft.drawCircle(277, 292, 14, icon_1);
   tft.drawCircle(327, 292, 15, icon_1);
+  tft.drawCircle(327, 292, 14, icon_1);
   tft.drawCircle(377, 292, 15, icon_1);
+  tft.drawCircle(377, 292, 14, icon_1);
 
   tft.drawCircle(327, 252, 15, icon_1);
+  tft.drawCircle(327, 252, 14, icon_1);
   tft.drawCircle(377, 252, 15, icon_1);
+  tft.drawCircle(377, 252, 14, icon_1);
 
   tft.drawCircle(327, 212, 15, icon_1);
+  tft.drawCircle(327, 212, 14, icon_1);
   tft.drawCircle(377, 212, 15, icon_1);
+  tft.drawCircle(377, 212, 14, icon_1);
 
   tft.drawCircle(327, 172, 15, icon_7);
+  tft.drawCircle(327, 172, 14, icon_7);
   tft.drawCircle(377, 172, 15, icon_7);
+  tft.drawCircle(377, 172, 14, icon_7);
 
   tft.drawCircle(327, 132, 15, icon_7);
+  tft.drawCircle(327, 132, 14, icon_7);
   tft.drawCircle(377, 132, 15, icon_7);
+  tft.drawCircle(377, 132, 14, icon_7);
 
   home();
   wifiLevel();
@@ -2545,6 +2673,7 @@ void telaMenu11() {
 }
 void telaMenu12() {
   tft.fillScreen(blackScript);
+
 }
 
 void telaMenu13() {
