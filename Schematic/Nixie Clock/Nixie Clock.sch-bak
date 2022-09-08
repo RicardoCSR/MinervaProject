@@ -1,0 +1,49 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L MCU_Espressif:ESP8266EX U?
+U 1 1 631A0497
+P 5150 4450
+F 0 "U?" H 5150 3261 50  0000 C CNN
+F 1 "ESP8266EX" H 5150 3170 50  0000 C CNN
+F 2 "Package_DFN_QFN:QFN-32-1EP_5x5mm_P0.5mm_EP3.45x3.45mm" H 5150 3150 50  0001 C CNN
+F 3 "http://espressif.com/sites/default/files/documentation/0a-esp8266ex_datasheet_en.pdf" H 5250 3150 50  0001 C CNN
+	1    5150 4450
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:USB_C_Plug_USB2.0 P?
+U 1 1 631A35D4
+P 1450 1600
+F 0 "P?" H 1557 2467 50  0000 C CNN
+F 1 "USB_C_Plug_USB2.0" H 1557 2376 50  0000 C CNN
+F 2 "" H 1600 1600 50  0001 C CNN
+F 3 "https://www.usb.org/sites/default/files/documents/usb_type-c.zip" H 1600 1600 50  0001 C CNN
+	1    1450 1600
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 631A59F0
+P 7850 2300
+F 0 "R?" H 7920 2346 50  0000 L CNN
+F 1 "R" H 7920 2255 50  0000 L CNN
+F 2 "" V 7780 2300 50  0001 C CNN
+F 3 "~" H 7850 2300 50  0001 C CNN
+	1    7850 2300
+	1    0    0    -1  
+$EndComp
+$EndSCHEMATC

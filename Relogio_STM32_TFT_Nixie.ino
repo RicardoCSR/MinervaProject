@@ -117,7 +117,7 @@ byte tempCalc [220] = {0};      // Armazena dados de Temperatura
 byte humiCalc [220] = {0};      // Armazena dados de Umidade 
 byte presCalc [220] = {0};      // Armazena dados de Pressão Atmosferica
 
-
+byte functGeiger = 0;
 
 // BANCO DE DADOS DE COMPARADORES
 byte logoStarted = 0;
@@ -386,7 +386,7 @@ void loop(void) {
     if(millis() - UtlTime < 0) {
       UtlTime = millis();
     } else {
-      secs = int((millis() - UtlTime) / 100);
+      secs = int((millis() - UtlTime) / 50);
     }
     if(secs > 59) {
       secs = 0;
@@ -542,123 +542,123 @@ void loop(void) {
 
   // ------------------------ ATUALIZACAO VISUAL DATA E HORA OPERACIONAL --------
 
-  if (i == 1) {
-    compareHour = 0;
-    compareMins = 0;
-    compareDay = 0;
-    compareMonth = 0;
-    compareYear = 0;
-    i = 2;
-  }
-  
-  String stringHour = String(hours);
-  String stringMin = String(mins);
-  String stringDay = String(day);
-  String stringMonth = String(month);
-  String stringYear = String(year);
+    if (i == 1) {
+      compareHour = 0;
+      compareMins = 0;
+      compareDay = 0;
+      compareMonth = 0;
+      compareYear = 0;
+      i = 2;
+    }
+    
+    String stringHour = String(hours);
+    String stringMin = String(mins);
+    String stringDay = String(day);
+    String stringMonth = String(month);
+    String stringYear = String(year);
 
-  String stringHourMin = String(hours - 1);
-  String stringMinMin = String(mins - 1);
-  String stringDayMin = String(day - 1);
-  String stringMonthMin = String(month - 1);
-  String stringYearMin = String(year - 1);
-  
-  if (hours != compareHour) {
-    compareHour = hours;
-    tft.setTextDatum(ML_DATUM);
-    tft.setTextColor(blackScript);
-    tft.setFreeFont(latoRegular24);
-    if ((hours > 1) && (hours < 10)) {
-      tft.drawString("0", 219, 30, GFXFF);
-      tft.drawString(stringHourMin, 234, 30, GFXFF);
-    } else {
-      tft.fillRect(219, 22, 28, 20, blackScript);
+    String stringHourMin = String(hours - 1);
+    String stringMinMin = String(mins - 1);
+    String stringDayMin = String(day - 1);
+    String stringMonthMin = String(month - 1);
+    String stringYearMin = String(year - 1);
+    
+    if (hours != compareHour) {
+      compareHour = hours;
+      tft.setTextDatum(ML_DATUM);
+      tft.setTextColor(blackScript);
+      tft.setFreeFont(latoRegular24);
+      if ((hours > 1) && (hours < 10)) {
+        tft.drawString("0", 219, 30, GFXFF);
+        tft.drawString(stringHourMin, 234, 30, GFXFF);
+      } else {
+        tft.fillRect(219, 22, 28, 20, blackScript);
+      }
+      tft.setTextColor(whiteScript);  
+      if (hours < 10) {
+        tft.drawString("0", 219, 30, GFXFF);
+        tft.drawString(stringHour, 234, 30, GFXFF);
+      } else {
+        tft.drawString(stringHour, 219, 30, GFXFF);
+      }
     }
-    tft.setTextColor(whiteScript);  
-    if (hours < 10) {
-      tft.drawString("0", 219, 30, GFXFF);
-      tft.drawString(stringHour, 234, 30, GFXFF);
-    } else {
-      tft.drawString(stringHour, 219, 30, GFXFF);
-    }
-  }
-  if (mins != compareMins) {
-    compareMins = mins;
-    tft.setTextDatum(ML_DATUM);
-    tft.setTextColor(blackScript);
-    tft.setFreeFont(latoRegular24);
-    if ((mins > 1) && (mins < 10)) {
-      tft.drawString("0", 252, 30, GFXFF);
-      tft.drawString(stringMinMin, 267, 30, GFXFF);
-    } else {
-      tft.fillRect(252, 22, 28, 20, blackScript);
-    }
-    tft.setTextColor(whiteScript);  
-    if (mins < 10) {
-      tft.drawString("0", 252, 30, GFXFF);
-      tft.drawString(":", 246, 30, GFXFF);
-      tft.drawString(stringMin, 267, 30, GFXFF);
-    } else {
-      tft.drawString(":", 246, 30, GFXFF);
-      tft.drawString(stringMin, 252, 30, GFXFF);
-    }
-  }
-
-  if (day != compareDay) {
-    compareDay = day;
-    tft.setTextDatum(ML_DATUM);
-    tft.setTextColor(blackScript);
-    tft.setFreeFont(latoRegular24);
-    if ((day > 1) && (day < 10)) {
-      tft.drawString("0", 77, 30, GFXFF);
-      tft.drawString(stringDayMin, 92, 30, GFXFF);
-    } else {
-      tft.fillRect(77, 22, 28, 20, blackScript);
+    if (mins != compareMins) {
+      compareMins = mins;
+      tft.setTextDatum(ML_DATUM);
+      tft.setTextColor(blackScript);
+      tft.setFreeFont(latoRegular24);
+      if ((mins > 1) && (mins < 10)) {
+        tft.drawString("0", 252, 30, GFXFF);
+        tft.drawString(stringMinMin, 267, 30, GFXFF);
+      } else {
+        tft.fillRect(252, 22, 28, 20, blackScript);
+      }
+      tft.setTextColor(whiteScript);  
+      if (mins < 10) {
+        tft.drawString("0", 252, 30, GFXFF);
+        tft.drawString(":", 246, 30, GFXFF);
+        tft.drawString(stringMin, 267, 30, GFXFF);
+      } else {
+        tft.drawString(":", 246, 30, GFXFF);
+        tft.drawString(stringMin, 252, 30, GFXFF);
+      }
     }
 
-    tft.setTextColor(whiteScript);  
+    if (day != compareDay) {
+      compareDay = day;
+      tft.setTextDatum(ML_DATUM);
+      tft.setTextColor(blackScript);
+      tft.setFreeFont(latoRegular24);
+      if ((day > 1) && (day < 10)) {
+        tft.drawString("0", 77, 30, GFXFF);
+        tft.drawString(stringDayMin, 92, 30, GFXFF);
+      } else {
+        tft.fillRect(77, 22, 28, 20, blackScript);
+      }
 
-    if (day < 10) {
-      tft.drawString("0", 77, 30, GFXFF);
-      tft.drawString(stringDay, 92, 30, GFXFF);
-    } else {
-      tft.drawString(stringDay, 77, 30, GFXFF);
+      tft.setTextColor(whiteScript);  
+
+      if (day < 10) {
+        tft.drawString("0", 77, 30, GFXFF);
+        tft.drawString(stringDay, 92, 30, GFXFF);
+      } else {
+        tft.drawString(stringDay, 77, 30, GFXFF);
+      }
     }
-  }
 
-  if (month != compareMonth) {
-    compareMonth = month;
-    tft.setTextDatum(ML_DATUM);
-    tft.setTextColor(blackScript);
-    tft.setFreeFont(latoRegular24);
-    if ((month > 1) && (month < 10)) {
-      tft.drawString("0", 110, 30, GFXFF);
-      tft.drawString(stringMonthMin, 125, 30, GFXFF);
-    } else {
-      tft.fillRect(110, 22, 28, 20, blackScript);
+    if (month != compareMonth) {
+      compareMonth = month;
+      tft.setTextDatum(ML_DATUM);
+      tft.setTextColor(blackScript);
+      tft.setFreeFont(latoRegular24);
+      if ((month > 1) && (month < 10)) {
+        tft.drawString("0", 110, 30, GFXFF);
+        tft.drawString(stringMonthMin, 125, 30, GFXFF);
+      } else {
+        tft.fillRect(110, 22, 28, 20, blackScript);
+      }
+
+      tft.setTextColor(whiteScript);  
+
+      if (month < 10) {
+        tft.drawString("0", 110, 30, GFXFF);
+        tft.drawString(stringMonth, 125, 30, GFXFF);
+      } else {
+        tft.drawString(stringMonth, 110, 30, GFXFF);
+      }
     }
 
-    tft.setTextColor(whiteScript);  
+    if (year != compareYear) {
+      compareYear = year;
+      tft.setTextDatum(ML_DATUM);
+      tft.setTextColor(blackScript);
+      tft.setFreeFont(latoRegular24);
+      tft.drawString(stringYearMin, 143, 30, GFXFF);
 
-    if (month < 10) {
-      tft.drawString("0", 110, 30, GFXFF);
-      tft.drawString(stringMonth, 125, 30, GFXFF);
-    } else {
-      tft.drawString(stringMonth, 110, 30, GFXFF);
+      tft.setTextColor(whiteScript);  
+
+      tft.drawString(stringYear, 143, 30, GFXFF);
     }
-  }
-
-  if (year != compareYear) {
-    compareYear = year;
-    tft.setTextDatum(ML_DATUM);
-    tft.setTextColor(blackScript);
-    tft.setFreeFont(latoRegular24);
-    tft.drawString(stringYearMin, 143, 30, GFXFF);
-
-    tft.setTextColor(whiteScript);  
-
-    tft.drawString(stringYear, 143, 30, GFXFF);
-  }
 
   // ------------------------ ATUALIZA POSICAO GRAFICO GEIGER -------
     if (minsCalcGeiger != mins) {
@@ -713,18 +713,21 @@ void loop(void) {
       case 56: bankGeiger = bankGeiger + 17; break;
     }
 
-    byte functGeiger = 0;
     if (minsCalcGeiger != bankGeiger) {
       minsCalcGeiger = bankGeiger;
-      geigerCalc[bankGeiger] = random(0, 200);
+      geigerCalc[bankGeiger] = random(50, 60);
     }
     if (telaMenu == 3) {
       if (bankGeiger != writerGeiger) {
         writerGeiger = bankGeiger;
-        functGeiger = mapFloat(geigerCalc[writerGeiger], 0, 200, 78, 196); 
+        functGeiger = mapFloat(geigerCalc[writerGeiger], 0, 200, 196, 78); 
       }
       rgbColorGeiger();
       tft.drawPixel(bankGeiger, functGeiger, geigerColor);
+      tft.drawPixel(bankGeiger, functGeiger + 1, geigerColor);
+      tft.drawPixel(bankGeiger, functGeiger + 2, geigerColor);
+      tft.drawPixel(bankGeiger, functGeiger + 3, geigerColor);
+      tft.drawPixel(bankGeiger, functGeiger + 4, geigerColor);
 
     }
 
@@ -2501,7 +2504,6 @@ void telaMenu3() {
   wifiLevel();
   batteryLevel();
   lockLevel();
-
 }
 
 void telaMenu4() {
@@ -2583,6 +2585,7 @@ void telaMenu9() {
 void telaMenu10() {
   tft.fillScreen(blackScript);
 }
+
 void telaMenu11() {
   tft.fillScreen(blackScript);
   i = 1;
@@ -2671,9 +2674,9 @@ void telaMenu11() {
   batteryLevel();
   lockLevel();
 }
+
 void telaMenu12() {
   tft.fillScreen(blackScript);
-
 }
 
 void telaMenu13() {
