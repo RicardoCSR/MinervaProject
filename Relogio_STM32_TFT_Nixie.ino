@@ -92,30 +92,30 @@ byte fuso = 1;
 //fuso = 1 24 Horas
 
 // GERACAO DE GRAFICOS
-byte minsCalcGeiger = 0;        // Armazena Horario marcação gráfico Geiger
-byte minsCalcTemp = 0;          // Armazena Horario marcação gráfico Temperatura
-byte minsCalcHumi = 0;          // Armazena Horario marcação gráfico Umidade
-byte minsCalcPres = 0;          // Armazena Horario marcação gráfico Pressão Atmosferica
+int minsCalcGeiger = 0;         // Armazena Horario marcação gráfico Geiger
+int minsCalcTemp = 0;           // Armazena Horario marcação gráfico Temperatura
+int minsCalcHumi = 0;           // Armazena Horario marcação gráfico Umidade
+int minsCalcPres = 0;           // Armazena Horario marcação gráfico Pressão Atmosferica
 
-byte calcGeiger = 0;            // Armazena dado de Contagem para geigerCalc
-byte calcTemp = 0;              // Armazena dado de Contagem para tempCalc
-byte calcHumi = 0;              // Armazena dado de Contagem para humiCalc
-byte calcPres = 0;              // Armazena dado de Contagem para presCalc
+int calcGeiger = 0;             // Armazena dado de Contagem para geigerCalc
+int calcTemp = 0;               // Armazena dado de Contagem para tempCalc
+int calcHumi = 0;               // Armazena dado de Contagem para humiCalc
+int calcPres = 0;               // Armazena dado de Contagem para presCalc
 
-byte bankGeiger = 0;            // Armazena dado da posição do Gráfico em uso
-byte bankTemp = 0;              // Armazena dado da posição do Gráfico em uso
-byte bankHumi = 0;              // Armazena dado da posição do Gráfico em uso
-byte bankPres = 0;              // Armazena dado da posição do Gráfico em uso
+int bankGeiger = 0;             // Armazena dado da posição do Gráfico em uso
+int bankTemp = 0;               // Armazena dado da posição do Gráfico em uso
+int bankHumi = 0;               // Armazena dado da posição do Gráfico em uso
+int bankPres = 0;               // Armazena dado da posição do Gráfico em uso
 
-byte writerGeiger = 0;          // Armazena dado da posição do Gráfico em não uso
-byte writerTemp = 0;            // Armazena dado da posição do Gráfico em não uso
-byte writerHumi = 0;            // Armazena dado da posição do Gráfico em não uso
-byte writerPres = 0;            // Armazena dado da posição do Gráfico em não uso
+int writerGeiger = 0;           // Armazena dado da posição do Gráfico em não uso
+int writerTemp = 0;             // Armazena dado da posição do Gráfico em não uso
+int writerHumi = 0;             // Armazena dado da posição do Gráfico em não uso
+int writerPres = 0;             // Armazena dado da posição do Gráfico em não uso
 
-byte geigerCalc [220] = {0};    // Armazena dados de Geiger
-byte tempCalc [220] = {0};      // Armazena dados de Temperatura 
-byte humiCalc [220] = {0};      // Armazena dados de Umidade 
-byte presCalc [220] = {0};      // Armazena dados de Pressão Atmosferica
+int geigerCalc [220] = {0};     // Armazena dados de Geiger
+int tempCalc [220] = {0};       // Armazena dados de Temperatura 
+int humiCalc [220] = {0};       // Armazena dados de Umidade 
+int presCalc [220] = {0};       // Armazena dados de Pressão Atmosferica
 
 byte functGeiger = 0;
 
@@ -386,7 +386,7 @@ void loop(void) {
     if(millis() - UtlTime < 0) {
       UtlTime = millis();
     } else {
-      secs = int((millis() - UtlTime) / 50);
+      secs = int((millis() - UtlTime) / 1000);
     }
     if(secs > 59) {
       secs = 0;
@@ -487,7 +487,7 @@ void loop(void) {
     if (UtlTime - period >= 5 * 1000) {
       period = UtlTime;
     }  
-    telaMenu = 3;
+    telaMenu = 4;
     if (i == 0) {
       switch (telaMenu) {
         case 1:
