@@ -13,7 +13,7 @@ AZUL -      NIXIE
 Caracteristica
 
 SN74141 : True Table
-D C B A #
+calcDay1 C B A #
 L,L,L,L 0
 L,L,L,H 1
 L,L,H,L 2
@@ -271,9 +271,6 @@ uint16_t icon_15 = 0x634C;              //0x6A6A6A
 
 uint16_t icon_black = 0x8450;           //0x8A8A8A
 uint16_t icon_white = 0xD6BA;           //0xD9D9D9
-
-uint16_t icon12 = 0xB8EC;               //0xBE1D69
-
 
 #include "STM32LowPower.h"
 
@@ -752,35 +749,22 @@ void defaultSetup() {
   if (screenLoad == 0) {
     tft.fillScreen(blackScript);
     tft.setSwapBytes(true);
-    tft.fillRoundRect(43,67, 71, 71, 10, icon_1);
     tft.pushImage(43, 67, 71, 71, icon1);
-    tft.fillRoundRect(124,67, 71, 71, 10, icon_2);
     tft.pushImage(124, 67, 71, 71, icon2);
-    tft.fillRoundRect(205,67, 71, 71, 10, icon_3);
     tft.pushImage(205, 67, 71, 71, icon3);
-    tft.fillRoundRect(286,67, 71, 71, 10, icon_4);
     tft.pushImage(286, 67, 71, 71, icon4);
-    tft.fillRoundRect(367,67, 71, 71, 10, icon_5);
     tft.pushImage(367, 67, 71, 71, icon5);
 
-    tft.fillRoundRect(43,147, 71, 71, 10, icon_6);
     tft.pushImage(43, 147, 71, 71, icon6);
-    tft.fillRoundRect(124,147, 71, 71, 10, icon_7);
     tft.pushImage(124, 147, 71, 71, icon7);
-    tft.fillRoundRect(205,147, 71, 71, 10, icon_8);
     tft.pushImage(205, 147, 71, 71, icon8);
-    tft.fillRoundRect(286,147, 71, 71, 10, icon_9);
     tft.pushImage(286, 147, 71, 71, icon9);
-    tft.fillRoundRect(367,147, 71, 71, 10, icon_10);
     tft.pushImage(367, 147, 71, 71, icon10);
 
-    tft.fillRoundRect(43,227, 71, 71, 10, icon_11);
     tft.pushImage(43, 227, 71, 71, icon11);
-    tft.fillRoundRect(204, 227, 71, 71, 10, icon_13);
+    tft.pushImage(124, 227, 71, 71, icon12);
     tft.pushImage(205, 227, 71, 71, icon13);
-    tft.fillRoundRect(286,227, 71, 71, 10, icon_14);
     tft.pushImage(286, 227, 71, 71, icon14);
-    tft.fillRoundRect(367,227, 71, 71, 10, icon_15);
     tft.pushImage(367, 227, 71, 71, icon15);
 
     wifiLevel();
@@ -2336,6 +2320,113 @@ void calendar() {
       tft.drawString("UNKNOWN", 187, 280, GFXFF);
       tft.drawString("UNKNOWN", 310, 280, GFXFF);
   }
+  calendarLoader();
+}
+
+void calendarLoader() {
+byte calcYear = 0;
+
+byte calcYear1 = 0;
+byte calcYear2 = 0;
+byte calcYear3 = 0;
+byte calcYear4 = 0;
+
+byte calcDay1 = 0;
+byte calcDay2 = 0;
+byte calcDay4 = 0;
+
+byte calcMonth = 0;
+
+byte segment = 0;
+byte weekday = 0;
+
+byte weekDay1 = 0;
+byte weekDay2 = 0;
+byte weekDay3 = 0;
+byte result = 0;
+float quatro = 4.00;
+float bissexto=0;
+int bs=0;
+float bs2=0;
+
+// 1 de Janeiro de 2022 SAB
+
+  if (year > 2000){
+    weekday = year - 2000;
+    calcYear = - 1;
+  }
+  if(year > 1899&&year < 2000) {
+    weekday = year - 1900; 
+    calcYear = 0;
+  }
+  if(year > 1799&&year < 1900) {
+    weekday = year - 1800;
+    calcYear = 2;
+  }
+  calcYear3 = weekday / 4;
+  calcYear1 = weekday / 7;//2
+  calcYear2 = calcYear1 * 7;
+  calcYear4 = weekday - calcYear2;
+
+
+  calcDay4 = day / 7;
+  calcDay2 = calcDay4 * 7;
+  calcDay1 = day - calcDay2;
+
+  if (month == 1){  calcMonth = 1;}
+  if (month == 2){  calcMonth = 4;}
+  if (month == 3){  calcMonth = 4;}
+  if (month == 4){  calcMonth = 0;}
+  if (month == 5){  calcMonth = 2;}
+  if (month == 6){  calcMonth = 3;}
+  if (month == 7){  calcMonth = 0;}
+  if (month == 8){  calcMonth = 3;}
+  if (month == 9){  calcMonth = 6;}
+  if (month == 10){ calcMonth = 1;}
+  if (month == 11){ calcMonth = 4;}
+  if (month == 12){ calcMonth = 6;}
+
+  weekDay1 = calcYear3 + calcYear4 + calcDay1 + calcMonth + segment;
+
+  weekDay2 = weekDay1 / 7;//2
+  weekDay3 = weekDay2 * 7;//14
+  result = weekDay1 - weekDay3;
+
+  bissexto = calcYear / quatro;
+  bs = calcYear / quatro;
+  bs2 = bissexto - bs;
+  if(bs2 == 0&&month < 3) {
+    result = result - 1;
+  }
+
+  if(result == 1) {
+    tft.fillRect(400, 150, 30, 30, icon_1);  // SUN
+    Serial.println("Domingo");
+  }
+  if(result == 2) {
+    tft.fillRect(400, 150, 30, 30, icon_2);  // MON
+    Serial.println("Segunda");
+  }
+  if(result == 3) {
+    tft.fillRect(400, 150, 30, 30, icon_3);  // TUE
+    Serial.println("Terca");
+  }
+  if(result == 4) {
+    tft.fillRect(400, 150, 30, 30, icon_4);  // WED
+    Serial.println("Quarta");
+  }
+  if(result == 5) {
+    tft.fillRect(400, 150, 30, 30, icon_5);  // THU
+    Serial.println("Quinta");
+  }
+  if(result == 6) {
+    tft.fillRect(400, 150, 30, 30, icon_6);  // FRI
+    Serial.println("Sexta");
+  }
+  if(result == 0) {
+    tft.fillRect(400, 150, 30, 30, icon_7);  // SAT
+    Serial.println("Sabado");
+  }
 }
 
 void date() {
@@ -2366,14 +2457,14 @@ void date() {
     tft.drawString("0", 40, 105, GFXFF);
     tft.drawString(stringDay, 70, 105, GFXFF);
   } else {
-    tft.drawString(stringDay, 40, 105, GFXFF);
+    tft.drawString(stringDay, 55, 105, GFXFF);
   }
 
   if (month < 10) {
     tft.drawString("0", 40, 175, GFXFF);
     tft.drawString(stringMonth, 70, 175, GFXFF);
   } else {
-    tft.drawString(stringMonth, 40, 175, GFXFF);
+    tft.drawString(stringMonth, 55, 175, GFXFF);
   }
 
   tft.setTextDatum(TL_DATUM);
@@ -2677,6 +2768,12 @@ void telaMenu11() {
 
 void telaMenu12() {
   tft.fillScreen(blackScript);
+  i = 1;
+
+  home();
+  wifiLevel();
+  batteryLevel();
+  lockLevel();
 }
 
 void telaMenu13() {
