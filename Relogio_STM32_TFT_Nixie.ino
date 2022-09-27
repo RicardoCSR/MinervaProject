@@ -419,7 +419,7 @@ void loop(void) {
                 month ++;
               }
             } else {
-              if(day>28) {
+              if(day > 28) {
                 day = 1;
                 month ++;
               }
@@ -471,7 +471,7 @@ void loop(void) {
       Serial.print("/");
       Serial.print(month);
       Serial.print("/");
-      Serial.print(year);
+      Serial.print(year); 
       Serial.print("     ");
       Serial.print(hours);
       Serial.print(":");
@@ -484,7 +484,7 @@ void loop(void) {
     if (UtlTime - period >= 5 * 1000) {
       period = UtlTime;
     }  
-    telaMenu = 4;
+    telaMenu = 12;
     if (i == 0) {
       switch (telaMenu) {
         case 1:
@@ -2324,109 +2324,7 @@ void calendar() {
 }
 
 void calendarLoader() {
-byte calcYear = 0;
 
-byte calcYear1 = 0;
-byte calcYear2 = 0;
-byte calcYear3 = 0;
-byte calcYear4 = 0;
-
-byte calcDay1 = 0;
-byte calcDay2 = 0;
-byte calcDay4 = 0;
-
-byte calcMonth = 0;
-
-byte segment = 0;
-byte weekday = 0;
-
-byte weekDay1 = 0;
-byte weekDay2 = 0;
-byte weekDay3 = 0;
-byte result = 0;
-float quatro = 4.00;
-float bissexto=0;
-int bs=0;
-float bs2=0;
-
-// 1 de Janeiro de 2022 SAB
-
-  if (year > 2000){
-    weekday = year - 2000;
-    calcYear = - 1;
-  }
-  if(year > 1899&&year < 2000) {
-    weekday = year - 1900; 
-    calcYear = 0;
-  }
-  if(year > 1799&&year < 1900) {
-    weekday = year - 1800;
-    calcYear = 2;
-  }
-  calcYear3 = weekday / 4;
-  calcYear1 = weekday / 7;//2
-  calcYear2 = calcYear1 * 7;
-  calcYear4 = weekday - calcYear2;
-
-
-  calcDay4 = day / 7;
-  calcDay2 = calcDay4 * 7;
-  calcDay1 = day - calcDay2;
-
-  if (month == 1){  calcMonth = 1;}
-  if (month == 2){  calcMonth = 4;}
-  if (month == 3){  calcMonth = 4;}
-  if (month == 4){  calcMonth = 0;}
-  if (month == 5){  calcMonth = 2;}
-  if (month == 6){  calcMonth = 3;}
-  if (month == 7){  calcMonth = 0;}
-  if (month == 8){  calcMonth = 3;}
-  if (month == 9){  calcMonth = 6;}
-  if (month == 10){ calcMonth = 1;}
-  if (month == 11){ calcMonth = 4;}
-  if (month == 12){ calcMonth = 6;}
-
-  weekDay1 = calcYear3 + calcYear4 + calcDay1 + calcMonth + segment;
-
-  weekDay2 = weekDay1 / 7;//2
-  weekDay3 = weekDay2 * 7;//14
-  result = weekDay1 - weekDay3;
-
-  bissexto = calcYear / quatro;
-  bs = calcYear / quatro;
-  bs2 = bissexto - bs;
-  if(bs2 == 0&&month < 3) {
-    result = result - 1;
-  }
-
-  if(result == 1) {
-    tft.fillRect(400, 150, 30, 30, icon_1);  // SUN
-    Serial.println("Domingo");
-  }
-  if(result == 2) {
-    tft.fillRect(400, 150, 30, 30, icon_2);  // MON
-    Serial.println("Segunda");
-  }
-  if(result == 3) {
-    tft.fillRect(400, 150, 30, 30, icon_3);  // TUE
-    Serial.println("Terca");
-  }
-  if(result == 4) {
-    tft.fillRect(400, 150, 30, 30, icon_4);  // WED
-    Serial.println("Quarta");
-  }
-  if(result == 5) {
-    tft.fillRect(400, 150, 30, 30, icon_5);  // THU
-    Serial.println("Quinta");
-  }
-  if(result == 6) {
-    tft.fillRect(400, 150, 30, 30, icon_6);  // FRI
-    Serial.println("Sexta");
-  }
-  if(result == 0) {
-    tft.fillRect(400, 150, 30, 30, icon_7);  // SAT
-    Serial.println("Sabado");
-  }
 }
 
 void date() {
@@ -2505,6 +2403,70 @@ void nixie() {
   tft.pushImage(348, 84, 36, 90, nixieBulb);
   tft.pushImage(385, 84, 36, 90, nixieBulb);
   tft.fillCircle(338, 158, 4, nixieColor);
+}
+
+void compass() {
+  tft.drawCircle(201, 173, 60, icon_15);
+
+  tft.drawCircle(201, 173, 79, icon_15);
+  tft.drawCircle(201, 173, 80, icon_15);
+
+  tft.drawCircle(201, 173, 88, icon_15);
+
+  tft.drawCircle(201, 173, 93, icon_15);
+
+  tft.drawCircle(201, 173, 98, icon_15);
+
+  tft.drawLine(200, 75, 200, 86, geigerLevel3);
+  tft.drawLine(201, 75, 201, 86, geigerLevel3);
+
+  tft.drawLine(103, 171, 113, 171, icon_15);
+  tft.drawLine(103, 172, 113, 172, icon_15);
+
+  tft.drawLine(289, 171, 299, 171, icon_15);
+  tft.drawLine(289, 172, 299, 172, icon_15);
+
+  tft.drawLine(200, 261, 200, 270, icon_15);
+  tft.drawLine(201, 261, 201, 270, icon_15);
+
+  tft.fillCircle(201, 172, 5, greenScript);
+
+
+  tft.drawRect(200, 162, 2, 2, icon_white);
+  tft.drawRect(200, 152, 2, 2, icon_white);
+  tft.drawRect(200, 142, 2, 2, icon_white);
+  tft.drawRect(200, 132, 2, 2, icon_white);
+  tft.drawRect(200, 122, 2, 2, icon_white);
+
+  tft.drawRect(150, 172, 2, 2, icon_white);
+  tft.drawRect(160, 172, 2, 2, icon_white);
+  tft.drawRect(170, 172, 2, 2, icon_white);
+  tft.drawRect(180, 172, 2, 2, icon_white);
+  tft.drawRect(190, 172, 2, 2, icon_white);
+
+  tft.drawRect(210, 172, 2, 2, icon_white);
+  tft.drawRect(220, 172, 2, 2, icon_white);
+  tft.drawRect(230, 172, 2, 2, icon_white);
+  tft.drawRect(240, 172, 2, 2, icon_white);
+  tft.drawRect(250, 172, 2, 2, icon_white);
+
+  tft.drawRect(200, 182, 2, 2, icon_white);
+  tft.drawRect(200, 192, 2, 2, icon_white);
+  tft.drawRect(200, 202, 2, 2, icon_white);
+  tft.drawRect(200, 212, 2, 2, icon_white);
+  tft.drawRect(200, 222, 2, 2, icon_white);
+
+  tft.setTextDatum(MC_DATUM);
+  tft.setTextColor(geigerLevel3);
+  tft.setFreeFont(latoRegular24);
+  tft.drawString("N", 192, 48, GFXFF); // CORRIGIR POSICAO
+
+  tft.setTextColor(wifi_level2);  
+  tft.drawString("S", 192, 268, GFXFF); // CORRIGIR POSICAO
+
+
+
+  tft.fillRectHGradient(15, 267, 100, 30, geigerColor1, geigerColor2);
 }
 
 void telaMenu1() {
@@ -2769,6 +2731,8 @@ void telaMenu11() {
 void telaMenu12() {
   tft.fillScreen(blackScript);
   i = 1;
+
+  compass();
 
   home();
   wifiLevel();
