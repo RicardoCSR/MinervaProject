@@ -330,11 +330,11 @@ void setup() {
   }
 
   UtlTime = 0;
-  mins = 0;
-  hours = 0;
-  day = 0;
-  month = 0;
-  year = 0;
+  mins = 1;
+  hours = 1;
+  day = 1;
+  month = 1;
+  year = 2022;
 
   Serial.print("Insira Hora: ");
   while (hours == 0) {
@@ -2432,41 +2432,163 @@ void compass() {
   tft.fillCircle(201, 172, 5, greenScript);
 
 
-  tft.drawRect(200, 162, 2, 2, icon_white);
-  tft.drawRect(200, 152, 2, 2, icon_white);
-  tft.drawRect(200, 142, 2, 2, icon_white);
-  tft.drawRect(200, 132, 2, 2, icon_white);
-  tft.drawRect(200, 122, 2, 2, icon_white);
+  tft.drawRect(200, 162, 2, 2, whiteScript);
+  tft.drawRect(200, 152, 2, 2, whiteScript);
+  tft.drawRect(200, 142, 2, 2, whiteScript);
+  tft.drawRect(200, 132, 2, 2, whiteScript);
+  tft.drawRect(200, 122, 2, 2, whiteScript);
 
-  tft.drawRect(150, 172, 2, 2, icon_white);
-  tft.drawRect(160, 172, 2, 2, icon_white);
-  tft.drawRect(170, 172, 2, 2, icon_white);
-  tft.drawRect(180, 172, 2, 2, icon_white);
-  tft.drawRect(190, 172, 2, 2, icon_white);
+  tft.drawRect(150, 172, 2, 2, whiteScript);
+  tft.drawRect(160, 172, 2, 2, whiteScript);
+  tft.drawRect(170, 172, 2, 2, whiteScript);
+  tft.drawRect(180, 172, 2, 2, whiteScript);
+  tft.drawRect(190, 172, 2, 2, whiteScript);
 
-  tft.drawRect(210, 172, 2, 2, icon_white);
-  tft.drawRect(220, 172, 2, 2, icon_white);
-  tft.drawRect(230, 172, 2, 2, icon_white);
-  tft.drawRect(240, 172, 2, 2, icon_white);
-  tft.drawRect(250, 172, 2, 2, icon_white);
+  tft.drawRect(210, 172, 2, 2, whiteScript);
+  tft.drawRect(220, 172, 2, 2, whiteScript);
+  tft.drawRect(230, 172, 2, 2, whiteScript);
+  tft.drawRect(240, 172, 2, 2, whiteScript);
+  tft.drawRect(250, 172, 2, 2, whiteScript);
 
-  tft.drawRect(200, 182, 2, 2, icon_white);
-  tft.drawRect(200, 192, 2, 2, icon_white);
-  tft.drawRect(200, 202, 2, 2, icon_white);
-  tft.drawRect(200, 212, 2, 2, icon_white);
-  tft.drawRect(200, 222, 2, 2, icon_white);
+  tft.drawRect(200, 182, 2, 2, whiteScript);
+  tft.drawRect(200, 192, 2, 2, whiteScript);
+  tft.drawRect(200, 202, 2, 2, whiteScript);
+  tft.drawRect(200, 212, 2, 2, whiteScript);
+  tft.drawRect(200, 222, 2, 2, whiteScript);
 
   tft.setTextDatum(MC_DATUM);
   tft.setTextColor(geigerLevel3);
   tft.setFreeFont(latoRegular24);
-  tft.drawString("N", 192, 48, GFXFF); // CORRIGIR POSICAO
+  tft.drawString("N", 200, 61, GFXFF);
 
   tft.setTextColor(wifi_level2);  
-  tft.drawString("S", 192, 268, GFXFF); // CORRIGIR POSICAO
+  tft.drawString("S", 200, 285, GFXFF); 
 
+  tft.setTextColor(whiteScript);  
+  tft.drawString("W", 83, 170, GFXFF); 
+
+  tft.setTextColor(whiteScript);  
+  tft.drawString("E", 313, 170, GFXFF); 
+
+  tft.setTextDatum(MC_DATUM);
+  tft.setTextColor(augustColor);
+  tft.setFreeFont(latoBold48);
+  tft.drawString("174", 370, 97, GFXFF);
+
+  tft.setTextDatum(MC_DATUM);
+  tft.setTextColor(greenScript);
+  tft.setFreeFont(latoBold48);
+  tft.drawString("0.0", 370, 146, GFXFF);
+
+  tft.setTextDatum(MC_DATUM);
+  tft.setTextColor(whiteScript);
+  tft.setFreeFont(latoRegular14);
+  tft.drawString("X", 340, 216, GFXFF);
+  tft.drawString("59", 360, 216, GFXFF);
+  tft.drawString("Y", 400, 216, GFXFF);
+  tft.drawString("46", 420, 216, GFXFF);
 
 
   tft.fillRectHGradient(15, 267, 100, 30, geigerColor1, geigerColor2);
+}
+
+void keyboard() {
+  byte alt = 0;
+  tft.fillCircle(30, 100, 20, icon_white);
+
+  tft.drawLine(18, 93, 30, 105, blackScript);
+  tft.drawLine(18, 94, 30, 106, blackScript);
+  tft.drawLine(18, 95, 30, 107, blackScript);
+  tft.drawLine(18, 96, 30, 108, blackScript);
+  tft.drawLine(18, 97, 30, 109, blackScript);
+  tft.drawLine(18, 98, 30, 110, blackScript);
+  tft.drawLine(30, 105, 42, 93, blackScript);
+  tft.drawLine(30, 106, 42, 94, blackScript);
+  tft.drawLine(30, 107, 42, 95, blackScript);
+  tft.drawLine(30, 108, 42, 96, blackScript);
+  tft.drawLine(30, 109, 42, 97, blackScript);
+  tft.drawLine(30, 110, 42, 98, blackScript);
+
+  tft.drawRoundRect(65, 80, 350, 40, 5, icon_white);
+  tft.drawCircle(450, 100, 20, icon_white);
+
+  tft.setTextDatum(MC_DATUM);
+  tft.setTextColor(icon_white);
+  tft.setFreeFont(latoBold48);
+
+  if (alt == 1) {
+    tft.drawString("Q", 37, 161, GFXFF);
+    tft.drawString("W", 85, 161, GFXFF);
+    tft.drawString("E", 130, 161, GFXFF);
+    tft.drawString("R", 175, 161, GFXFF);
+    tft.drawString("T", 220, 161, GFXFF);
+    tft.drawString("Y", 265, 161, GFXFF);
+    tft.drawString("U", 310, 161, GFXFF);
+    tft.drawString("I", 355, 161, GFXFF);
+    tft.drawString("O", 400, 161, GFXFF);
+    tft.drawString("P", 445, 161, GFXFF);
+
+    tft.drawString("A", 60, 221, GFXFF);
+    tft.drawString("S", 105, 221, GFXFF); 
+    tft.drawString("D", 150, 221, GFXFF);
+    tft.drawString("F", 195, 221, GFXFF);
+    tft.drawString("G", 240, 221, GFXFF);
+    tft.drawString("H", 285, 221, GFXFF);
+    tft.drawString("J", 330, 221, GFXFF);
+    tft.drawString("K", 375, 221, GFXFF);
+    tft.drawString("L", 420, 221, GFXFF);
+
+    tft.drawString("Z", 90, 281, GFXFF);
+    tft.drawString("X", 135, 281, GFXFF);
+    tft.drawString("C", 180, 281, GFXFF);
+    tft.drawString("V", 225, 281, GFXFF);
+    tft.drawString("B", 275, 281, GFXFF);
+    tft.drawString("N", 325, 281, GFXFF);
+    tft.drawString("M", 380, 281, GFXFF);
+
+    tft.fillRect(21, 276, 28, 24, icon_white);
+    tft.fillTriangle(21, 275, 35, 266, 48, 275, icon_white);
+
+  } else {
+    tft.drawString("q", 37, 161, GFXFF);
+    tft.drawString("w", 85, 161, GFXFF);
+    tft.drawString("e", 130, 161, GFXFF);
+    tft.drawString("r", 175, 161, GFXFF);
+    tft.drawString("t", 220, 161, GFXFF);
+    tft.drawString("y", 265, 161, GFXFF);
+    tft.drawString("u", 310, 161, GFXFF);
+    tft.drawString("i", 355, 161, GFXFF);
+    tft.drawString("o", 400, 161, GFXFF);
+    tft.drawString("p", 445, 161, GFXFF);
+
+    tft.drawString("a", 60, 221, GFXFF);
+    tft.drawString("s", 105, 221, GFXFF);
+    tft.drawString("d", 150, 221, GFXFF);
+    tft.drawString("f", 195, 221, GFXFF);
+    tft.drawString("g", 240, 221, GFXFF);
+    tft.drawString("h", 285, 221, GFXFF);
+    tft.drawString("j", 330, 221, GFXFF);
+    tft.drawString("k", 375, 221, GFXFF);
+    tft.drawString("l", 420, 221, GFXFF);
+
+    tft.drawString("z", 90, 281, GFXFF);
+    tft.drawString("x", 135, 281, GFXFF);
+    tft.drawString("c", 180, 281, GFXFF);
+    tft.drawString("v", 225, 281, GFXFF);
+    tft.drawString("b", 275, 281, GFXFF);
+    tft.drawString("n", 325, 281, GFXFF);
+    tft.drawString("m", 380, 281, GFXFF);
+
+    tft.drawLine(21, 275, 35, 266, icon_white);
+    tft.drawLine(35, 266, 48, 275, icon_white);
+    tft.drawLine(21, 276, 21, 300, icon_white);
+    tft.drawLine(21, 300, 49, 300, icon_white);
+    tft.drawLine(49, 300, 49, 276, icon_white);
+
+  }
+
+
+
 }
 
 void telaMenu1() {
@@ -2732,9 +2854,10 @@ void telaMenu12() {
   tft.fillScreen(blackScript);
   i = 1;
 
-  compass();
+  //compass();
+  keyboard();
 
-  home();
+  //home();
   wifiLevel();
   batteryLevel();
   lockLevel();
