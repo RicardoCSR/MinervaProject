@@ -2493,8 +2493,15 @@ void compass() {
 }
 
 void keyboard() {
-  byte alt = 0;
+  byte alt = 1;
   tft.fillCircle(30, 100, 20, icon_white);
+  tft.drawLine(440, 91, 458, 110, icon_white);
+  tft.drawLine(441, 91, 459, 110, icon_white);
+  tft.drawLine(442, 91, 460, 110, icon_white);
+
+  tft.drawLine(459, 91, 440, 110, icon_white);
+  tft.drawLine(460, 91, 441, 110, icon_white);
+  tft.drawLine(461, 91, 442, 110, icon_white);
 
   tft.drawLine(18, 93, 30, 105, blackScript);
   tft.drawLine(18, 94, 30, 106, blackScript);
@@ -2586,8 +2593,20 @@ void keyboard() {
     tft.drawLine(49, 300, 49, 276, icon_white);
 
   }
+  
+  tft.drawLine(425, 285, 436, 272, icon_white);
+  tft.drawLine(436, 272, 465, 272, icon_white);
+  tft.drawLine(465, 272, 465, 299, icon_white);
+  tft.drawLine(465, 299, 436, 299, icon_white);
+  tft.drawLine(436, 299, 425, 285, icon_white);
 
+  tft.drawLine(439, 276, 457, 295, icon_white);
+  tft.drawLine(440, 276, 458, 295, icon_white);
+  tft.drawLine(441, 276, 459, 295, icon_white);
 
+  tft.drawLine(457, 276, 439, 295, icon_white);
+  tft.drawLine(458, 276, 440, 295, icon_white);
+  tft.drawLine(459, 276, 441, 295, icon_white);
 
 }
 
