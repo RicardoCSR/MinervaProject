@@ -61,7 +61,7 @@ byte compareUpdateWiFi;         // Armazena atualização de updateBattery
 
 // DADOS TIMERS
 unsigned long period = 0;
-unsigned long UtlTime;
+uint32_t UtlTime;
 
 // VALORES AJUSTAVEIS PELO USUÁRIO
 byte logoTime = 3;
@@ -280,6 +280,9 @@ uint16_t icon_white = 0xD6BA;           //0xD9D9D9
 #include <Wire.h>
 #include "Adafruit_GFX.h"
 
+#include <stdint.h>
+#include "TouchScreen.h"
+
 #include <EasyColor.h>
 
 #include "Imagens.h"
@@ -295,6 +298,14 @@ uint16_t icon_white = 0xD6BA;           //0xD9D9D9
 #define latoRegular14 &Lato_Regular_14
 #define latoRegular12 &Lato_Regular_12
 #define latoRegular10 &Lato_Regular_10
+
+#define YP A1  // must be an analog pin, use "An" notation!
+#define XM A3  // must be an analog pin, use "An" notation!
+#define YM 8   // can be a digital pin
+#define XP 9   // can be a digital pin
+
+#define minpressure 10
+#define maxpressure 1000
 
 byte i = 0;
 
@@ -316,6 +327,7 @@ byte i = 0;
     
     TFT_eSPI tft = TFT_eSPI();      // Could invoke custom library declaring width and height
     EasyColor rgb2rgb;                 //Conversão de e para RGB888/RGB565
+    TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
 
 void setup() {
   Serial.begin(115200);
@@ -330,11 +342,6 @@ void setup() {
   }
 
   UtlTime = 0;
-  mins = 1;
-  hours = 1;
-  day = 1;
-  month = 1;
-  year = 2022;
 
   Serial.print("Insira Hora: ");
   while (hours == 0) {
@@ -378,6 +385,15 @@ void setup() {
 }
 
 void loop(void) {
+
+  // ------------------------------- TOUCHSCREEN LEITURA -------------
+    TSPoint p = ts.getPoint();
+    if (p.z > minpressure && p.z < maxpressure) {
+      Serial.print("X = "); Serial.print(p.x);
+      Serial.print("\tY = "); Serial.print(p.y);
+      Serial.print("\tPressure = "); Serial.println(p.z);
+    }
+
   // ------------------------------- HORARIO VIA MILLIS() OPERACIONAL -----------------------
 
     if(millis() - UtlTime < 0) {
