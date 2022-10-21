@@ -117,6 +117,24 @@ int tempCalc [220] = {0};       // Armazena dados de Temperatura
 int humiCalc [220] = {0};       // Armazena dados de Umidade 
 int presCalc [220] = {0};       // Armazena dados de Pressão Atmosferica
 
+byte encoderPos = 0;
+byte lastPos;
+byte readClock;
+boolean bCW;
+
+int pressingDuration = 500;     // Tempo do botão Pressionado em Millis
+
+unsigned long timerMode = 0;    // Armazena tempo atual
+int startedPressingEncoder = 0; // Armazena valor = 1 se maior pressingDuration
+
+byte displayMode = 0;
+// displayMode = 0 Sistema aguardando comando
+// displayMode = 1 Habilita entrada do Menu
+// displayMode = 2 Habilita saida do Menu
+
+byte displayTFT = 0;     
+// displayTFT = 0 Sistema aguardando comando
+
 byte functGeiger = 0;
 
 // BANCO DE DADOS DE COMPARADORES
@@ -169,6 +187,14 @@ byte telaMenu = 0;
 
 int pinBatteryRead = PC13;
 int pinBatteryCharger = PB7;         // Pino de Leitura da Bateria
+int YP = PA4;  // must be an analog pin, use "An" notation!
+int XM = PB0;  // must be an analog pin, use "An" notation!
+int YM = PA9;  // can be a digital pin
+int XP = PC7;  // can be a digital pin
+
+int pinS1 = PC8;
+int pinS2 = PC6;
+int pinSW = PC5;
 
 // ------------------------------ CORES DISPLAY RGB 555 -------------------------------
 
@@ -280,8 +306,6 @@ uint16_t icon_white = 0xD6BA;           //0xD9D9D9
 #include <Wire.h>
 #include "Adafruit_GFX.h"
 
-#include <stdint.h>
-#include "TouchScreen.h"
 
 #include <EasyColor.h>
 
@@ -298,11 +322,6 @@ uint16_t icon_white = 0xD6BA;           //0xD9D9D9
 #define latoRegular14 &Lato_Regular_14
 #define latoRegular12 &Lato_Regular_12
 #define latoRegular10 &Lato_Regular_10
-
-#define YP A1  // must be an analog pin, use "An" notation!
-#define XM A3  // must be an analog pin, use "An" notation!
-#define YM 8   // can be a digital pin
-#define XP 9   // can be a digital pin
 
 #define minpressure 10
 #define maxpressure 1000
@@ -327,13 +346,18 @@ byte i = 0;
     
     TFT_eSPI tft = TFT_eSPI();      // Could invoke custom library declaring width and height
     EasyColor rgb2rgb;                 //Conversão de e para RGB888/RGB565
-    TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
 
 void setup() {
   Serial.begin(115200);
   Serial.println("Sistema Inicializado");
   tft.init();
   tft.setRotation(3);
+
+  pinMode(pinS1, INPUT);
+  pinMode(pinS2, INPUT);
+  pinMode(pinSW, INPUT_PULLUP);
+
+  lastPos = digitalRead(pinS1);
 
   if (fuso == 1) {
     fuso = 23;
@@ -342,6 +366,11 @@ void setup() {
   }
 
   UtlTime = 0;
+  hours = 1;
+  mins = 1;
+  day = 1;
+  month = 1;
+  year = 2022;
 
   Serial.print("Insira Hora: ");
   while (hours == 0) {
@@ -386,14 +415,135 @@ void setup() {
 
 void loop(void) {
 
-  // ------------------------------- TOUCHSCREEN LEITURA -------------
-    TSPoint p = ts.getPoint();
-    if (p.z > minpressure && p.z < maxpressure) {
-      Serial.print("X = "); Serial.print(p.x);
-      Serial.print("\tY = "); Serial.print(p.y);
-      Serial.print("\tPressure = "); Serial.println(p.z);
+  // ------------------------------- ENCODER ----------
+
+    readClock = digitalRead(pinS1);
+    if (readClock != lastPos) {
+      if (digitalRead (pinS2) != readClock) {
+        if (encoderPos < 15)
+        encoderPos ++;
+        telaMenu ++;
+
+        bCW = true;
+      } else {
+        bCW = false;
+        encoderPos --;
+        telaMenu --;
+
+      }
+      Serial.print("Giro no ");
+      if (bCW) {
+        Serial.print("Sentido horario");
+      } else {
+        Serial.print("Sentido anti-horario");
+      }
+      Serial.print(" / Posição do encoder: "); 
+      Serial.println(encoderPos);
+      Serial.println(displayTFT);
+
     }
 
+    if (lastPos != readClock) {
+      lastPos = readClock;
+    }
+
+
+  // ------------------------------- ENCODER COMANDO ---------------
+
+    if (digitalRead(pinSW) == LOW && startedPressingEncoder == 0) {
+        startedPressingEncoder = 1;
+        timerMode = millis();
+    } else if (pinSW == HIGH) {
+        startedPressingEncoder = 0;
+        timerMode = millis();
+    }
+
+    if (millis() - timerMode >= (pressingDuration) && startedPressingEncoder == 1) {
+      displayMenu();
+      Serial.println("Botao pressionado");
+      startedPressingEncoder = 0;
+    }
+
+    switch (telaMenu) {
+      case 1:
+        tft.drawRoundRect(43, 67, 71, 71, 5, whiteScript);
+        tft.drawRoundRect(124, 67, 71, 71, 5, blackScript);
+      break;
+      case 2:
+        tft.drawRoundRect(43, 67, 71, 71, 5, blackScript);
+        tft.drawRoundRect(124, 67, 71, 71, 5, whiteScript);
+        tft.drawRoundRect(205, 67, 71, 71, 5, blackScript);
+      break;
+      case 3:
+        tft.drawRoundRect(124, 67, 71, 71, 5, blackScript);
+        tft.drawRoundRect(205, 67, 71, 71, 5, whiteScript);
+        tft.drawRoundRect(286, 67, 71, 71, 5, blackScript);
+      break;
+      case 4:
+        tft.drawRoundRect(205, 67, 71, 71, 5, blackScript);
+        tft.drawRoundRect(286, 67, 71, 71, 5, whiteScript);
+        tft.drawRoundRect(367, 67, 71, 71, 5, blackScript);
+      break;
+      case 5:
+        tft.drawRoundRect(286, 67, 71, 71, 5, blackScript);
+        tft.drawRoundRect(367, 67, 71, 71, 5, whiteScript);
+        tft.drawRoundRect(43, 147, 71, 71, 5, blackScript);
+      break;
+      case 6:
+        tft.drawRoundRect(367, 67, 71, 71, 5, blackScript);
+        tft.drawRoundRect(43, 147, 71, 71, 5, whiteScript);
+        tft.drawRoundRect(124, 147, 71, 71, 5, blackScript);
+      break;
+      case 7:
+        tft.drawRoundRect(43, 147, 71, 71, 5, blackScript);
+        tft.drawRoundRect(124, 147, 71, 71, 5, whiteScript);
+        tft.drawRoundRect(205, 147, 71, 71, 5, blackScript);
+      break;
+      case 8:
+        tft.drawRoundRect(124, 147, 71, 71, 5, blackScript);
+        tft.drawRoundRect(205, 147, 71, 71, 5, whiteScript);
+        tft.drawRoundRect(286, 147, 71, 71, 5, blackScript);
+      break;
+      case 9:
+        tft.drawRoundRect(205, 147, 71, 71, 5, blackScript);
+        tft.drawRoundRect(286, 147, 71, 71, 5, whiteScript);
+        tft.drawRoundRect(367, 147, 71, 71, 5, blackScript);
+      break;
+      case 10:
+        tft.drawRoundRect(286, 147, 71, 71, 5, blackScript);
+        tft.drawRoundRect(367, 147, 71, 71, 5, whiteScript);
+        tft.drawRoundRect(43, 227, 71, 71, 5, blackScript);
+      break;
+      case 11:
+        tft.drawRoundRect(367, 147, 71, 71, 5, blackScript);
+        tft.drawRoundRect(43, 227, 71, 71, 5, whiteScript);
+        tft.drawRoundRect(124, 227, 71, 71, 5, blackScript);
+      break;
+      case 12:
+        tft.drawRoundRect(43, 227, 71, 71, 5, blackScript);
+        tft.drawRoundRect(124, 227, 71, 71, 5, whiteScript);
+        tft.drawRoundRect(205, 227, 71, 71, 5, blackScript);
+      break;
+      case 13:
+        tft.drawRoundRect(124, 227, 71, 71, 5, blackScript);
+        tft.drawRoundRect(205, 227, 71, 71, 5, whiteScript);
+        tft.drawRoundRect(286, 227, 71, 71, 5, blackScript);
+      break;
+      case 14:
+        tft.drawRoundRect(205, 227, 71, 71, 5, blackScript);
+        tft.drawRoundRect(286, 227, 71, 71, 5, whiteScript);
+        tft.drawRoundRect(367, 227, 71, 71, 5, blackScript);
+      break;
+      case 15:
+        tft.drawRoundRect(286, 227, 71, 71, 5, blackScript);
+        tft.drawRoundRect(367, 227, 71, 71, 5, whiteScript);
+      break;
+      default:
+        tft.drawRoundRect(43, 67, 71, 71, 5, blackScript);
+    }
+
+  // ------------------------------- TOUCHSCREEN LEITURA -------------
+  
   // ------------------------------- HORARIO VIA MILLIS() OPERACIONAL -----------------------
 
     if(millis() - UtlTime < 0) {
@@ -494,63 +644,6 @@ void loop(void) {
       Serial.print(mins);
       Serial.print(":");
       Serial.println(secs);  
-    }
-
-  // ---------------------- ACESSO A PAGINA white white white white white --------------
-    if (UtlTime - period >= 5 * 1000) {
-      period = UtlTime;
-    }  
-    telaMenu = 12;
-    if (i == 0) {
-      switch (telaMenu) {
-        case 1:
-          telaMenu1();
-        break;
-        case 2:
-          telaMenu2();
-        break;
-        case 3:
-          telaMenu3();
-        break;
-        case 4:
-          telaMenu4();
-        break;
-        case 5:
-          telaMenu5();
-        break;
-        case 6:
-          telaMenu6();
-        break;
-        case 7:
-          telaMenu7();
-        break;
-        case 8:
-          telaMenu8();
-        break;
-        case 9:
-          telaMenu9();
-        break;
-        case 10:
-          telaMenu10();
-        break;
-        case 11:
-          telaMenu11();
-        break;
-        case 12:
-          telaMenu12();
-        break;
-        case 13:
-          telaMenu13();
-        break;
-        case 14:
-          telaMenu14();
-        break;
-        case 15:
-          telaMenu15();
-        break;
-        default:
-          defaultSetup();
-      }
     }
 
   // ------------------------ ATUALIZACAO VISUAL DATA E HORA OPERACIONAL --------
@@ -752,6 +845,79 @@ void rgbColorGeiger() {
     byte bValue = map (writerGeiger, 33, 433, 1, 55);
 
     geigerColor = rgb2rgb.RGB24toRGB16(rValue,gValue,bValue);
+}
+
+// -------------------------
+void displayMenu() {
+  startedPressingEncoder = 0;
+
+  displayMode ++;
+  if (displayMode == 1) {
+    selectFunctionDisplay();
+  } else if (displayMode == 2) {
+    displayMode = 0;
+  }
+}
+
+void selectFunctionDisplay() {
+  // telaMenu = 0 Sistema aguardando comando
+  // telaMenu = 1 Exibe display Geiger 
+
+
+  if (UtlTime - period >= 5 * 1000) {
+    period = UtlTime;
+  }  
+  if (displayTFT == 0) {
+    switch (telaMenu) {
+      case 1:
+        telaMenu1();
+      break;
+      case 2:
+        telaMenu2();
+      break;
+      case 3:
+        telaMenu3();
+      break;
+      case 4:
+        telaMenu4();
+      break;
+      case 5:
+        telaMenu5();
+      break;
+      case 6:
+        telaMenu6();
+      break;
+      case 7:
+        telaMenu7();
+      break;
+      case 8:
+        telaMenu8();
+      break;
+      case 9:
+        telaMenu9();
+      break;
+      case 10:
+        telaMenu10();
+      break;
+      case 11:
+        telaMenu11();
+      break;
+      case 12:
+        telaMenu12();
+      break;
+      case 13:
+        telaMenu13();
+      break;
+      case 14:
+        telaMenu14();
+      break;
+      case 15:
+        telaMenu15();
+      break;
+      default:
+        defaultSetup();
+    }
+  }
 }
 
 // ------------------------ TELA DE ABERTURA -------------
