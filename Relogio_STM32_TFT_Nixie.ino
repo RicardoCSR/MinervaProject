@@ -187,10 +187,11 @@ byte telaMenu = 0;
 
 int pinBatteryRead = PC13;
 int pinBatteryCharger = PB7;         // Pino de Leitura da Bateria
-int YP = PA4;  // must be an analog pin, use "An" notation!
-int XM = PB0;  // must be an analog pin, use "An" notation!
-int YM = PA9;  // can be a digital pin
-int XP = PC7;  // can be a digital pin
+
+#define YP PC2  // must be an analog pin, use "An" notation!
+#define XM PC3  // must be an analog pin, use "An" notation!
+#define YM PC4  // can be a digital pin
+#define XP PB1  // can be a digital pin
 
 int pinS1 = PC8;
 int pinS2 = PC6;
@@ -306,6 +307,8 @@ uint16_t icon_white = 0xD6BA;           //0xD9D9D9
 #include <Wire.h>
 #include "Adafruit_GFX.h"
 
+#include <stdint.h>
+#include "TouchScreen.h"
 
 #include <EasyColor.h>
 
@@ -325,6 +328,11 @@ uint16_t icon_white = 0xD6BA;           //0xD9D9D9
 
 #define minpressure 10
 #define maxpressure 1000
+
+#define Xresolution 480 
+#define Yresolution 320 
+
+
 
 byte i = 0;
 
@@ -346,6 +354,7 @@ byte i = 0;
     
     TFT_eSPI tft = TFT_eSPI();      // Could invoke custom library declaring width and height
     EasyColor rgb2rgb;                 //Conversão de e para RGB888/RGB565
+    TouchScreen ts = TouchScreen(XP, YP, XM, YM, 4500);
 
 void setup() {
   Serial.begin(115200);
@@ -409,8 +418,6 @@ void setup() {
       Serial.println(year);
     }
   }
-  
-
 }
 
 void loop(void) {
@@ -420,16 +427,18 @@ void loop(void) {
     readClock = digitalRead(pinS1);
     if (readClock != lastPos) {
       if (digitalRead (pinS2) != readClock) {
-        if (encoderPos < 15)
-        encoderPos ++;
-        telaMenu ++;
+        if (encoderPos < 15) {
+          encoderPos ++;
+          telaMenu ++;
 
-        bCW = true;
+          bCW = true;
+        }
       } else {
-        bCW = false;
-        encoderPos --;
-        telaMenu --;
-
+        if (encoderPos > 1) {
+          bCW = false;
+          encoderPos --;
+          telaMenu --;
+        }
       }
       Serial.print("Giro no ");
       if (bCW) {
@@ -446,7 +455,6 @@ void loop(void) {
     if (lastPos != readClock) {
       lastPos = readClock;
     }
-
 
   // ------------------------------- ENCODER COMANDO ---------------
 
@@ -543,7 +551,43 @@ void loop(void) {
     }
 
   // ------------------------------- TOUCHSCREEN LEITURA -------------
-  
+
+    TSPoint p = ts.getPoint();
+    if (p.z > minpressure && p.z < maxpressure) {
+
+
+      /*
+      p.x = p.x + p.y;
+      p.y = p.x - p.y;
+      p.x = p.x - p.y;
+      p.x = map(p.x, TS_MINX, TS_MAXX, tft.width(), 0);
+      p.y = tft.height() - (map(p.y, TS_MINY, TS_MAXY, tft.height(), 0));
+      */
+
+
+      int touchX = map(p.x, 490, 960, 0, 480);
+      int touchY = map(p.y, 85, 540, 0, 320);
+
+      Serial.print("X = "); Serial.print(p.x);
+      Serial.print("\tY = "); Serial.print(p.y);
+      Serial.print("\tPressure = "); Serial.println(p.z);
+
+      i++;
+
+      String stringi = String(i);
+
+      tft.fillRect(432, 295, 35, 15, blackScript);
+
+      tft.setTextDatum(ML_DATUM);
+      tft.setTextColor(greenScript);
+      tft.setFreeFont(latoRegular14);
+
+      tft.drawString(stringi, 440, 300, GFXFF);
+
+      tft.drawPixel(touchX, touchY, greenScript);
+    }
+
+
   // ------------------------------- HORARIO VIA MILLIS() OPERACIONAL -----------------------
 
     if(millis() - UtlTime < 0) {
@@ -921,6 +965,7 @@ void selectFunctionDisplay() {
 }
 
 // ------------------------ TELA DE ABERTURA -------------
+
 void startLogo() {
   tft.fillScreen(blackScript);
   tft.setSwapBytes(true);
@@ -930,6 +975,10 @@ void startLogo() {
 void defaultSetup() {
   if (screenLoad == 0) {
     tft.fillScreen(blackScript);
+
+    tft.drawLine(5, 5, 10, 5, redScript);
+    tft.drawLine(0, 5, 10, 10, redScript);
+    
     tft.setSwapBytes(true);
     tft.pushImage(43, 67, 71, 71, icon1);
     tft.pushImage(124, 67, 71, 71, icon2);
@@ -952,6 +1001,7 @@ void defaultSetup() {
     wifiLevel();
     batteryLevel();
     lockLevel();
+    
     screenLoad = 1;
   }
 }
