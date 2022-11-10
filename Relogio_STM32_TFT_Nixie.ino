@@ -125,6 +125,7 @@ boolean bCW;
 int pressingDuration = 500;     // Tempo do botão Pressionado em Millis
 
 unsigned long timerMode = 0;    // Armazena tempo atual
+unsigned long touchMode = 0;    // Armazena tempo Touch
 int startedPressingEncoder = 0; // Armazena valor = 1 se maior pressingDuration
 
 byte displayMode = 0;
@@ -188,10 +189,16 @@ byte telaMenu = 0;
 int pinBatteryRead = PC13;
 int pinBatteryCharger = PB7;         // Pino de Leitura da Bateria
 
-#define YP PC2  // must be an analog pin, use "An" notation!
-#define XM PC3  // must be an analog pin, use "An" notation!
-#define YM PC4  // can be a digital pin
-#define XP PB1  // can be a digital pin
+int YP = PC2;  // must be an analog pin, use "An" notation!
+int XM = PC3;  // must be an analog pin, use "An" notation!
+int YM = PC4;  // can be a digital pin
+int XP = PB1;  // can be a digital pin
+
+int ts_maxX = 0;
+int ts_maxY = 0;
+int ts_minX = 1023;
+int ts_minY = 1023;
+byte touchSet = 0;
 
 int pinS1 = PC8;
 int pinS2 = PC6;
@@ -354,7 +361,7 @@ byte i = 0;
     
     TFT_eSPI tft = TFT_eSPI();      // Could invoke custom library declaring width and height
     EasyColor rgb2rgb;                 //Conversão de e para RGB888/RGB565
-    TouchScreen ts = TouchScreen(XP, YP, XM, YM, 4500);
+    TouchScreen ts = TouchScreen(XP, YP, XM, YM, 5000);
 
 void setup() {
   Serial.begin(115200);
@@ -551,26 +558,19 @@ void loop(void) {
     }
 
   // ------------------------------- TOUCHSCREEN LEITURA -------------
-
+/*
     TSPoint p = ts.getPoint();
     if (p.z > minpressure && p.z < maxpressure) {
 
-
-      /*
-      p.x = p.x + p.y;
-      p.y = p.x - p.y;
-      p.x = p.x - p.y;
-      p.x = map(p.x, TS_MINX, TS_MAXX, tft.width(), 0);
-      p.y = tft.height() - (map(p.y, TS_MINY, TS_MAXY, tft.height(), 0));
-      */
-
-
-      int touchX = map(p.x, 490, 960, 0, 480);
-      int touchY = map(p.y, 85, 540, 0, 320);
+      int touchX = map(p.x, ts_maxX, ts_minX, 0, Xresolution);
+      int touchY = map(p.y, ts_maxY, ts_minY, 0, Yresolution);
 
       Serial.print("X = "); Serial.print(p.x);
       Serial.print("\tY = "); Serial.print(p.y);
-      Serial.print("\tPressure = "); Serial.println(p.z);
+      Serial.print("\tPressure = "); Serial.print(p.z);
+
+      Serial.print("\tTX"); Serial.print(touchX);
+      Serial.print("\tTY"); Serial.println(touchY);
 
       i++;
 
@@ -587,7 +587,7 @@ void loop(void) {
       tft.drawPixel(touchX, touchY, greenScript);
     }
 
-
+*/
   // ------------------------------- HORARIO VIA MILLIS() OPERACIONAL -----------------------
 
     if(millis() - UtlTime < 0) {
@@ -671,7 +671,11 @@ void loop(void) {
         // do something
       break; 
       default:
-        defaultSetup();
+        if (touchSet == 0) {
+          defaultSetup();
+        } else {
+          calibrationTouch();
+        }
     } 
 
   // ---------------------- ATUALIZA RELOGIO SERIAL OPERACIONAL -----------
@@ -692,122 +696,124 @@ void loop(void) {
 
   // ------------------------ ATUALIZACAO VISUAL DATA E HORA OPERACIONAL --------
 
-    if (i == 1) {
-      compareHour = 0;
-      compareMins = 0;
-      compareDay = 0;
-      compareMonth = 0;
-      compareYear = 0;
-      i = 2;
-    }
-    
-    String stringHour = String(hours);
-    String stringMin = String(mins);
-    String stringDay = String(day);
-    String stringMonth = String(month);
-    String stringYear = String(year);
+    if (touchSet == 1) {
+      if (i == 1) {
+        compareHour = 0;
+        compareMins = 0;
+        compareDay = 0;
+        compareMonth = 0;
+        compareYear = 0;
+        i = 2;
+      }
+      
+      String stringHour = String(hours);
+      String stringMin = String(mins);
+      String stringDay = String(day);
+      String stringMonth = String(month);
+      String stringYear = String(year);
 
-    String stringHourMin = String(hours - 1);
-    String stringMinMin = String(mins - 1);
-    String stringDayMin = String(day - 1);
-    String stringMonthMin = String(month - 1);
-    String stringYearMin = String(year - 1);
-    
-    if (hours != compareHour) {
-      compareHour = hours;
-      tft.setTextDatum(ML_DATUM);
-      tft.setTextColor(blackScript);
-      tft.setFreeFont(latoRegular24);
-      if ((hours > 1) && (hours < 10)) {
-        tft.drawString("0", 219, 30, GFXFF);
-        tft.drawString(stringHourMin, 234, 30, GFXFF);
-      } else {
-        tft.fillRect(219, 22, 28, 20, blackScript);
+      String stringHourMin = String(hours - 1);
+      String stringMinMin = String(mins - 1);
+      String stringDayMin = String(day - 1);
+      String stringMonthMin = String(month - 1);
+      String stringYearMin = String(year - 1);
+      
+      if (hours != compareHour) {
+        compareHour = hours;
+        tft.setTextDatum(ML_DATUM);
+        tft.setTextColor(blackScript);
+        tft.setFreeFont(latoRegular24);
+        if ((hours > 1) && (hours < 10)) {
+          tft.drawString("0", 219, 30, GFXFF);
+          tft.drawString(stringHourMin, 234, 30, GFXFF);
+        } else {
+          tft.fillRect(219, 22, 28, 20, blackScript);
+        }
+        tft.setTextColor(whiteScript);  
+        if (hours < 10) {
+          tft.drawString("0", 219, 30, GFXFF);
+          tft.drawString(stringHour, 234, 30, GFXFF);
+        } else {
+          tft.drawString(stringHour, 219, 30, GFXFF);
+        }
       }
-      tft.setTextColor(whiteScript);  
-      if (hours < 10) {
-        tft.drawString("0", 219, 30, GFXFF);
-        tft.drawString(stringHour, 234, 30, GFXFF);
-      } else {
-        tft.drawString(stringHour, 219, 30, GFXFF);
-      }
-    }
-    if (mins != compareMins) {
-      compareMins = mins;
-      tft.setTextDatum(ML_DATUM);
-      tft.setTextColor(blackScript);
-      tft.setFreeFont(latoRegular24);
-      if ((mins > 1) && (mins < 10)) {
-        tft.drawString("0", 252, 30, GFXFF);
-        tft.drawString(stringMinMin, 267, 30, GFXFF);
-      } else {
-        tft.fillRect(252, 22, 28, 20, blackScript);
-      }
-      tft.setTextColor(whiteScript);  
-      if (mins < 10) {
-        tft.drawString("0", 252, 30, GFXFF);
-        tft.drawString(":", 246, 30, GFXFF);
-        tft.drawString(stringMin, 267, 30, GFXFF);
-      } else {
-        tft.drawString(":", 246, 30, GFXFF);
-        tft.drawString(stringMin, 252, 30, GFXFF);
-      }
-    }
-
-    if (day != compareDay) {
-      compareDay = day;
-      tft.setTextDatum(ML_DATUM);
-      tft.setTextColor(blackScript);
-      tft.setFreeFont(latoRegular24);
-      if ((day > 1) && (day < 10)) {
-        tft.drawString("0", 77, 30, GFXFF);
-        tft.drawString(stringDayMin, 92, 30, GFXFF);
-      } else {
-        tft.fillRect(77, 22, 28, 20, blackScript);
+      if (mins != compareMins) {
+        compareMins = mins;
+        tft.setTextDatum(ML_DATUM);
+        tft.setTextColor(blackScript);
+        tft.setFreeFont(latoRegular24);
+        if ((mins > 1) && (mins < 10)) {
+          tft.drawString("0", 252, 30, GFXFF);
+          tft.drawString(stringMinMin, 267, 30, GFXFF);
+        } else {
+          tft.fillRect(252, 22, 28, 20, blackScript);
+        }
+        tft.setTextColor(whiteScript);  
+        if (mins < 10) {
+          tft.drawString("0", 252, 30, GFXFF);
+          tft.drawString(":", 246, 30, GFXFF);
+          tft.drawString(stringMin, 267, 30, GFXFF);
+        } else {
+          tft.drawString(":", 246, 30, GFXFF);
+          tft.drawString(stringMin, 252, 30, GFXFF);
+        }
       }
 
-      tft.setTextColor(whiteScript);  
+      if (day != compareDay) {
+        compareDay = day;
+        tft.setTextDatum(ML_DATUM);
+        tft.setTextColor(blackScript);
+        tft.setFreeFont(latoRegular24);
+        if ((day > 1) && (day < 10)) {
+          tft.drawString("0", 77, 30, GFXFF);
+          tft.drawString(stringDayMin, 92, 30, GFXFF);
+        } else {
+          tft.fillRect(77, 22, 28, 20, blackScript);
+        }
 
-      if (day < 10) {
-        tft.drawString("0", 77, 30, GFXFF);
-        tft.drawString(stringDay, 92, 30, GFXFF);
-      } else {
-        tft.drawString(stringDay, 77, 30, GFXFF);
+        tft.setTextColor(whiteScript);  
+
+        if (day < 10) {
+          tft.drawString("0", 77, 30, GFXFF);
+          tft.drawString(stringDay, 92, 30, GFXFF);
+        } else {
+          tft.drawString(stringDay, 77, 30, GFXFF);
+        }
       }
-    }
 
-    if (month != compareMonth) {
-      compareMonth = month;
-      tft.setTextDatum(ML_DATUM);
-      tft.setTextColor(blackScript);
-      tft.setFreeFont(latoRegular24);
-      if ((month > 1) && (month < 10)) {
-        tft.drawString("0", 110, 30, GFXFF);
-        tft.drawString(stringMonthMin, 125, 30, GFXFF);
-      } else {
-        tft.fillRect(110, 22, 28, 20, blackScript);
+      if (month != compareMonth) {
+        compareMonth = month;
+        tft.setTextDatum(ML_DATUM);
+        tft.setTextColor(blackScript);
+        tft.setFreeFont(latoRegular24);
+        if ((month > 1) && (month < 10)) {
+          tft.drawString("0", 110, 30, GFXFF);
+          tft.drawString(stringMonthMin, 125, 30, GFXFF);
+        } else {
+          tft.fillRect(110, 22, 28, 20, blackScript);
+        }
+
+        tft.setTextColor(whiteScript);  
+
+        if (month < 10) {
+          tft.drawString("0", 110, 30, GFXFF);
+          tft.drawString(stringMonth, 125, 30, GFXFF);
+        } else {
+          tft.drawString(stringMonth, 110, 30, GFXFF);
+        }
       }
 
-      tft.setTextColor(whiteScript);  
+      if (year != compareYear) {
+        compareYear = year;
+        tft.setTextDatum(ML_DATUM);
+        tft.setTextColor(blackScript);
+        tft.setFreeFont(latoRegular24);
+        tft.drawString(stringYearMin, 143, 30, GFXFF);
 
-      if (month < 10) {
-        tft.drawString("0", 110, 30, GFXFF);
-        tft.drawString(stringMonth, 125, 30, GFXFF);
-      } else {
-        tft.drawString(stringMonth, 110, 30, GFXFF);
+        tft.setTextColor(whiteScript);  
+
+        tft.drawString(stringYear, 143, 30, GFXFF);
       }
-    }
-
-    if (year != compareYear) {
-      compareYear = year;
-      tft.setTextDatum(ML_DATUM);
-      tft.setTextColor(blackScript);
-      tft.setFreeFont(latoRegular24);
-      tft.drawString(stringYearMin, 143, 30, GFXFF);
-
-      tft.setTextColor(whiteScript);  
-
-      tft.drawString(stringYear, 143, 30, GFXFF);
     }
 
   // ------------------------ ATUALIZA POSICAO GRAFICO GEIGER -------
@@ -911,6 +917,7 @@ void selectFunctionDisplay() {
   if (UtlTime - period >= 5 * 1000) {
     period = UtlTime;
   }  
+  telaMenu = 12;
   if (displayTFT == 0) {
     switch (telaMenu) {
       case 1:
@@ -975,9 +982,6 @@ void startLogo() {
 void defaultSetup() {
   if (screenLoad == 0) {
     tft.fillScreen(blackScript);
-
-    tft.drawLine(5, 5, 10, 5, redScript);
-    tft.drawLine(0, 5, 10, 10, redScript);
     
     tft.setSwapBytes(true);
     tft.pushImage(43, 67, 71, 71, icon1);
@@ -1003,6 +1007,91 @@ void defaultSetup() {
     lockLevel();
     
     screenLoad = 1;
+    telaMenu12();       // white white white white white white white white white white white white white white white white white white white
+  }
+}
+
+byte startedPressingTouch = 0;
+
+void calibrationTouch() {
+
+  int touchX;
+  int touchY;
+
+  String stringTs_maxX = String(ts_maxX);
+  String stringTs_maxY = String(ts_maxY);
+  String stringTs_minX = String(ts_minX);
+  String stringTs_minY = String(ts_minY);
+  String stringXresolution = String(Xresolution);
+  String stringYresolution = String(Yresolution);
+
+  tft.setTextDatum(MC_DATUM);
+  tft.setTextColor(whiteScript);
+  tft.setFreeFont(latoRegular14);
+
+  Serial.println(startedPressingTouch);
+
+  if (touchSet == 0) {
+    tft.drawString("TOQUE PARA INICIAR", 240, 150, GFXFF);
+  }
+
+  TSPoint p = ts.getPoint();
+  if (p.z > minpressure && p.z < maxpressure) {
+    startedPressingTouch = 1;
+    touchMode = millis();
+  } else {
+    startedPressingTouch = 0;
+    touchMode = millis();
+  }
+
+  if (millis() - touchMode >= (50) && startedPressingTouch == 1) {
+    touchSet = 1;
+    tft.fillScreen(blackScript);
+    startedPressingTouch = 0;
+    touchMode = millis();
+    Serial.print("X = "); Serial.print(p.x);
+    Serial.print("\tY = "); Serial.print(p.y);
+    Serial.print("\tPressure = "); Serial.println(p.z);
+
+    if (p.x  > ts_maxX) {
+      ts_maxX = p.x;
+    } 
+    if (p.x < ts_minX) {
+      ts_minX = p.x;
+    }
+    if (p.y > ts_maxY) {
+      ts_maxY = p.y;
+    } 
+    if (p.y < ts_minY) {
+      ts_minY = p.y;
+    }
+
+    touchX = map(p.x, ts_minX, ts_maxX, 0, Xresolution);
+    touchY = map(p.y, ts_minY, ts_maxY, 0, Yresolution);
+
+    tft.drawString("TOQUE NOS LOCAIS INDICADOS", 240, 150, GFXFF);
+
+    tft.drawString(stringXresolution, 240, 250, GFXFF);
+    tft.drawString(stringYresolution, 240, 270, GFXFF);
+    tft.drawString(stringTs_maxX, 50, 125, GFXFF);
+    tft.drawString(stringTs_minX, 50, 150, GFXFF);
+    tft.drawString(stringTs_maxY, 50, 175, GFXFF);
+    tft.drawString(stringTs_maxY, 50, 200, GFXFF);
+
+  }
+
+  if (digitalRead(pinSW) == LOW && startedPressingEncoder == 0) {
+    startedPressingEncoder = 1;
+    timerMode = millis();
+  } else if (pinSW == HIGH) {
+    startedPressingEncoder = 0;
+    timerMode = millis();
+  }
+
+  if (millis() - timerMode >= (pressingDuration) && startedPressingEncoder == 1) {
+    Serial.println("Botao pressionado");
+    touchSet = 1;
+    startedPressingEncoder = 0;
   }
 }
 
@@ -2727,13 +2816,13 @@ void compass() {
 void keyboard() {
   byte alt = 1;
   tft.fillCircle(30, 100, 20, icon_white);
-  tft.drawLine(440, 91, 458, 110, icon_white);
-  tft.drawLine(441, 91, 459, 110, icon_white);
-  tft.drawLine(442, 91, 460, 110, icon_white);
+  tft.drawLine(440, 91, 458, 110, icon_black);
+  tft.drawLine(441, 91, 459, 110, icon_black);
+  tft.drawLine(442, 91, 460, 110, icon_black);
 
-  tft.drawLine(459, 91, 440, 110, icon_white);
-  tft.drawLine(460, 91, 441, 110, icon_white);
-  tft.drawLine(461, 91, 442, 110, icon_white);
+  tft.drawLine(459, 91, 440, 110, icon_black);
+  tft.drawLine(460, 91, 441, 110, icon_black);
+  tft.drawLine(461, 91, 442, 110, icon_black);
 
   tft.drawLine(18, 93, 30, 105, blackScript);
   tft.drawLine(18, 94, 30, 106, blackScript);
@@ -2748,97 +2837,161 @@ void keyboard() {
   tft.drawLine(30, 109, 42, 97, blackScript);
   tft.drawLine(30, 110, 42, 98, blackScript);
 
-  tft.drawRoundRect(65, 80, 350, 40, 5, icon_white);
-  tft.drawCircle(450, 100, 20, icon_white);
+  tft.drawRoundRect(65, 80, 350, 40, 5, icon_black);
+  tft.drawCircle(450, 100, 20, icon_black);
+
+  tft.drawRoundRect(10, 133, 30, 30, 5, icon_black);
+  tft.drawRoundRect(42, 133, 30, 30, 5, icon_black);
+  tft.drawRoundRect(74, 133, 30, 30, 5, icon_black);
+  tft.drawRoundRect(106, 133, 30, 30, 5, icon_black);
+  tft.drawRoundRect(138, 133, 30, 30, 5, icon_black);
+  tft.drawRoundRect(170, 133, 30, 30, 5, icon_black);
+  tft.drawRoundRect(202, 133, 30, 30, 5, icon_black);
+  tft.drawRoundRect(234, 133, 30, 30, 5, icon_black);
+  tft.drawRoundRect(266, 133, 30, 30, 5, icon_black);
+  tft.drawRoundRect(298, 133, 30, 30, 5, icon_black);
+  tft.drawRoundRect(330, 133, 30, 30, 5, icon_black);
+  tft.drawRoundRect(362, 133, 30, 30, 5, icon_black);
+  tft.drawRoundRect(394, 133, 30, 30, 5, icon_black);
+
+  tft.drawRoundRect(10, 165, 45, 30, 5, icon_black);
+  tft.drawRoundRect(57, 165, 30, 30, 5, icon_black);
+  tft.drawRoundRect(89, 165, 30, 30, 5, icon_black);
+  tft.drawRoundRect(121, 165, 30, 30, 5, icon_black);
+  tft.drawRoundRect(153, 165, 30, 30, 5, icon_black);
+  tft.drawRoundRect(185, 165, 30, 30, 5, icon_black);
+  tft.drawRoundRect(217, 165, 30, 30, 5, icon_black);
+  tft.drawRoundRect(249, 165, 30, 30, 5, icon_black);
+  tft.drawRoundRect(281, 165, 30, 30, 5, icon_black);
+  tft.drawRoundRect(313, 165, 30, 30, 5, icon_black);
+  tft.drawRoundRect(345, 165, 30, 30, 5, icon_black);
+  tft.drawRoundRect(377, 165, 30, 30, 5, icon_black);
+  tft.drawRoundRect(409, 165, 30, 30, 5, icon_black);
+
+  tft.drawRoundRect(10, 197, 60, 30, 5, icon_black);
+  tft.drawRoundRect(72, 197, 30, 30, 5, icon_black);
+  tft.drawRoundRect(104, 197, 30, 30, 5, icon_black);
+  tft.drawRoundRect(136, 197, 30, 30, 5, icon_black);
+  tft.drawRoundRect(168, 197, 30, 30, 5, icon_black);
+  tft.drawRoundRect(200, 197, 30, 30, 5, icon_black);
+  tft.drawRoundRect(232, 197, 30, 30, 5, icon_black);
+  tft.drawRoundRect(264, 197, 30, 30, 5, icon_black);
+  tft.drawRoundRect(296, 197, 30, 30, 5, icon_black);
+  tft.drawRoundRect(328, 197, 30, 30, 5, icon_black);
+  tft.drawRoundRect(360, 197, 30, 30, 5, icon_black);
+  tft.drawRoundRect(392, 197, 30, 30, 5, icon_black);
+  tft.drawRoundRect(424, 197, 47, 30, 5, icon_black);
+
+  tft.drawRoundRect(57, 229, 30, 30, 5, icon_black);
+  tft.drawRoundRect(89, 229, 30, 30, 5, icon_black);
+  tft.drawRoundRect(121, 229, 30, 30, 5, icon_black);
+  tft.drawRoundRect(153, 229, 30, 30, 5, icon_black);
+  tft.drawRoundRect(185, 229, 30, 30, 5, icon_black);
+  tft.drawRoundRect(217, 229, 30, 30, 5, icon_black);
+  tft.drawRoundRect(249, 229, 30, 30, 5, icon_black);
+  tft.drawRoundRect(281, 229, 30, 30, 5, icon_black);
+  tft.drawRoundRect(313, 229, 30, 30, 5, icon_black);
+  tft.drawRoundRect(345, 229, 30, 30, 5, icon_black);
+  tft.drawRoundRect(377, 229, 30, 30, 5, icon_black);
+  tft.drawRoundRect(409, 229, 62, 30, 5, icon_black);
+
+  tft.drawRoundRect(10, 261, 60, 30, 5, icon_black);
+  tft.drawRoundRect(72, 261, 30, 30, 5, icon_black);
+  tft.drawRoundRect(104, 261, 200, 30, 5, icon_black);
+  tft.drawRoundRect(306, 261, 60, 30, 5, icon_black);
+  tft.drawRoundRect(368, 261, 30, 30, 5, icon_black);
+  tft.drawRoundRect(400, 261, 30, 30, 5, icon_black);
+  tft.drawRoundRect(432, 261, 39, 30, 5, icon_black);
+
+  tft.drawArc(426, 133, 5, icon_black);
 
   tft.setTextDatum(MC_DATUM);
-  tft.setTextColor(icon_white);
-  tft.setFreeFont(latoBold48);
+  tft.setTextColor(icon_black);
+  tft.setFreeFont(latoRegular24);
 
   if (alt == 1) {
-    tft.drawString("Q", 37, 161, GFXFF);
-    tft.drawString("W", 85, 161, GFXFF);
-    tft.drawString("E", 130, 161, GFXFF);
-    tft.drawString("R", 175, 161, GFXFF);
-    tft.drawString("T", 220, 161, GFXFF);
-    tft.drawString("Y", 265, 161, GFXFF);
-    tft.drawString("U", 310, 161, GFXFF);
-    tft.drawString("I", 355, 161, GFXFF);
-    tft.drawString("O", 400, 161, GFXFF);
-    tft.drawString("P", 445, 161, GFXFF);
+    
+    tft.drawString("`", 22, 146, GFXFF);
+    tft.drawString("1", 56, 146, GFXFF);
+    tft.drawString("2", 88, 146, GFXFF);
+    tft.drawString("3", 120, 146, GFXFF);
+    tft.drawString("4", 152, 146, GFXFF);
+    tft.drawString("5", 184, 146, GFXFF);
+    tft.drawString("6", 216, 146, GFXFF);
+    tft.drawString("7", 249, 146, GFXFF);
+    tft.drawString("8", 281, 146, GFXFF);
+    tft.drawString("9", 312, 146, GFXFF);
+    tft.drawString("0", 344, 146, GFXFF);
+    tft.drawString("-", 376, 146, GFXFF);
+    tft.drawString("_", 409, 146, GFXFF);
 
-    tft.drawString("A", 60, 221, GFXFF);
-    tft.drawString("S", 105, 221, GFXFF); 
-    tft.drawString("D", 150, 221, GFXFF);
-    tft.drawString("F", 195, 221, GFXFF);
-    tft.drawString("G", 240, 221, GFXFF);
-    tft.drawString("H", 285, 221, GFXFF);
-    tft.drawString("J", 330, 221, GFXFF);
-    tft.drawString("K", 375, 221, GFXFF);
-    tft.drawString("L", 420, 221, GFXFF);
+    tft.drawString("Q", 72, 178, GFXFF);
+    tft.drawString("W", 104, 178, GFXFF);
+    tft.drawString("E", 136, 178, GFXFF);
+    tft.drawString("R", 168, 178, GFXFF);
+    tft.drawString("T", 200, 178, GFXFF);
+    tft.drawString("Y", 232, 178, GFXFF);
+    tft.drawString("U", 263, 178, GFXFF);
+    tft.drawString("I", 295, 178, GFXFF);
+    tft.drawString("O", 327, 178, GFXFF);
+    tft.drawString("P", 360, 178, GFXFF);
+    tft.drawString("[ {", 392, 178, GFXFF);
+    tft.drawString("] }", 424, 178, GFXFF);
+    
+    tft.drawString("A", 87, 210, GFXFF);
+    tft.drawString("S", 118, 210, GFXFF);
+    tft.drawString("D", 151, 210, GFXFF);
+    tft.drawString("F", 183, 210, GFXFF);
+    tft.drawString("G", 214, 210, GFXFF);
+    tft.drawString("H", 246, 210, GFXFF);
+    tft.drawString("J", 278, 210, GFXFF);
+    tft.drawString("K", 310, 210, GFXFF);
+    tft.drawString("L", 342, 210, GFXFF);
+    tft.drawString("; :", 374, 210, GFXFF);
+    tft.drawString("'", 400, 210, GFXFF);
+    tft.drawLine(410, 208, 410, 203, icon_black);
+    tft.drawLine(413, 208, 413, 203, icon_black);
+    
+    tft.drawString(" \ ", 68, 242, GFXFF);
+    tft.drawString("Z", 104, 242, GFXFF);
+    tft.drawString("X", 136, 242, GFXFF);
+    tft.drawString("C", 168, 242, GFXFF);
+    tft.drawString("V", 200, 242, GFXFF);
+    tft.drawString("B", 232, 242, GFXFF);
+    tft.drawString("N", 263, 242, GFXFF);
+    tft.drawString("M", 295, 242, GFXFF);
+    tft.drawString(",<", 327, 242, GFXFF);
+    tft.drawString(".>", 360, 242, GFXFF);
+    tft.drawString("/?", 392, 242, GFXFF);
+    tft.drawString("~", 424, 242, GFXFF);
 
-    tft.drawString("Z", 90, 281, GFXFF);
-    tft.drawString("X", 135, 281, GFXFF);
-    tft.drawString("C", 180, 281, GFXFF);
-    tft.drawString("V", 225, 281, GFXFF);
-    tft.drawString("B", 275, 281, GFXFF);
-    tft.drawString("N", 325, 281, GFXFF);
-    tft.drawString("M", 380, 281, GFXFF);
 
-    tft.fillRect(21, 276, 28, 24, icon_white);
-    tft.fillTriangle(21, 275, 35, 266, 48, 275, icon_white);
+
+
+    tft.fillRoundRect(10, 229, 45, 30, 5, icon_white);
+    tft.fillRect(18, 244, 29, 10, blackScript);
+    tft.fillTriangle(18, 244, 33, 235, 47, 244, blackScript);
 
   } else {
-    tft.drawString("q", 37, 161, GFXFF);
-    tft.drawString("w", 85, 161, GFXFF);
-    tft.drawString("e", 130, 161, GFXFF);
-    tft.drawString("r", 175, 161, GFXFF);
-    tft.drawString("t", 220, 161, GFXFF);
-    tft.drawString("y", 265, 161, GFXFF);
-    tft.drawString("u", 310, 161, GFXFF);
-    tft.drawString("i", 355, 161, GFXFF);
-    tft.drawString("o", 400, 161, GFXFF);
-    tft.drawString("p", 445, 161, GFXFF);
-
-    tft.drawString("a", 60, 221, GFXFF);
-    tft.drawString("s", 105, 221, GFXFF);
-    tft.drawString("d", 150, 221, GFXFF);
-    tft.drawString("f", 195, 221, GFXFF);
-    tft.drawString("g", 240, 221, GFXFF);
-    tft.drawString("h", 285, 221, GFXFF);
-    tft.drawString("j", 330, 221, GFXFF);
-    tft.drawString("k", 375, 221, GFXFF);
-    tft.drawString("l", 420, 221, GFXFF);
-
-    tft.drawString("z", 90, 281, GFXFF);
-    tft.drawString("x", 135, 281, GFXFF);
-    tft.drawString("c", 180, 281, GFXFF);
-    tft.drawString("v", 225, 281, GFXFF);
-    tft.drawString("b", 275, 281, GFXFF);
-    tft.drawString("n", 325, 281, GFXFF);
+    
     tft.drawString("m", 380, 281, GFXFF);
-
-    tft.drawLine(21, 275, 35, 266, icon_white);
-    tft.drawLine(35, 266, 48, 275, icon_white);
-    tft.drawLine(21, 276, 21, 300, icon_white);
-    tft.drawLine(21, 300, 49, 300, icon_white);
-    tft.drawLine(49, 300, 49, 276, icon_white);
 
   }
   
-  tft.drawLine(425, 285, 436, 272, icon_white);
-  tft.drawLine(436, 272, 465, 272, icon_white);
-  tft.drawLine(465, 272, 465, 299, icon_white);
-  tft.drawLine(465, 299, 436, 299, icon_white);
-  tft.drawLine(436, 299, 425, 285, icon_white);
+  tft.drawLine(440, 203, 461, 203, icon_black);
+  tft.drawLine(461, 203, 461, 221, icon_black);
+  tft.drawLine(461, 221, 440, 221, icon_black);
+  tft.drawLine(440, 221, 433, 211, icon_black);
+  tft.drawLine(433, 211, 440, 203, icon_black);
 
-  tft.drawLine(439, 276, 457, 295, icon_white);
-  tft.drawLine(440, 276, 458, 295, icon_white);
-  tft.drawLine(441, 276, 459, 295, icon_white);
+  tft.drawLine(442, 205, 455, 219, icon_black);
+  tft.drawLine(443, 205, 456, 219, icon_black);
+  tft.drawLine(444, 205, 457, 219, icon_black);
 
-  tft.drawLine(457, 276, 439, 295, icon_white);
-  tft.drawLine(458, 276, 440, 295, icon_white);
-  tft.drawLine(459, 276, 441, 295, icon_white);
+  tft.drawLine(442, 219, 455, 205, icon_black);
+  tft.drawLine(443, 219, 456, 205, icon_black);
+  tft.drawLine(444, 219, 457, 205, icon_black);
+
 
 }
 
