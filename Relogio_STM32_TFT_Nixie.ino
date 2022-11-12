@@ -2837,6 +2837,16 @@ void keyboard() {
   tft.drawLine(30, 109, 42, 97, blackScript);
   tft.drawLine(30, 110, 42, 98, blackScript);
 
+  tft.drawLine(377, 275, 383, 269, icon_black);
+  tft.drawLine(389, 275, 383, 269, icon_black);
+  tft.drawLine(383, 284, 383, 269, icon_black);
+
+  tft.drawLine(409, 277, 415, 283, icon_black);
+  tft.drawLine(421, 277, 415, 283, icon_black);
+  tft.drawLine(415, 269, 415, 283, icon_black);
+
+
+
   tft.drawRoundRect(65, 80, 350, 40, 5, icon_black);
   tft.drawCircle(450, 100, 20, icon_black);
 
@@ -2903,7 +2913,14 @@ void keyboard() {
   tft.drawRoundRect(400, 261, 30, 30, 5, icon_black);
   tft.drawRoundRect(432, 261, 39, 30, 5, icon_black);
 
-  tft.drawArc(426, 133, 5, icon_black);
+  for (byte radi = 3; radi > 3; radi --) {
+    for (int i = 270; i < 360; i++) {
+      double radians = i * PI / 180;
+      double px = 178 + radi * cos(radians);
+      double py = 94 + radi * sin(radians);
+      tft.drawPixel(px, py, redScript);
+    }
+  }
 
   tft.setTextDatum(MC_DATUM);
   tft.setTextColor(icon_black);
@@ -2925,6 +2942,7 @@ void keyboard() {
     tft.drawString("-", 376, 146, GFXFF);
     tft.drawString("_", 409, 146, GFXFF);
 
+    tft.drawString("tab", 33, 178, GFXFF);
     tft.drawString("Q", 72, 178, GFXFF);
     tft.drawString("W", 104, 178, GFXFF);
     tft.drawString("E", 136, 178, GFXFF);
@@ -2937,7 +2955,8 @@ void keyboard() {
     tft.drawString("P", 360, 178, GFXFF);
     tft.drawString("[ {", 392, 178, GFXFF);
     tft.drawString("] }", 424, 178, GFXFF);
-    
+
+    tft.drawString("cap", 40, 210, GFXFF);    
     tft.drawString("A", 87, 210, GFXFF);
     tft.drawString("S", 118, 210, GFXFF);
     tft.drawString("D", 151, 210, GFXFF);
@@ -2952,7 +2971,7 @@ void keyboard() {
     tft.drawLine(410, 208, 410, 203, icon_black);
     tft.drawLine(413, 208, 413, 203, icon_black);
     
-    tft.drawString(" \ ", 68, 242, GFXFF);
+    tft.drawString("#", 72, 242, GFXFF);
     tft.drawString("Z", 104, 242, GFXFF);
     tft.drawString("X", 136, 242, GFXFF);
     tft.drawString("C", 168, 242, GFXFF);
@@ -2963,14 +2982,19 @@ void keyboard() {
     tft.drawString(",<", 327, 242, GFXFF);
     tft.drawString(".>", 360, 242, GFXFF);
     tft.drawString("/?", 392, 242, GFXFF);
-    tft.drawString("~", 424, 242, GFXFF);
+    tft.drawString("show", 440, 242, GFXFF);
 
-
+    tft.drawString("ctrl", 37, 275, GFXFF);
+    tft.drawString("fn", 87, 275, GFXFF);
+    tft.drawString("ctrl", 333, 275, GFXFF);
+    tft.drawString("rgb", 452, 275, GFXFF);
 
 
     tft.fillRoundRect(10, 229, 45, 30, 5, icon_white);
     tft.fillRect(18, 244, 29, 10, blackScript);
     tft.fillTriangle(18, 244, 33, 235, 47, 244, blackScript);
+
+
 
   } else {
     
