@@ -2813,6 +2813,22 @@ void compass() {
   tft.fillRectHGradient(15, 267, 100, 30, geigerColor1, geigerColor2);
 }
 
+void drawArc(int x, int y, int arcStart, int artEnd, int radius, int color) {
+  /*
+      270
+    /    \
+  180     360-0
+    \    /
+      90
+  */
+  for (int i = arcStart; i < artEnd; i++) { 
+    double radians = i * PI / 180;
+    double px = x + radius * cos(radians);
+    double py = y + radius * sin(radians);
+    tft.drawPixel(px, py, color);
+  }
+}
+
 void keyboard() {
   byte alt = 1;
   tft.fillCircle(30, 100, 20, icon_white);
@@ -2845,9 +2861,18 @@ void keyboard() {
   tft.drawLine(421, 277, 415, 283, icon_black);
   tft.drawLine(415, 269, 415, 283, icon_black);
 
+  drawArc(431, 138, 180, 270, 5, icon_black);
+  tft.drawLine(430, 133, 465, 133, icon_black);
+  drawArc(466, 138, 270, 360, 5, icon_black);
+  drawArc(466, 190, 0, 90, 5, icon_black);
+  drawArc(446, 190, 90, 180, 5, icon_black);
+  drawArc(436, 168, 270, 360, 5, icon_black);
+  drawArc(431, 158, 90, 180, 5, icon_black);
 
 
-  tft.drawRoundRect(65, 80, 350, 40, 5, icon_black);
+
+
+
   tft.drawCircle(450, 100, 20, icon_black);
 
   tft.drawRoundRect(10, 133, 30, 30, 5, icon_black);
@@ -2863,6 +2888,7 @@ void keyboard() {
   tft.drawRoundRect(330, 133, 30, 30, 5, icon_black);
   tft.drawRoundRect(362, 133, 30, 30, 5, icon_black);
   tft.drawRoundRect(394, 133, 30, 30, 5, icon_black);
+
 
   tft.drawRoundRect(10, 165, 45, 30, 5, icon_black);
   tft.drawRoundRect(57, 165, 30, 30, 5, icon_black);
@@ -2912,15 +2938,6 @@ void keyboard() {
   tft.drawRoundRect(368, 261, 30, 30, 5, icon_black);
   tft.drawRoundRect(400, 261, 30, 30, 5, icon_black);
   tft.drawRoundRect(432, 261, 39, 30, 5, icon_black);
-
-  for (byte radi = 3; radi > 3; radi --) {
-    for (int i = 270; i < 360; i++) {
-      double radians = i * PI / 180;
-      double px = 178 + radi * cos(radians);
-      double py = 94 + radi * sin(radians);
-      tft.drawPixel(px, py, redScript);
-    }
-  }
 
   tft.setTextDatum(MC_DATUM);
   tft.setTextColor(icon_black);
