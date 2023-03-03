@@ -2419,7 +2419,12 @@ void calendar() {
 
 int startDay = 0;
 int newWeek = 0;
+byte dayWeek = 0;
 int monthLengh = 0;
+int newDayStart = 0;
+int newWeekStart = 0;
+byte weekYear = 1; 
+
 
 void calendarLoader() {
 // 1 de janeiro 2023, Domingo
@@ -2440,8 +2445,11 @@ void calendarLoader() {
     monthLengh = 28;
   }
 
+  startDay = startDayOfWeek(year, month, day);
+
   switch (startDay) {
     case 0:
+      newWeekStart = 1;
       tft.setTextColor(blackScript);
       tft.drawString("1", 154, 113, GFXFF);
       tft.drawString("7", 332, 113, GFXFF);
@@ -2453,6 +2461,7 @@ void calendarLoader() {
       tft.drawString("6", 304, 113, GFXFF);
     break;
     case 1:
+      newWeekStart = 1;
       tft.setTextColor(whiteScript);
       tft.drawString("1", 182, 113, GFXFF);
       tft.drawString("2", 215, 113, GFXFF);
@@ -2463,6 +2472,7 @@ void calendarLoader() {
       tft.drawString("6", 332, 113, GFXFF);
     break;
     case 2:
+      newWeekStart = 1;
       tft.setTextColor(whiteScript);
       tft.drawString("1", 215, 113, GFXFF);
       tft.drawString("2", 241, 113, GFXFF);
@@ -2472,6 +2482,7 @@ void calendarLoader() {
       tft.drawString("5", 332, 113, GFXFF);
     break;
     case 3:
+      newWeekStart = 1;
       tft.setTextColor(whiteScript);
       tft.drawString("1", 241, 113, GFXFF);
       tft.drawString("2", 275, 113, GFXFF);
@@ -2480,6 +2491,7 @@ void calendarLoader() {
       tft.drawString("4", 332, 113, GFXFF);
     break;
     case 4:
+      newWeekStart = 1;
       tft.setTextColor(whiteScript);
       tft.drawString("1", 275, 113, GFXFF);
       tft.drawString("2", 304, 113, GFXFF);
@@ -2487,6 +2499,7 @@ void calendarLoader() {
       tft.drawString("3", 332, 113, GFXFF);
     break;
     case 5:
+      newWeekStart = 1;
       if (monthLengh == 28 || monthLengh == 30) {
         tft.setTextColor(whiteScript);
         tft.drawString("1", 304, 113, GFXFF);
@@ -2502,6 +2515,7 @@ void calendarLoader() {
       }
     break;
     case 6:
+      newWeekStart = 1;
       if (monthLengh == 28) {
         tft.setTextColor(blackScript);
         tft.drawString("1", 332, 113, GFXFF);
@@ -2521,13 +2535,211 @@ void calendarLoader() {
       };
     break;
   }
-  newWeek = (7 - startDay) + 1;
-  for (int f = newWeek; f < newWeek = 7; f++) {
-    if (f < 10) {
-
+  if ((startDay == 0) && (newWeekStart == 1)) {
+    newDayStart = 6 - startDay;
+    for (int weekTwo = 0; weekTwo < 8; weekTwo++) {
+      newDayStart = newDayStart + 1;
+      String StringDayWeek = String(newDayStart);
+      if (monthLengh >= newDayStart) {
+        switch (weekTwo) {
+          case 1:
+            tft.setTextColor(blackScript);
+            tft.drawString(StringDayWeek, 154, 138, GFXFF);
+            weekYear = weekYear + 1;
+            newWeekStart = (newWeekStart + 1);
+            Serial.println();
+            Serial.print("newWeekStart: ");
+            Serial.println(newWeekStart);
+            Serial.print("startDay: ");
+            Serial.println(startDay);
+            Serial.print("monthLengh: ");
+            Serial.println(monthLengh);
+          break;
+          case 2:
+            tft.setTextColor(whiteScript);
+            tft.drawString(StringDayWeek, 182, 138, GFXFF);
+          break;
+          case 3:
+            tft.setTextColor(whiteScript);
+            tft.drawString(StringDayWeek, 215, 138, GFXFF);
+          break;
+          case 4:
+            tft.setTextColor(whiteScript);
+            tft.drawString(StringDayWeek, 241, 138, GFXFF);
+          break;
+          case 5:
+            tft.setTextColor(whiteScript);
+            tft.drawString(StringDayWeek, 275, 138, GFXFF);
+          break;
+          case 6:
+            tft.setTextColor(whiteScript);
+            tft.drawString(StringDayWeek, 304, 138, GFXFF);
+          break;
+          case 7:
+            tft.setTextColor(blackScript);
+            tft.drawString(StringDayWeek, 332, 138, GFXFF);
+          break;
+        }
+      }
     }
- }
+  }
 
+  if ((startDay == 0) && (newWeekStart == 2)) {
+    newDayStart = 13 - startDay;
+    newWeekStart = newWeekStart + 1;
+    for (int weekThree = 0; weekThree < 8; weekThree++) {
+      newDayStart = newDayStart + 1;
+      String StringDayWeek = String(newDayStart);
+      if (monthLengh >= newDayStart) {
+        switch (weekThree) {
+          case 1:
+            tft.setTextColor(blackScript);
+            tft.drawString(StringDayWeek, 154, 163, GFXFF);
+            weekYear = weekYear + 1;
+          break;
+          case 2:
+            tft.setTextColor(whiteScript);
+            tft.drawString(StringDayWeek, 182, 163, GFXFF);
+          break;
+          case 3:
+            tft.setTextColor(whiteScript);
+            tft.drawString(StringDayWeek, 215, 163, GFXFF);
+          break;
+          case 4:
+            tft.setTextColor(whiteScript);
+            tft.drawString(StringDayWeek, 241, 163, GFXFF);
+          break;
+          case 5:
+            tft.setTextColor(whiteScript);
+            tft.drawString(StringDayWeek, 275, 163, GFXFF);
+          break;
+          case 6:
+            tft.setTextColor(whiteScript);
+            tft.drawString(StringDayWeek, 304, 163, GFXFF);
+          break;
+          case 7:
+            tft.setTextColor(blackScript);
+            tft.drawString(StringDayWeek, 332, 163, GFXFF);
+          break;
+        }
+      }
+    }
+  }
+
+  if ((startDay == 0) && (newWeekStart == 3)) {
+    newDayStart = 20 - startDay;
+    newWeekStart = newWeekStart + 1;
+    for (int weekFour = 0; weekFour < 8; weekFour++) {
+      newDayStart = newDayStart + 1;
+      String StringDayWeek = String(newDayStart);
+      if (monthLengh >= newDayStart) {
+        switch (weekFour) {
+          case 1:
+            tft.setTextColor(blackScript);
+            tft.drawString(StringDayWeek, 154, 188, GFXFF);
+            weekYear = weekYear + 1;
+          break;
+          case 2:
+            tft.setTextColor(whiteScript);
+            tft.drawString(StringDayWeek, 182, 188, GFXFF);
+          break;
+          case 3:
+            tft.setTextColor(whiteScript);
+            tft.drawString(StringDayWeek, 215, 188, GFXFF);
+          break;
+          case 4:
+            tft.setTextColor(whiteScript);
+            tft.drawString(StringDayWeek, 241, 188, GFXFF);
+          break;
+          case 5:
+            tft.setTextColor(whiteScript);
+            tft.drawString(StringDayWeek, 275, 188, GFXFF);
+          break;
+          case 6:
+            tft.setTextColor(whiteScript);
+            tft.drawString(StringDayWeek, 304, 188, GFXFF);
+          break;
+          case 7:
+            tft.setTextColor(blackScript);
+            tft.drawString(StringDayWeek, 332, 188, GFXFF);
+          break;
+        }
+      }
+    }
+  }
+
+  if ((startDay == 0) && (newWeekStart == 4)) {
+    newDayStart = 27 - startDay;
+    newWeekStart = newWeekStart + 1;
+    for (int weekFive = 0; weekFive < 8; weekFive++) {
+      newDayStart = newDayStart + 1;
+      String StringDayWeek = String(newDayStart);
+      if (monthLengh >= newDayStart) {
+        switch (weekFive) {
+          case 1:
+            tft.setTextColor(blackScript);
+            tft.drawString(StringDayWeek, 154, 213, GFXFF);
+            weekYear = weekYear + 1;
+          break;
+          case 2:
+            tft.setTextColor(whiteScript);
+            tft.drawString(StringDayWeek, 182, 213, GFXFF);
+          break;
+          case 3:
+            tft.setTextColor(whiteScript);
+            tft.drawString(StringDayWeek, 215, 213, GFXFF);
+          break;
+          case 4:
+            tft.setTextColor(whiteScript);
+            tft.drawString(StringDayWeek, 241, 213, GFXFF);
+          break;
+          case 5:
+            tft.setTextColor(whiteScript);
+            tft.drawString(StringDayWeek, 275, 213, GFXFF);
+          break;
+          case 6:
+            tft.setTextColor(whiteScript);
+            tft.drawString(StringDayWeek, 304, 213, GFXFF);
+          break;
+          case 7:
+            tft.setTextColor(blackScript);
+            tft.drawString(StringDayWeek, 332, 213, GFXFF);
+          break;
+        }
+      }
+    }
+  }
+
+  if ((startDay == 0) && (newWeekStart == 5)) {
+    newDayStart = 30 - startDay;
+    newWeekStart = newWeekStart + 1;
+    for (int weekSix = 0; weekSix < 3; weekSix++) {
+      newDayStart = newDayStart + 1;
+      String StringDayWeek = String(newDayStart);
+      if (monthLengh >= newDayStart) {
+        switch (weekSix) {
+          case 1:
+            tft.setTextColor(blackScript);
+            tft.drawString(StringDayWeek, 154, 233, GFXFF);
+            weekYear = weekYear + 1;
+          break;
+          case 2:
+            tft.setTextColor(whiteScript);
+            tft.drawString(StringDayWeek, 182, 233, GFXFF);
+          break;
+        }
+      }
+    }
+  }
+
+
+}
+
+// calculate first day of month
+int startDayOfWeek(int y, int m, int d){
+  static int t[] = {0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4};
+  y -= m < 3;
+  return (y +y/4 -y/100 + y/400 + t[m-1] + d)% 7; 
 }
 
 void date() {
