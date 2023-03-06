@@ -86,6 +86,13 @@ byte lockStyle = 0;
 int day;                      // Armazena dados de dia calendario
 int month;                    // Armazena dados de mes calendario
 int year;                     // Armazena dados de ano calendario
+int startDay = 0;         // Identifica o 1 dia da semana
+byte Week = 0;            // Armazena Semana do ano
+int dayWeek = 0;          // Armazena Dia do ano
+int monthLengh = 0;       // Armazena o tamanho do Mes
+int newDayStart = 0;      // Armazena o Dia do inicio da semana
+int newWeekStart = 0;     // Armazena a posicao da Semana 
+byte weekYear = 1; 
 
 byte fuso = 1;                  
 //fuso = 0 12 Horas  
@@ -196,7 +203,7 @@ int pinBatteryCharger;         // Pino de Leitura da Bateria
 // ------------------------------ CORES DISPLAY RGB 555 -------------------------------
 
 uint16_t blue_battery = 0x16BB;         //0x15D9E2
-uint16_t green_battery = 0x9669;        //0x9AD24D
+uint16_t green_battery = 0x1F22;        //0x19E710
 uint16_t yellow_battery = 0xEF02;       //0xF4E317
 uint16_t yellowed_battery = 0xF523;     //0xF7A619
 uint16_t orange_battery = 0xEB84;       //0xF67423
@@ -358,7 +365,7 @@ void setup() {
   hours = 23;
   mins = 59;
   day = 1;
-  month = 9;
+  month = 2;
   year = 2023;
 
   Serial.print("Insira Hora: ");
@@ -922,9 +929,15 @@ void lockLevel() {
 }
 
 void batteryStyle1() {
-  tft.drawRoundRect(361, 21, 50, 20, 5, whiteScript);
-  tft.drawRoundRect(362, 22, 48, 18, 4, whiteScript);  
-  tft.fillRoundRect(363, 23, 46, 16, 4, blue_battery);
+  tft.drawRoundRect(363, 19, 45, 21, 3, whiteScript);
+  tft.drawRoundRect(364, 20, 43, 20, 2, whiteScript);
+
+  tft.fillRoundRect(366, 22, 7, 16, 1, green_battery);
+  tft.fillRoundRect(374, 22, 7, 16, 1, green_battery);
+  tft.fillRoundRect(382, 22, 7, 16, 1, green_battery);
+  tft.fillRoundRect(390, 22, 7, 16, 1, green_battery);
+  tft.fillRoundRect(398, 22, 7, 16, 1, green_battery);
+
 }
 void batteryStyle2() {
   tft.drawRoundRect(361, 21, 50, 20, 4, whiteScript);
@@ -2415,15 +2428,6 @@ void calendar() {
   calendarLoader();
 }
 
-int startDay = 0;         // Identifica o 1 dia da semana
-byte Week = 0;            // Armazena Semana do ano
-int dayWeek = 0;          // Armazena Dia do ano
-int monthLengh = 0;       // Armazena o tamanho do Mes
-int newDayStart = 0;      // Armazena o Dia do inicio da semana
-int newWeekStart = 0;     // Armazena a posicao da Semana 
-byte weekYear = 1; 
-
-// calculate first day of month
 int startDayOfWeek(int y, int m, int d){
   static int t[] = {0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4};
   y -= m < 3;
@@ -2439,6 +2443,10 @@ void calendarLoader() {
   if (month == 2) {
     if (year%400 == 0) {
       monthLengh = 29;
+    } else if((year%4==0) && (year%100!=0)) {
+      monthLengh = 29;
+    }else {
+      monthLengh = 28;
     }
   }
 
