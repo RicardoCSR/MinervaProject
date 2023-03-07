@@ -72,7 +72,7 @@ byte backgroundSetup = 0;
 // backgroundSetup = 2 Programa Fundo Preto.
 // backgroundSetup = 3 Programa Fundo Branco.
 
-byte batteryStyleMode = 0;
+byte batteryStyleMode = 2;
 // batteryStyleMode = 0 Estilo 1 de Bateria.
 // batteryStyleMode = 1 Estilo 2 de Bateria.
 // batteryStyleMode = 2 Estilo 3 de Bateria.
@@ -166,7 +166,7 @@ byte updateBattery = 0;
 // updateBattery = 5 Apresentação Bateria Level 6
 // updateBattery = 6 Apresentação Bateria Level 7
 
-byte wifiRead = 0;
+byte wifiRead = 2;
 // wifiRead = 0 WiFi em alta potência
 // wifiRead = 1 WiFi em media potência
 // wifiRead = 2 WiFi em baixa potência
@@ -881,10 +881,18 @@ void defaultSetup() {
 void wifiLevel() {
   switch (wifiRead) {
     case 1:
-      tft.pushImage(330, 37, 32, 32, wifi1);
+      tft.fillCircle(333, 36, 2, septemberColor);
+      tft.drawSmoothArc(333, 36, 5, 7, 134, 226, septemberColor, blackScript, roundEnd);
+      tft.drawSmoothArc(333, 36, 10, 12, 134, 226, septemberColor, blackScript, roundEnd);
+      tft.drawSmoothArc(333, 36, 15, 17, 134, 226, septemberColor, blackScript, roundEnd);
     break;
     case 2:
-      tft.pushImage(330, 37, 32, 32, wifi2);
+      tft.fillRoundRect(322, 15, 30, 30, 5, octoberColor);
+      tft.fillCircle(337, 36, 2, whiteScript);
+      tft.drawSmoothArc(337, 36, 6, 7, 134, 226, whiteScript, blackScript, roundEnd);
+      tft.drawSmoothArc(337, 36, 11, 12, 134, 226, whiteScript, blackScript, roundEnd);
+      tft.drawSmoothArc(337, 36, 16, 17, 134, 226, whiteScript, blackScript, roundEnd);
+
     break;
     case 3:
       tft.pushImage(330, 37, 32, 32, wifi3);
@@ -897,9 +905,9 @@ void wifiLevel() {
   }
 }
 
-void batteryLevel() {
-  int batteryRead = 1000;
 
+
+void batteryLevel() {
   switch (batteryStyleMode) {
       case 1:
         batteryStyle2();
@@ -929,27 +937,32 @@ void lockLevel() {
 }
 
 void batteryStyle1() {
-  tft.drawRoundRect(363, 19, 45, 21, 3, whiteScript);
-  tft.drawRoundRect(364, 20, 43, 20, 2, whiteScript);
+  tft.drawRoundRect(362, 18, 47, 21, 3, whiteScript);
+  tft.drawRoundRect(363, 19, 45, 20, 2, whiteScript);
+  tft.drawSmoothArc(408, 28, 1, 4, 180, 359, whiteScript, whiteScript, squareEnd);
 
-  tft.fillRoundRect(366, 22, 7, 16, 1, green_battery);
-  tft.fillRoundRect(374, 22, 7, 16, 1, green_battery);
-  tft.fillRoundRect(382, 22, 7, 16, 1, green_battery);
-  tft.fillRoundRect(390, 22, 7, 16, 1, green_battery);
-  tft.fillRoundRect(398, 22, 7, 16, 1, green_battery);
-
+  tft.fillRoundRect(366, 21, 7, 16, 1, green_battery);
+  tft.fillRoundRect(374, 21, 7, 16, 1, green_battery);
+  tft.fillRoundRect(382, 21, 7, 16, 1, green_battery);
+  tft.fillRoundRect(390, 21, 7, 16, 1, green_battery);
+  tft.fillRoundRect(398, 21, 7, 16, 1, green_battery);
 }
 void batteryStyle2() {
-  tft.drawRoundRect(361, 21, 50, 20, 4, whiteScript);
-  tft.fillRoundRect(362, 22, 48, 18, 4, blue_battery);
+  tft.drawRoundRect(362, 18, 47, 21, 3, whiteScript);
+  tft.drawRoundRect(363, 19, 45, 20, 2, whiteScript);
+  tft.drawSmoothArc(408, 28, 1, 4, 180, 359, whiteScript, whiteScript, squareEnd);
+
+  tft.fillRoundRect(366, 21, 39, 16, 1, green_battery);
 }
 void batteryStyle3() {
-  tft.drawRoundRect(361, 21, 50, 20, 4, whiteScript);
-  tft.fillRoundRect(362, 22, 48, 18, 4, blue_battery);
+  tft.drawRoundRect(362, 18, 47, 21, 3, whiteScript);
+  tft.drawRoundRect(363, 19, 45, 20, 2, whiteScript);
+  tft.drawSmoothArc(408, 28, 1, 4, 180, 359, whiteScript, whiteScript, squareEnd);
+
+  tft.fillRectHGradient(366, 21, 39, 16, pressureColor1, pressureColor2);
 }
 void batteryStyle4() {
-  tft.drawRoundRect(361, 21, 50, 20, 4, blue_battery);
-  tft.fillRoundRect(362, 22, 48, 18, 4, blue_battery);
+  tft.drawRoundRect(362, 21, 50, 19, 3, blue_battery);
 }
 
 void lockStyle1() {
