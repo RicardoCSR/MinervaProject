@@ -166,7 +166,7 @@ byte updateBattery = 0;
 // updateBattery = 5 Apresentação Bateria Level 6
 // updateBattery = 6 Apresentação Bateria Level 7
 
-byte wifiRead = 2;
+byte wifiRead = 0;
 // wifiRead = 0 WiFi em alta potência
 // wifiRead = 1 WiFi em media potência
 // wifiRead = 2 WiFi em baixa potência
@@ -881,31 +881,43 @@ void defaultSetup() {
 void wifiLevel() {
   switch (wifiRead) {
     case 1:
-      tft.fillCircle(333, 36, 2, septemberColor);
-      tft.drawSmoothArc(333, 36, 5, 7, 134, 226, septemberColor, blackScript, roundEnd);
-      tft.drawSmoothArc(333, 36, 10, 12, 134, 226, septemberColor, blackScript, roundEnd);
-      tft.drawSmoothArc(333, 36, 15, 17, 134, 226, septemberColor, blackScript, roundEnd);
+      wifiStyle2();
     break;
     case 2:
-      tft.fillRoundRect(322, 15, 30, 30, 5, octoberColor);
-      tft.fillCircle(337, 36, 2, whiteScript);
-      tft.drawSmoothArc(337, 36, 6, 7, 134, 226, whiteScript, blackScript, roundEnd);
-      tft.drawSmoothArc(337, 36, 11, 12, 134, 226, whiteScript, blackScript, roundEnd);
-      tft.drawSmoothArc(337, 36, 16, 17, 134, 226, whiteScript, blackScript, roundEnd);
-
+      wifiStyle3();
     break;
     case 3:
-      tft.pushImage(330, 37, 32, 32, wifi3);
+      wifiStyle4();
     break;
     default:
-      tft.setSwapBytes(true);
-      tft.pushImage(320, 15, 32, 32, wifi4);
-      tft.pushImage(425, 5, 45, 45, climate16);
-      tft.pushImage (5, 7, 48, 48, profile1);
+      wifiStyle1();
   }
 }
 
-
+void wifiStyle1() {
+  tft.fillCircle(333, 36, 2, septemberColor);
+  tft.drawSmoothArc(333, 36, 5, 7, 134, 226, septemberColor, blackScript, roundEnd);
+  tft.drawSmoothArc(333, 36, 10, 12, 134, 226, septemberColor, blackScript, roundEnd);
+  tft.drawSmoothArc(333, 36, 15, 17, 134, 226, septemberColor, blackScript, roundEnd);
+}
+void wifiStyle2() {
+  tft.fillRoundRect(322, 15, 30, 30, 5, februeryColor);
+  tft.fillCircle(337, 36, 2, whiteScript);
+  tft.drawSmoothArc(337, 36, 6, 7, 134, 226, whiteScript, februeryColor, roundEnd);
+  tft.drawSmoothArc(337, 36, 11, 12, 134, 226, whiteScript, februeryColor, roundEnd);
+  tft.drawSmoothArc(337, 36, 16, 17, 134, 226, whiteScript, februeryColor, roundEnd);
+}
+void wifiStyle3() {
+  tft.drawSmoothArc(330, 38, 0, 2, 179, 269, whiteScript, blackScript, squareEnd);
+  tft.drawSmoothArc(330, 38, 6, 7, 179, 269, whiteScript, blackScript, squareEnd);
+  tft.drawSmoothArc(330, 38, 11, 12, 179, 269, whiteScript, blackScript, squareEnd);
+  tft.drawSmoothArc(330, 38, 16, 17, 179, 269, whiteScript, blackScript, squareEnd);
+}
+void wifiStyle4() {
+  tft.drawSmoothArc(337, 36, 0, 4, 134, 226, whiteScript, februeryColor, roundEnd);
+  tft.drawSmoothArc(337, 36, 8, 10, 134, 226, whiteScript, februeryColor, roundEnd);
+  tft.drawSmoothArc(337, 36, 14, 16, 134, 226, whiteScript, februeryColor, roundEnd);
+}
 
 void batteryLevel() {
   switch (batteryStyleMode) {
@@ -920,19 +932,6 @@ void batteryLevel() {
       break;
       default:
         batteryStyle1();
-  }
-}
-
-void lockLevel() {
-  switch (lockStyle) {
-      case 1:
-        // do something
-        break;
-      case 2:
-        // do something
-        break;
-      default:
-        lockStyle1();
   }
 }
 
@@ -960,14 +959,29 @@ void batteryStyle3() {
   tft.drawSmoothArc(408, 28, 1, 4, 180, 359, whiteScript, whiteScript, squareEnd);
 
   tft.fillRectHGradient(366, 21, 39, 16, pressureColor1, pressureColor2);
+  tft.drawLine(365, 22, 365, 36, pressureColor1);
+  tft.drawLine(405, 22, 405, 36, pressureColor2);
 }
 void batteryStyle4() {
   tft.drawRoundRect(362, 21, 50, 19, 3, blue_battery);
 }
 
-void lockStyle1() {
+void lockLevel() {
+  switch (lockStyle) {
+      case 1:
+        // do something
+        break;
+      case 2:
+        // do something
+        break;
+      default:
+        lockStyle1();
+  }
+}
 
-  tft.pushImage(294, 19, 19, 23, lock);
+void lockStyle1() {
+  tft.drawSmoothArc(300, 26, 5, 6, 89, 269, whiteScript, blackScript, squareEnd);
+  tft.fillRoundRect(293, 31, 14, 16, 2, whiteScript);
 }
 
 void home() {
