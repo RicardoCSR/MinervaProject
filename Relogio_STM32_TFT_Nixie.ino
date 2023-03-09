@@ -78,10 +78,9 @@ byte batteryStyleMode = 2;
 // batteryStyleMode = 2 Estilo 3 de Bateria.
 // batteryStyleMode = 3 Estilo 4 de Bateria.
 
-byte lockStyle = 0;
+byte lockStyle = 1;
 // lockStyle = 0 Estilo 1 de Trava.
 // lockStyle = 1 Estilo 2 de Trava.
-// lockStyle = 2 Estilo 3 de Trava.
 
 int day;                      // Armazena dados de dia calendario
 int month;                    // Armazena dados de mes calendario
@@ -969,10 +968,7 @@ void batteryStyle4() {
 void lockLevel() {
   switch (lockStyle) {
       case 1:
-        // do something
-        break;
-      case 2:
-        // do something
+        lockStyle2();
         break;
       default:
         lockStyle1();
@@ -980,8 +976,28 @@ void lockLevel() {
 }
 
 void lockStyle1() {
-  tft.drawSmoothArc(300, 26, 5, 6, 89, 269, whiteScript, blackScript, squareEnd);
-  tft.fillRoundRect(293, 31, 14, 16, 2, whiteScript);
+  tft.drawSmoothArc(300, 23, 3, 4, 89, 270, whiteScript, blackScript, squareEnd);
+  tft.drawLine(296, 24, 296, 28, whiteScript);
+  tft.drawLine(297, 24, 297, 28, whiteScript);
+  tft.drawLine(303, 24, 303, 28, whiteScript);
+  tft.drawLine(304, 24, 304, 28, whiteScript);
+  tft.fillRoundRect(295, 28, 11, 12, 2, whiteScript);
+}
+
+void lockStyle2() {
+  tft.drawSmoothArc(300, 23, 3, 4, 89, 270, whiteScript, blackScript, squareEnd);
+  tft.drawLine(296, 24, 296, 26, whiteScript);
+  tft.drawLine(297, 24, 297, 26, whiteScript);
+  tft.drawLine(303, 24, 303, 26, whiteScript);
+  tft.drawLine(304, 24, 304, 26, whiteScript);
+  tft.drawLine(294, 27, 306, 27, whiteScript);
+  tft.drawLine(294, 28, 306, 28, whiteScript);
+  tft.drawLine(294, 29, 294, 32, whiteScript);
+  tft.drawLine(295, 29, 295, 32, whiteScript);
+  tft.drawLine(294, 38, 306, 38, whiteScript);
+  tft.drawLine(294, 39, 306, 39, whiteScript); 
+  tft.drawLine(305, 37, 305, 34, whiteScript); 
+  tft.drawLine(306, 37, 306, 34, whiteScript); 
 }
 
 void home() {
@@ -3918,23 +3934,23 @@ void date() {
 }
 
 void seasons() {
-  if (day >= 22 && month >= 3) {
-    if (day <= 21 && month <= 6) {
+  if ((day >= 22) && (month >= 3)) {
+    if ((day <= 21) && (month <= 6)) {
       tft.pushImage(377, 154, 75, 92, autumn);
     } 
   }  
-  if (day >= 22 && month == 12) {
-    if (day <= 21 && month <= 3) {
+  if ((day >= 22) && (month == 12)) {
+    if ((day <= 21) && (month <= 3)) {
       tft.pushImage(377, 154, 75, 92, summer);
     }
   }  
-  if (day >= 24 && month >= 9) {
-    if (day <= 21 && month <= 12) {
+  if ((day >= 24) && (month >= 9)) { 
+    if ((day <= 21) && (month <= 12)) {
       tft.pushImage(377, 154, 75, 92, spring);
     }
   }  
-  if (day >= 22 && month >= 6) {
-    if (day <= 23 && month <= 9) {
+  if ((day >= 22) && (month >= 6)) {
+    if ((day <= 23) && (month <= 9)) {
       tft.pushImage(377, 154, 75, 92, winter);
     }
   }
@@ -5076,11 +5092,9 @@ void telaMenu15() {
   tft.setFreeFont(latoRegular24);
   tft.drawString("TEMA", 31, 90, GFXFF);
 
-  tft.pushImage(155, 110, 9, 11, minilock);
-  tft.pushImage(168, 111, 11, 10, miniwifi);
+
   tft.drawRoundRect(184, 112, 22, 8, 2, whiteScript);
   tft.fillRoundRect(185, 113, 20, 6, 2, blue_battery);
-  tft.pushImage(214, 108, 17, 17, miniclimate);
 
   tft.fillRectHGradient(30, 249, 100, 30, pressureColor1, pressureColor2);
   tft.fillRectHGradient(135, 249, 100, 30, temperatureColor1, temperatureColor2);
@@ -5109,10 +5123,6 @@ void telaMenu15() {
   tft.fillRoundRect(399, 108, 22, 22, 5, icon_5);
   tft.fillRect(399, 144, 22, 22, icon_5);
 
-  tft.pushImage(440, 106, 19, 23, lock);
-  tft.pushImage(442, 143, 16, 24, touch1);
-  tft.pushImage(440, 184, 21, 17, touch2);
-
   tft.drawRoundRect(290, 109, 50, 20, 5, whiteScript);
   tft.drawRoundRect(291, 110, 48, 18, 4, whiteScript);
   tft.fillRoundRect(292, 111, 46, 16, 4, blue_battery);
@@ -5121,8 +5131,6 @@ void telaMenu15() {
   tft.drawRoundRect(291, 145, 48, 18, 4, blue_battery);
 
   tft.fillRoundRect(290, 180, 50, 20, 5, blue_battery);
-
-  tft.pushImage(361, 110, 17, 17, miniclimate);
 
   tft.fillRect(244, 104, 31, 31, icon_5);
   tft.fillTriangle(273, 105, 273, 133, 245, 133, icon_5);
