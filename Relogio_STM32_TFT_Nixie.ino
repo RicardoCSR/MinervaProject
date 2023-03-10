@@ -363,8 +363,8 @@ void setup() {
   UtlTime = 0;
   hours = 23;
   mins = 59;
-  day = 1;
-  month = 2;
+  day = 31;
+  month = 3;
   year = 2023;
 
   Serial.print("Insira Hora: ");
@@ -444,7 +444,7 @@ void loop(void) {
     if(millis() - UtlTime < 0) {
       UtlTime = millis();
     } else {
-      secs = int((millis() - UtlTime) / 1000);
+      secs = int((millis() - UtlTime) / 100);
     }
     if(secs > 59) {
       secs = 0;
@@ -2557,8 +2557,9 @@ void calendarLoader() {
       }
       if (monthLengh == 31) {
         tft.setTextColor(whiteScript);
-        tft.drawString("2", 332, 113, GFXFF);
         tft.drawString("1", 304, 113, GFXFF);
+        tft.setTextColor(blackScript);
+        tft.drawString("2", 332, 113, GFXFF);
       }
     break;
     case 6:
@@ -3934,23 +3935,43 @@ void date() {
 }
 
 void seasons() {
-  if ((day >= 22) && (month >= 3)) {
-    if ((day <= 21) && (month <= 6)) {
-      tft.pushImage(377, 154, 75, 92, autumn);
-    } 
-  }  
-  if ((day >= 22) && (month == 12)) {
-    if ((day <= 21) && (month <= 3)) {
+  if (month >= 3) {
+    if (day >= 22) {
+      tft.pushImage(377, 154, 75, 92, autumn); 
+    }
+  }
+  if (month >= 3 && month <= 6) {
+    if (day <= 21) {
+      tft.pushImage(377, 154, 75, 92, autumn); 
+    }
+  }
+  if (month == 12) {
+    if (day >= 22) {
       tft.pushImage(377, 154, 75, 92, summer);
     }
-  }  
-  if ((day >= 24) && (month >= 9)) { 
-    if ((day <= 21) && (month <= 12)) {
+  }
+  if (month == 12 || month <= 3) {
+    if (day <= 21) {
+      tft.pushImage(377, 154, 75, 92, summer);
+    }
+  }
+  if (month >= 9) {
+    if (day >= 24) {
       tft.pushImage(377, 154, 75, 92, spring);
     }
-  }  
-  if ((day >= 22) && (month >= 6)) {
-    if ((day <= 23) && (month <= 9)) {
+  }
+  if (month >= 9 && month <= 12) {
+    if (day <= 21) {
+      tft.pushImage(377, 154, 75, 92, spring);
+    }
+  }
+  if (month >= 6) {
+    if (day >= 22) {
+      tft.pushImage(377, 154, 75, 92, winter);
+    }
+  }
+  if (month >= 6 && month <= 9) {
+    if (day <= 23) {
       tft.pushImage(377, 154, 75, 92, winter);
     }
   }
@@ -4759,8 +4780,8 @@ void telaMenu4() {
   tft.fillScreen(blackScript);
   i = 1;
   
-  seasons();
   calendar();
+  seasons();
   date();
   home();
   wifiLevel();
