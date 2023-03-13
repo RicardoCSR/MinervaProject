@@ -171,7 +171,7 @@ byte wifiRead = 0;
 // wifiRead = 2 WiFi em baixa potência
 // wifiRead = 3 WiFi sem Sinal
 
-byte telaMenu = 0;
+byte telaMenu = 4;
 // telaMenu = 0 Menu Principal
 // telaMenu = 1 Tela  
 // telaMenu = 2 Tela  
@@ -363,7 +363,7 @@ void setup() {
   UtlTime = 0;
   hours = 23;
   mins = 59;
-  day = 31;
+  day = 10;
   month = 3;
   year = 2023;
 
@@ -762,7 +762,6 @@ void selectFunctionDisplay() {
   if (UtlTime - period >= 5 * 1000) {
     period = UtlTime;
   }  
-  telaMenu = 12;
   if (displayTFT == 0) {
     switch (telaMenu) {
       case 1:
@@ -4879,6 +4878,41 @@ void telaMenu9() {
 }
 void telaMenu10() {
   tft.fillScreen(blackScript);
+
+  tft.pushImage(15, 50, 48, 48, profile1);
+  tft.pushImage(65, 50, 48, 48, profile2);
+  tft.pushImage(115, 50, 48, 48, profile3);
+  tft.pushImage(165, 50, 48, 48, profile4);
+  tft.pushImage(215, 50, 48, 48, profile5);
+  tft.pushImage(265, 50, 48, 48, profile6);
+  tft.pushImage(315, 50, 48, 48, profile7);
+  tft.pushImage(365, 50, 48, 48, profile8);
+  tft.pushImage(405, 50, 48, 48, profile9);
+
+  tft.pushImage(15, 100, 48, 48, profile10);
+  tft.pushImage(65, 100, 48, 48, profile11);
+  tft.pushImage(115, 100, 48, 48, profile12);
+  tft.pushImage(165, 100, 48, 48, profile13);
+  tft.pushImage(215, 100, 48, 48, profile14);
+  tft.pushImage(265, 100, 48, 48, profile15);
+  tft.pushImage(315, 100, 48, 48, profile16);
+  tft.pushImage(365, 100, 48, 48, profile17);
+  tft.pushImage(405, 100, 48, 48, profile18);
+
+  tft.pushImage(15, 150, 48, 48, profile19);
+  tft.pushImage(65, 150, 48, 48, profile20);
+  tft.pushImage(115, 150, 48, 48, profile21);
+  tft.pushImage(165, 150, 48, 48, profile22);
+  tft.pushImage(215, 150, 48, 48, profile23);
+  tft.pushImage(265, 150, 48, 48, profile24);
+  tft.pushImage(315, 150, 48, 48, profile25);
+  tft.pushImage(365, 150, 48, 48, profile26);
+  tft.pushImage(405, 150, 48, 48, profile27);
+
+  tft.pushImage(15, 200, 48, 48, profile28);
+  tft.pushImage(65, 200, 48, 48, profile29);
+
+
 
 
   tft.fillRectHGradient(15, 267, 100, 30, pressureColor1, pressureColor2);
