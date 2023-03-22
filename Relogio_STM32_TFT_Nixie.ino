@@ -363,7 +363,7 @@ void setup() {
   UtlTime = 0;
   hours = 23;
   mins = 59;
-  day = 10;
+  day = 21;
   month = 3;
   year = 2023;
 
@@ -406,6 +406,8 @@ void setup() {
   }
 }
 
+byte udpateCalendar = 0;
+
 void loop(void) {
 
   // ------------------------------- TOUCHSCREEN LEITURA -------------
@@ -444,7 +446,7 @@ void loop(void) {
     if(millis() - UtlTime < 0) {
       UtlTime = millis();
     } else {
-      secs = int((millis() - UtlTime) / 100);
+      secs = int((millis() - UtlTime) / 1000);
     }
     if(secs > 59) {
       secs = 0;
@@ -610,6 +612,7 @@ void loop(void) {
 
     if (day != compareDay) {
       compareDay = day;
+      udpateCalendar = 1;
       tft.setTextDatum(ML_DATUM);
       tft.setTextColor(blackScript);
       tft.setFreeFont(latoRegular24);
@@ -732,6 +735,14 @@ void loop(void) {
       tft.drawPixel(bankGeiger, functGeiger + 3, geigerColor);
       tft.drawPixel(bankGeiger, functGeiger + 4, geigerColor);
 
+    }
+
+  // ---------------- ATUALIZACAO CALENDARIO
+    if (compareDay != udpateCalendar) {
+      udpateCalendar = compareDay;
+      if (telaMenu == 4) {
+        displayMenu();
+      }
     }
 
 }
@@ -871,7 +882,6 @@ void defaultSetup() {
     lockLevel();
     
     screenLoad = 1;
-    telaMenu4();       // white white white white white white white white white white white white white white white white white white white
   }
 }
 
@@ -3935,42 +3945,42 @@ void date() {
 
 void seasons() {
   if (month >= 3) {
-    if (day >= 22) {
+    if (day >= 21) {
       tft.pushImage(377, 154, 75, 92, autumn); 
     }
   }
   if (month >= 3 && month <= 6) {
-    if (day <= 21) {
+    if (day <= 20) {
       tft.pushImage(377, 154, 75, 92, autumn); 
     }
   }
   if (month == 12) {
-    if (day >= 22) {
+    if (day >= 21) {
       tft.pushImage(377, 154, 75, 92, summer);
     }
   }
   if (month == 12 || month <= 3) {
-    if (day <= 21) {
+    if (day <= 20) {
       tft.pushImage(377, 154, 75, 92, summer);
     }
   }
   if (month >= 9) {
-    if (day >= 24) {
+    if (day >= 23) {
       tft.pushImage(377, 154, 75, 92, spring);
     }
   }
   if (month >= 9 && month <= 12) {
-    if (day <= 21) {
+    if (day <= 20) {
       tft.pushImage(377, 154, 75, 92, spring);
     }
   }
   if (month >= 6) {
-    if (day >= 22) {
+    if (day >= 21) {
       tft.pushImage(377, 154, 75, 92, winter);
     }
   }
   if (month >= 6 && month <= 9) {
-    if (day <= 23) {
+    if (day <= 22) {
       tft.pushImage(377, 154, 75, 92, winter);
     }
   }
