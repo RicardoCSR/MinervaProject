@@ -363,7 +363,7 @@ void setup() {
   UtlTime = 0;
   hours = 23;
   mins = 59;
-  day = 21;
+  day = 30;
   month = 3;
   year = 2023;
 
@@ -406,7 +406,7 @@ void setup() {
   }
 }
 
-byte udpateCalendar = 0;
+int udpateCalendar;
 
 void loop(void) {
 
@@ -446,12 +446,15 @@ void loop(void) {
     if(millis() - UtlTime < 0) {
       UtlTime = millis();
     } else {
-      secs = int((millis() - UtlTime) / 1000);
+      secs = int((millis() - UtlTime) / 2);
     }
     if(secs > 59) {
       secs = 0;
       mins ++;
       UtlTime = millis();
+      if (UtlTime > 86399999) {
+        UtlTime = 0;
+      }
 
       if(mins > 59) {
         hours ++;
@@ -612,7 +615,6 @@ void loop(void) {
 
     if (day != compareDay) {
       compareDay = day;
-      udpateCalendar = 1;
       tft.setTextDatum(ML_DATUM);
       tft.setTextColor(blackScript);
       tft.setFreeFont(latoRegular24);
@@ -738,10 +740,11 @@ void loop(void) {
     }
 
   // ---------------- ATUALIZACAO CALENDARIO
-    if (compareDay != udpateCalendar) {
-      udpateCalendar = compareDay;
+    if (day != udpateCalendar) {
+      udpateCalendar = day;
       if (telaMenu == 4) {
-        displayMenu();
+        tft.fillRect(0, 65, 480, 255, blackScript);
+        calendar();
       }
     }
 
@@ -992,7 +995,6 @@ void lockStyle1() {
   tft.drawLine(304, 24, 304, 28, whiteScript);
   tft.fillRoundRect(295, 28, 11, 12, 2, whiteScript);
 }
-
 void lockStyle2() {
   tft.drawSmoothArc(300, 23, 3, 4, 89, 270, whiteScript, blackScript, squareEnd);
   tft.drawLine(296, 24, 296, 26, whiteScript);
@@ -2478,6 +2480,8 @@ void calendar() {
       tft.drawString("UNKNOWN", 310, 280, GFXFF);
   }
   calendarLoader();
+  seasons();
+  date();
 }
 
 int startDayOfWeek(int y, int m, int d){
@@ -2502,7 +2506,9 @@ void calendarLoader() {
     }
   }
 
-  startDay = startDayOfWeek(year, month, day);
+  if (day == 1) {
+    startDay = startDayOfWeek(year, month, day);
+  }
   tft.setTextDatum(MC_DATUM);
 
   switch (startDay) {
@@ -3944,40 +3950,47 @@ void date() {
 }
 
 void seasons() {
-  if (month >= 3) {
-    if (day >= 21) {
-      tft.pushImage(377, 154, 75, 92, autumn); 
-    }
-  }
-  if (month >= 3 && month <= 6) {
-    if (day <= 20) {
-      tft.pushImage(377, 154, 75, 92, autumn); 
-    }
-  }
-  if (month == 12) {
-    if (day >= 21) {
-      tft.pushImage(377, 154, 75, 92, summer);
-    }
-  }
-  if (month == 12 || month <= 3) {
-    if (day <= 20) {
-      tft.pushImage(377, 154, 75, 92, summer);
-    }
-  }
   if (month >= 9) {
     if (day >= 23) {
       tft.pushImage(377, 154, 75, 92, spring);
     }
+    return;
   }
   if (month >= 9 && month <= 12) {
     if (day <= 20) {
       tft.pushImage(377, 154, 75, 92, spring);
     }
+    return;
+  }
+  if (month == 12) {
+    if (day >= 21) {
+      tft.pushImage(377, 154, 75, 92, summer);
+    }
+    return;
+  }
+  if (month == 12 || month <= 3) {
+    if (day <= 20) {
+      tft.pushImage(377, 154, 75, 92, summer);
+    }
+    return;
+  }
+  if (month >= 3) {
+    if (day >= 21) {
+      tft.pushImage(377, 154, 75, 92, autumn); 
+    }
+    return;
+  }
+  if (month >= 3 && month <= 6) {
+    if (day <= 20) {
+      tft.pushImage(377, 154, 75, 92, autumn); 
+    }
+    return;
   }
   if (month >= 6) {
     if (day >= 21) {
       tft.pushImage(377, 154, 75, 92, winter);
     }
+    return;
   }
   if (month >= 6 && month <= 9) {
     if (day <= 22) {
@@ -4790,8 +4803,6 @@ void telaMenu4() {
   i = 1;
   
   calendar();
-  seasons();
-  date();
   home();
   wifiLevel();
   batteryLevel();
