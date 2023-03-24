@@ -61,7 +61,6 @@ byte compareUpdateWiFi;         // Armazena atualização de updateBattery
 
 // DADOS TIMERS
 unsigned long period = 0;
-uint32_t UtlTime;
 
 // VALORES AJUSTAVEIS PELO USUÁRIO
 byte logoTime = 3;
@@ -82,16 +81,17 @@ byte lockStyle = 1;
 // lockStyle = 0 Estilo 1 de Trava.
 // lockStyle = 1 Estilo 2 de Trava.
 
-int day;                      // Armazena dados de dia calendario
-int month;                    // Armazena dados de mes calendario
-int year;                     // Armazena dados de ano calendario
-int startDay = 0;         // Identifica o 1 dia da semana
-byte Week = 0;            // Armazena Semana do ano
-int dayWeek = 0;          // Armazena Dia do ano
-int monthLengh = 0;       // Armazena o tamanho do Mes
-int newDayStart = 0;      // Armazena o Dia do inicio da semana
-int newWeekStart = 0;     // Armazena a posicao da Semana 
-byte weekYear = 1; 
+int day;                        // Armazena dados de dia calendario
+int month;                      // Armazena dados de mes calendario
+int year;                       // Armazena dados de ano calendario
+int startDay = 0;               // Identifica o 1 dia da semana
+byte Week = 0;                  // Armazena Semana do ano
+int dayWeek = 0;                // Armazena Dia do ano
+int monthLengh = 0;             // Armazena o tamanho do Mes
+int newDayStart = 0;            // Armazena o Dia do inicio da semana
+int newWeekStart = 0;           // Armazena a posicao da Semana 
+byte weekYear = 1;              // Armazena semana do mes calendario
+int udpateCalendar;             // Armazena o dia para atualizacao do calendario
 
 byte fuso = 1;                  
 //fuso = 0 12 Horas  
@@ -171,7 +171,7 @@ byte wifiRead = 0;
 // wifiRead = 2 WiFi em baixa potência
 // wifiRead = 3 WiFi sem Sinal
 
-byte telaMenu = 4;
+byte telaMenu = 3;
 // telaMenu = 0 Menu Principal
 // telaMenu = 1 Tela  
 // telaMenu = 2 Tela  
@@ -189,7 +189,7 @@ byte telaMenu = 4;
 // telaMenu = 14 Tela 
 // telaMenu = 15 Tela 
 
-byte touchSet = 0;
+byte touchSet = 1; // ALTERAR PARA 0 white white white white
 
 bool squareEnd = 0;
 bool roundEnd = 1;
@@ -360,7 +360,6 @@ void setup() {
     fuso = 11;
   }
 
-  UtlTime = 0;
   hours = 23;
   mins = 59;
   day = 30;
@@ -406,8 +405,6 @@ void setup() {
   }
 }
 
-int udpateCalendar;
-
 void loop(void) {
 
   // ------------------------------- TOUCHSCREEN LEITURA -------------
@@ -442,24 +439,20 @@ void loop(void) {
 
 */
   // ------------------------------- HORARIO VIA MILLIS() OPERACIONAL -----------------------
+    static unsigned long UtlTime = 0;
+    int time = millis();
 
-    if(millis() - UtlTime < 0) {
-      UtlTime = millis();
-    } else {
-      secs = int((millis() - UtlTime) / 2);
+    if(time - UtlTime >= 10) {
+      UtlTime = time;
+      secs ++;
     }
     if(secs > 59) {
       secs = 0;
       mins ++;
-      UtlTime = millis();
-      if (UtlTime > 86399999) {
-        UtlTime = 0;
-      }
-
-      if(mins > 59) {
+      if(mins > 0) {
         hours ++;
         mins = 0;
-        if(hours > 23) {
+        if(hours > 0) {
           day ++;
           hours = 0;
           if( month ==1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) {
@@ -529,12 +522,12 @@ void loop(void) {
       default:
         if (touchSet == 0) {
           defaultSetup();
-        } else {
-
+        } else if (i == 0){
+          telaMenu3();
         }
     } 
 
-  // ---------------------- ATUALIZA RELOGIO SERIAL OPERACIONAL -----------
+  // ------------------------ ATUALIZA RELOGIO SERIAL OPERACIONAL -----------
     if (secs != compareSecs) {
       compareSecs = secs;
       Serial.print(day);
@@ -739,7 +732,7 @@ void loop(void) {
 
     }
 
-  // ---------------- ATUALIZACAO CALENDARIO
+  // ------------------------ ATUALIZACAO CALENDARIO OPERACIONAL -----------
     if (day != udpateCalendar) {
       udpateCalendar = day;
       if (telaMenu == 4) {
@@ -771,7 +764,7 @@ void displayMenu() {
 void selectFunctionDisplay() {
   // telaMenu = 0 Sistema aguardando comando
   // telaMenu = 1 Exibe display Geiger 
-
+  static unsigned long UtlTime = 0;
 
   if (UtlTime - period >= 5 * 1000) {
     period = UtlTime;
