@@ -49,9 +49,9 @@ byte compareDay = 0;            // Armazena Data Menu de Ajuste Calendario
 byte compareMonth = 0;          // Armazena Data Menu de Ajuste Calendario
 int compareYear = 0;            // Armazena Data Menu de Ajuste Calendario
 
-byte hourBias = 0;              // Byte para Long horas x fuso (12 ~ 24)
-byte minuteBias = 0;            // Byte para Long minutos x 60 
-byte secsBias = 0;              // Byte para Long segundos x 60
+byte hourBias;                  // Byte para Long horas x fuso (12 ~ 24)
+byte minuteBias;                // Byte para Long minutos x 60 
+byte secsBias;                  // Byte para Long segundos x 60
 int secs;                       // Armazena Horario Segundos sem conversão
 
 // NIVEL DE BATERIA E WIFI   
@@ -360,11 +360,13 @@ void setup() {
     fuso = 11;
   }
 
-  hours = 23;
-  mins = 59;
-  day = 30;
+  hours = 0;
+  mins = 0;
+  day = 27;
   month = 3;
   year = 2023;
+
+/*
 
   Serial.print("Insira Hora: ");
   while (hours == 0) {
@@ -403,7 +405,17 @@ void setup() {
       Serial.println(year);
     }
   }
+
+  */
 }
+
+
+
+unsigned long UtlTime;
+unsigned long time;
+
+int x;
+float seno;
 
 void loop(void) {
 
@@ -439,28 +451,27 @@ void loop(void) {
 
 */
   // ------------------------------- HORARIO VIA MILLIS() OPERACIONAL -----------------------
-    static unsigned long UtlTime = 0;
-    int time = millis();
+    time = millis();
 
-    if(time - UtlTime >= 10) {
+    if(time - UtlTime >= 1) {
       UtlTime = time;
       secs ++;
     }
     if(secs > 59) {
       secs = 0;
-      mins ++;
-      if(mins > 0) {
-        hours ++;
+      mins = mins + 1;
+      if(mins > 59) {
+        hours = hours + 1;
         mins = 0;
-        if(hours > 0) {
-          day ++;
+        if(hours > 23) {
+          day = day + 1;
           hours = 0;
           if( month ==1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) {
             if(day > 31) {
               day = 1;
-              month ++;
+              month = month + 1;
               if(month > 12) {
-                year ++;
+                year = year + 1;
                 month = 1;
               }
             }
@@ -469,24 +480,24 @@ void loop(void) {
             if(year%400 == 0) {
               if(day > 29) {
                 day = 1;
-                month ++;
+                month = month + 1;
               }
             }
             else if((year%4==0) && (year%100!=0)) {
               if(day > 29) {
                 day = 1;
-                month ++;
+                month = month + 1;
               }
             } else {
               if(day > 28) {
                 day = 1;
-                month ++;
+                month = month + 1;
               }
             }
           } else {
             if(day > 30) {
               day = 1;
-              month ++;
+              month = month + 1;
             }
           }
         }
@@ -552,7 +563,7 @@ void loop(void) {
       compareYear = 0;
       i = 2;
     }
-      
+  
     String stringHour = String(hours);
     String stringMin = String(mins);
     String stringDay = String(day);
@@ -564,7 +575,7 @@ void loop(void) {
     String stringDayMin = String(day - 1);
     String stringMonthMin = String(month - 1);
     String stringYearMin = String(year - 1);
-      
+  
     if (hours != compareHour) {
       compareHour = hours;
       tft.setTextDatum(ML_DATUM);
@@ -715,8 +726,12 @@ void loop(void) {
     }
 
     if (minsCalcGeiger != bankGeiger) {
+      x++;
+      seno = 100+(100*(sin(x*(6.28/1000))));
+      Serial.print("    Seno:");
+      Serial.println(seno);
       minsCalcGeiger = bankGeiger;
-      geigerCalc[bankGeiger] = random(50, 60);
+      geigerCalc[bankGeiger] = seno;
     }
     if (telaMenu == 3) {
       if (bankGeiger != writerGeiger) {
@@ -725,10 +740,7 @@ void loop(void) {
       }
       rgbColorGeiger();
       tft.drawPixel(bankGeiger, functGeiger, geigerColor);
-      tft.drawPixel(bankGeiger, functGeiger + 1, geigerColor);
-      tft.drawPixel(bankGeiger, functGeiger + 2, geigerColor);
-      tft.drawPixel(bankGeiger, functGeiger + 3, geigerColor);
-      tft.drawPixel(bankGeiger, functGeiger + 4, geigerColor);
+
 
     }
 
@@ -965,7 +977,7 @@ void batteryStyle3() {
   tft.fillRectHGradient(366, 21, 39, 16, pressureColor1, pressureColor2);
   tft.drawLine(365, 22, 365, 36, pressureColor1);
   tft.drawLine(405, 22, 405, 36, pressureColor2);
-}
+} 
 void batteryStyle4() {
   tft.drawRoundRect(362, 21, 50, 19, 3, blue_battery);
 }
