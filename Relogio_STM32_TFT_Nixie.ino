@@ -414,8 +414,9 @@ void setup() {
 unsigned long UtlTime;
 unsigned long time;
 
-int x;
-float seno;
+int dosimetervalue = 0;
+byte geigerCurve = 0;
+byte updateGeigerCurve = 0;
 
 void loop(void) {
 
@@ -539,20 +540,6 @@ void loop(void) {
     } 
 
   // ------------------------ ATUALIZA RELOGIO SERIAL OPERACIONAL -----------
-    if (secs != compareSecs) {
-      compareSecs = secs;
-      Serial.print(day);
-      Serial.print("/");
-      Serial.print(month);
-      Serial.print("/");
-      Serial.print(year); 
-      Serial.print("     ");
-      Serial.print(hours);
-      Serial.print(":");
-      Serial.print(mins);
-      Serial.print(":");
-      Serial.println(secs);  
-    }
 
   // ------------------------ ATUALIZACAO VISUAL DATA E HORA OPERACIONAL --------
     if (i == 1) {
@@ -672,12 +659,12 @@ void loop(void) {
       tft.drawString(stringYear, 143, 30, GFXFF);
     }
 
-  // ------------------------ ATUALIZA POSICAO GRAFICO GEIGER -------
+  // ------------------------ ATUALIZA POSICAO GRAFICO DOSIMETRO GEIGER OPERACIONAL -------
     if (minsCalcGeiger != mins) {
+      //33 - 433 X
+      //78 - 196 Y
       minsCalcGeiger = mins;
       switch(hours) {
-        //33 - 433 X
-        //78 - 196 Y
         case 0: bankGeiger = 32; break; 
         case 1: bankGeiger = 48; break; 
         case 2: bankGeiger = 64; break; 
@@ -725,23 +712,85 @@ void loop(void) {
       case 56: bankGeiger = bankGeiger + 17; break;
     }
 
+  // ------------------------ ATUALIZA GRAFICO DOSIMETRO GEIGER -------------------
     if (minsCalcGeiger != bankGeiger) {
-      x++;
-      seno = 100+(100*(sin(x*(6.28/1000))));
-      Serial.print("    Seno:");
-      Serial.println(seno);
       minsCalcGeiger = bankGeiger;
-      geigerCalc[bankGeiger] = seno;
+      switch (hours) {
+          case 1:
+            dosimetervalue = 150;
+            break;
+          case 2:
+            dosimetervalue = 200;
+            break;
+          case 3:
+            dosimetervalue = 100;
+            break;
+          case 4:
+            dosimetervalue = 50;
+            break;
+          case 5:
+            dosimetervalue = 100;
+            break;
+          case 6:
+            dosimetervalue = 150;
+            break;
+          case 7:
+            dosimetervalue = 200;
+            break;
+          case 8:
+            dosimetervalue = 50;
+            break;
+          case 9:
+            dosimetervalue = 150;
+            break;
+          case 10:
+            dosimetervalue = 100;
+            break;
+          default:
+            dosimetervalue = 50;
+      }
+      geigerCalc[bankGeiger] = dosimetervalue;
     }
     if (telaMenu == 3) {
       if (bankGeiger != writerGeiger) {
         writerGeiger = bankGeiger;
-        functGeiger = mapFloat(geigerCalc[writerGeiger], 0, 200, 196, 78); 
+        functGeiger = map(geigerCalc[writerGeiger], 0, 200, 196, 78); 
       }
       rgbColorGeiger();
       tft.drawPixel(bankGeiger, functGeiger, geigerColor);
 
+      if (hours != updateGeigerCurve) {
+        updateGeigerCurve = hours;
+        switch (bankGeiger) {
+          case 32: geigerCurve = 1; break; 
+          case 48: geigerCurve = 2; break; 
+          case 64: geigerCurve = 3; break; 
+          case 82: geigerCurve = 4; break;
+          case 98: geigerCurve = 5; break;
+          case 114: geigerCurve = 6; break;
+          case 132: geigerCurve = 7; break;
+          case 148: geigerCurve = 8; break;
+          case 164: geigerCurve = 9; break;
+          case 182: geigerCurve = 10; break;
+          case 198: geigerCurve = 11; break;
+          case 214: geigerCurve = 12; break;
+          case 232: geigerCurve = 13; break;
+          case 248: geigerCurve = 14; break;
+          case 264: geigerCurve = 15; break;
+          case 282: geigerCurve = 16; break;
+          case 298: geigerCurve = 17; break;
+          case 314: geigerCurve = 18; break;
+          case 332: geigerCurve = 19; break;
+          case 348: geigerCurve = 20; break;
+          case 364: geigerCurve = 21; break;
+          case 382: geigerCurve = 22; break;
+          case 398: geigerCurve = 23; break;
+          case 414: geigerCurve = 24; break;
+        }
+        Serial.println(geigerCurve);
 
+
+      }
     }
 
   // ------------------------ ATUALIZACAO CALENDARIO OPERACIONAL -----------
@@ -1429,7 +1478,670 @@ void dosimeterAlarm() {
   tft.pushImage(46, 205, 71, 71, icon1);
 }
 
-void dosimeterLoad() { 
+void dosimeterDay() { 
+  tft.drawPixel(33, 78, whiteScript);
+  tft.drawLine(33, 86, 33, 88, whiteScript);
+  tft.drawLine(33, 96, 33, 98, whiteScript);
+  tft.drawLine(33, 106, 33, 108, whiteScript);
+  tft.drawLine(33, 116, 33, 118, whiteScript);
+  tft.drawLine(33, 126, 33, 128, whiteScript);
+  tft.drawLine(33, 136, 33, 138, whiteScript);
+  tft.drawLine(33, 146, 33, 148, whiteScript);
+  tft.drawLine(33, 156, 33, 158, whiteScript);
+  tft.drawLine(33, 166, 33, 168, whiteScript);
+  tft.drawLine(33, 176, 33, 178, whiteScript);
+  tft.drawLine(33, 186, 33, 188, whiteScript);
+  tft.drawPixel(33, 196, whiteScript);
+
+  tft.drawPixel(66, 78, whiteScript);
+  tft.drawLine(66, 86, 66, 88, whiteScript);
+  tft.drawLine(66, 96, 66, 98, whiteScript);
+  tft.drawLine(66, 106, 66, 108, whiteScript);
+  tft.drawLine(66, 116, 66, 118, whiteScript);
+  tft.drawLine(66, 126, 66, 128, whiteScript);
+  tft.drawLine(66, 136, 66, 138, whiteScript);
+  tft.drawLine(66, 146, 66, 148, whiteScript);
+  tft.drawLine(66, 156, 66, 158, whiteScript);
+  tft.drawLine(66, 166, 66, 168, whiteScript);
+  tft.drawLine(66, 176, 66, 178, whiteScript);
+  tft.drawLine(66, 186, 66, 188, whiteScript);
+  tft.drawPixel(66, 196, whiteScript);
+
+  tft.drawPixel(99, 78, whiteScript);
+  tft.drawLine(99, 86, 99, 88, whiteScript);
+  tft.drawLine(99, 96, 99, 98, whiteScript);
+  tft.drawLine(99, 106, 99, 108, whiteScript);
+  tft.drawLine(99, 116, 99, 118, whiteScript);
+  tft.drawLine(99, 126, 99, 128, whiteScript);
+  tft.drawLine(99, 136, 99, 138, whiteScript);
+  tft.drawLine(99, 146, 99, 148, whiteScript);
+  tft.drawLine(99, 156, 99, 158, whiteScript);
+  tft.drawLine(99, 166, 99, 168, whiteScript);
+  tft.drawLine(99, 176, 99, 178, whiteScript);
+  tft.drawLine(99, 186, 99, 188, whiteScript);
+  tft.drawPixel(99, 196, whiteScript);
+
+  tft.drawPixel(133, 78, whiteScript);
+  tft.drawLine(133, 86, 133, 88, whiteScript);
+  tft.drawLine(133, 96, 133, 98, whiteScript);
+  tft.drawLine(133, 106, 133, 108, whiteScript);
+  tft.drawLine(133, 116, 133, 118, whiteScript);
+  tft.drawLine(133, 126, 133, 128, whiteScript);
+  tft.drawLine(133, 136, 133, 138, whiteScript);
+  tft.drawLine(133, 146, 133, 148, whiteScript);
+  tft.drawLine(133, 156, 133, 158, whiteScript);
+  tft.drawLine(133, 166, 133, 168, whiteScript);
+  tft.drawLine(133, 176, 133, 178, whiteScript);
+  tft.drawLine(133, 186, 133, 188, whiteScript);
+  tft.drawPixel(133, 196, whiteScript);
+
+  tft.drawPixel(166, 78, whiteScript);
+  tft.drawLine(166, 86, 166, 88, whiteScript);
+  tft.drawLine(166, 96, 166, 98, whiteScript);
+  tft.drawLine(166, 106, 166, 108, whiteScript);
+  tft.drawLine(166, 116, 166, 118, whiteScript);
+  tft.drawLine(166, 126, 166, 128, whiteScript);
+  tft.drawLine(166, 136, 166, 138, whiteScript);
+  tft.drawLine(166, 146, 166, 148, whiteScript);
+  tft.drawLine(166, 156, 166, 158, whiteScript);
+  tft.drawLine(166, 166, 166, 168, whiteScript);
+  tft.drawLine(166, 176, 166, 178, whiteScript);
+  tft.drawLine(166, 186, 166, 188, whiteScript);
+  tft.drawPixel(166, 196, whiteScript);
+
+  tft.drawPixel(199, 78, whiteScript);
+  tft.drawLine(199, 86, 199, 88, whiteScript);
+  tft.drawLine(199, 96, 199, 98, whiteScript);
+  tft.drawLine(199, 106, 199, 108, whiteScript);
+  tft.drawLine(199, 116, 199, 118, whiteScript);
+  tft.drawLine(199, 126, 199, 128, whiteScript);
+  tft.drawLine(199, 136, 199, 138, whiteScript);
+  tft.drawLine(199, 146, 199, 148, whiteScript);
+  tft.drawLine(199, 156, 199, 158, whiteScript);
+  tft.drawLine(199, 166, 199, 168, whiteScript);
+  tft.drawLine(199, 176, 199, 178, whiteScript);
+  tft.drawLine(199, 186, 199, 188, whiteScript);
+  tft.drawPixel(199, 196, whiteScript);
+
+  tft.drawPixel(233, 78, whiteScript);
+  tft.drawLine(233, 86, 233, 88, whiteScript);
+  tft.drawLine(233, 96, 233, 98, whiteScript);
+  tft.drawLine(233, 106, 233, 108, whiteScript);
+  tft.drawLine(233, 116, 233, 118, whiteScript);
+  tft.drawLine(233, 126, 233, 128, whiteScript);
+  tft.drawLine(233, 136, 233, 138, whiteScript);
+  tft.drawLine(233, 146, 233, 148, whiteScript);
+  tft.drawLine(233, 156, 233, 158, whiteScript);
+  tft.drawLine(233, 166, 233, 168, whiteScript);
+  tft.drawLine(233, 176, 233, 178, whiteScript);
+  tft.drawLine(233, 186, 233, 188, whiteScript);
+  tft.drawPixel(233, 196, whiteScript);
+
+  tft.drawPixel(266, 78, whiteScript);
+  tft.drawLine(266, 86, 266, 88, whiteScript);
+  tft.drawLine(266, 96, 266, 98, whiteScript);
+  tft.drawLine(266, 106, 266, 108, whiteScript);
+  tft.drawLine(266, 116, 266, 118, whiteScript);
+  tft.drawLine(266, 126, 266, 128, whiteScript);
+  tft.drawLine(266, 136, 266, 138, whiteScript);
+  tft.drawLine(266, 146, 266, 148, whiteScript);
+  tft.drawLine(266, 156, 266, 158, whiteScript);
+  tft.drawLine(266, 166, 266, 168, whiteScript);
+  tft.drawLine(266, 176, 266, 178, whiteScript);
+  tft.drawLine(266, 186, 266, 188, whiteScript);
+  tft.drawPixel(266, 196, whiteScript);
+
+  tft.drawPixel(299, 78, whiteScript);
+  tft.drawLine(299, 86, 299, 88, whiteScript);
+  tft.drawLine(299, 96, 299, 98, whiteScript);
+  tft.drawLine(299, 106, 299, 108, whiteScript);
+  tft.drawLine(299, 116, 299, 118, whiteScript);
+  tft.drawLine(299, 126, 299, 128, whiteScript);
+  tft.drawLine(299, 136, 299, 138, whiteScript);
+  tft.drawLine(299, 146, 299, 148, whiteScript);
+  tft.drawLine(299, 156, 299, 158, whiteScript);
+  tft.drawLine(299, 166, 299, 168, whiteScript);
+  tft.drawLine(299, 176, 299, 178, whiteScript);
+  tft.drawLine(299, 186, 299, 188, whiteScript);
+  tft.drawPixel(299, 196, whiteScript);
+
+  tft.drawPixel(333, 78, whiteScript);
+  tft.drawLine(333, 86, 333, 88, whiteScript);
+  tft.drawLine(333, 96, 333, 98, whiteScript);
+  tft.drawLine(333, 106, 333, 108, whiteScript);
+  tft.drawLine(333, 116, 333, 118, whiteScript);
+  tft.drawLine(333, 126, 333, 128, whiteScript);
+  tft.drawLine(333, 136, 333, 138, whiteScript);
+  tft.drawLine(333, 146, 333, 148, whiteScript);
+  tft.drawLine(333, 156, 333, 158, whiteScript);
+  tft.drawLine(333, 166, 333, 168, whiteScript);
+  tft.drawLine(333, 176, 333, 178, whiteScript);
+  tft.drawLine(333, 186, 333, 188, whiteScript);
+  tft.drawPixel(333, 196, whiteScript);
+
+  tft.drawPixel(367, 78, whiteScript);
+  tft.drawLine(367, 86, 367, 88, whiteScript);
+  tft.drawLine(367, 96, 367, 98, whiteScript);
+  tft.drawLine(367, 106, 367, 108, whiteScript);
+  tft.drawLine(367, 116, 367, 118, whiteScript);
+  tft.drawLine(367, 126, 367, 128, whiteScript);
+  tft.drawLine(367, 136, 367, 138, whiteScript);
+  tft.drawLine(367, 146, 367, 148, whiteScript);
+  tft.drawLine(367, 156, 367, 158, whiteScript);
+  tft.drawLine(367, 166, 367, 168, whiteScript);
+  tft.drawLine(367, 176, 367, 178, whiteScript);
+  tft.drawLine(367, 186, 367, 188, whiteScript);
+  tft.drawPixel(367, 196, whiteScript);
+
+  tft.drawPixel(399, 78, whiteScript);
+  tft.drawLine(399, 86, 399, 88, whiteScript);
+  tft.drawLine(399, 96, 399, 98, whiteScript);
+  tft.drawLine(399, 106, 399, 108, whiteScript);
+  tft.drawLine(399, 116, 399, 118, whiteScript);
+  tft.drawLine(399, 126, 399, 128, whiteScript);
+  tft.drawLine(399, 136, 399, 138, whiteScript);
+  tft.drawLine(399, 146, 399, 148, whiteScript);
+  tft.drawLine(399, 156, 399, 158, whiteScript);
+  tft.drawLine(399, 166, 399, 168, whiteScript);
+  tft.drawLine(399, 176, 399, 178, whiteScript);
+  tft.drawLine(399, 186, 399, 188, whiteScript);
+  tft.drawPixel(399, 196, whiteScript);
+
+  tft.drawPixel(433, 78, whiteScript);
+  tft.drawLine(433, 86, 433, 88, whiteScript);
+  tft.drawLine(433, 96, 433, 98, whiteScript);
+  tft.drawLine(433, 106, 433, 108, whiteScript);
+  tft.drawLine(433, 116, 433, 118, whiteScript);
+  tft.drawLine(433, 126, 433, 128, whiteScript);
+  tft.drawLine(433, 136, 433, 138, whiteScript);
+  tft.drawLine(433, 146, 433, 148, whiteScript);
+  tft.drawLine(433, 156, 433, 158, whiteScript);
+  tft.drawLine(433, 166, 433, 168, whiteScript);
+  tft.drawLine(433, 176, 433, 178, whiteScript);
+  tft.drawLine(433, 186, 433, 188, whiteScript);
+  tft.drawPixel(433, 196, whiteScript);
+
+  tft.drawLine(32, 208, 32, 213, highValueColor);
+  tft.drawLine(33, 208, 33, 213, highValueColor);
+
+  tft.drawLine(132, 208, 132, 213, highValueColor);
+  tft.drawLine(133, 208, 133, 213, highValueColor);
+
+  tft.drawLine(232, 208, 232, 213, highValueColor);
+  tft.drawLine(233, 208, 233, 213, highValueColor);
+
+  tft.drawLine(332, 208, 332, 213, highValueColor);
+  tft.drawLine(333, 208, 333, 213, highValueColor);
+
+  tft.drawLine(432, 208, 432, 213, highValueColor);
+  tft.drawLine(433, 208, 433, 213, highValueColor);
+
+  tft.drawLine(80, 208, 80, 212, middleTimeGraph);
+  tft.drawLine(181, 208, 181, 212, middleTimeGraph);
+  tft.drawLine(282, 208, 282, 212, middleTimeGraph);
+  tft.drawLine(382, 208, 382, 212, middleTimeGraph);
+
+  tft.setTextDatum(ML_DATUM);
+  tft.setTextColor(whiteScript);
+  tft.setFreeFont(latoRegular24);
+
+  tft.drawString("0", 26, 228, GFXFF);
+  tft.drawString("6", 125, 228, GFXFF);
+  tft.drawString("12", 220, 228, GFXFF);
+  tft.drawString("18", 318, 228, GFXFF);
+  tft.drawString("24", 418, 228, GFXFF);
+
+  tft.setFreeFont(latoRegular14);
+
+  tft.drawString("3", 76, 225, GFXFF);
+  tft.drawString("9", 178, 225, GFXFF);
+  tft.drawString("15", 274, 225, GFXFF);
+  tft.drawString("21", 374, 225, GFXFF);
+} 
+
+void dosimeterWeek() { 
+  tft.drawPixel(33, 78, whiteScript);
+  tft.drawLine(33, 86, 33, 88, whiteScript);
+  tft.drawLine(33, 96, 33, 98, whiteScript);
+  tft.drawLine(33, 106, 33, 108, whiteScript);
+  tft.drawLine(33, 116, 33, 118, whiteScript);
+  tft.drawLine(33, 126, 33, 128, whiteScript);
+  tft.drawLine(33, 136, 33, 138, whiteScript);
+  tft.drawLine(33, 146, 33, 148, whiteScript);
+  tft.drawLine(33, 156, 33, 158, whiteScript);
+  tft.drawLine(33, 166, 33, 168, whiteScript);
+  tft.drawLine(33, 176, 33, 178, whiteScript);
+  tft.drawLine(33, 186, 33, 188, whiteScript);
+  tft.drawPixel(33, 196, whiteScript);
+
+  tft.drawPixel(66, 78, whiteScript);
+  tft.drawLine(66, 86, 66, 88, whiteScript);
+  tft.drawLine(66, 96, 66, 98, whiteScript);
+  tft.drawLine(66, 106, 66, 108, whiteScript);
+  tft.drawLine(66, 116, 66, 118, whiteScript);
+  tft.drawLine(66, 126, 66, 128, whiteScript);
+  tft.drawLine(66, 136, 66, 138, whiteScript);
+  tft.drawLine(66, 146, 66, 148, whiteScript);
+  tft.drawLine(66, 156, 66, 158, whiteScript);
+  tft.drawLine(66, 166, 66, 168, whiteScript);
+  tft.drawLine(66, 176, 66, 178, whiteScript);
+  tft.drawLine(66, 186, 66, 188, whiteScript);
+  tft.drawPixel(66, 196, whiteScript);
+
+  tft.drawPixel(99, 78, whiteScript);
+  tft.drawLine(99, 86, 99, 88, whiteScript);
+  tft.drawLine(99, 96, 99, 98, whiteScript);
+  tft.drawLine(99, 106, 99, 108, whiteScript);
+  tft.drawLine(99, 116, 99, 118, whiteScript);
+  tft.drawLine(99, 126, 99, 128, whiteScript);
+  tft.drawLine(99, 136, 99, 138, whiteScript);
+  tft.drawLine(99, 146, 99, 148, whiteScript);
+  tft.drawLine(99, 156, 99, 158, whiteScript);
+  tft.drawLine(99, 166, 99, 168, whiteScript);
+  tft.drawLine(99, 176, 99, 178, whiteScript);
+  tft.drawLine(99, 186, 99, 188, whiteScript);
+  tft.drawPixel(99, 196, whiteScript);
+
+  tft.drawPixel(133, 78, whiteScript);
+  tft.drawLine(133, 86, 133, 88, whiteScript);
+  tft.drawLine(133, 96, 133, 98, whiteScript);
+  tft.drawLine(133, 106, 133, 108, whiteScript);
+  tft.drawLine(133, 116, 133, 118, whiteScript);
+  tft.drawLine(133, 126, 133, 128, whiteScript);
+  tft.drawLine(133, 136, 133, 138, whiteScript);
+  tft.drawLine(133, 146, 133, 148, whiteScript);
+  tft.drawLine(133, 156, 133, 158, whiteScript);
+  tft.drawLine(133, 166, 133, 168, whiteScript);
+  tft.drawLine(133, 176, 133, 178, whiteScript);
+  tft.drawLine(133, 186, 133, 188, whiteScript);
+  tft.drawPixel(133, 196, whiteScript);
+
+  tft.drawPixel(166, 78, whiteScript);
+  tft.drawLine(166, 86, 166, 88, whiteScript);
+  tft.drawLine(166, 96, 166, 98, whiteScript);
+  tft.drawLine(166, 106, 166, 108, whiteScript);
+  tft.drawLine(166, 116, 166, 118, whiteScript);
+  tft.drawLine(166, 126, 166, 128, whiteScript);
+  tft.drawLine(166, 136, 166, 138, whiteScript);
+  tft.drawLine(166, 146, 166, 148, whiteScript);
+  tft.drawLine(166, 156, 166, 158, whiteScript);
+  tft.drawLine(166, 166, 166, 168, whiteScript);
+  tft.drawLine(166, 176, 166, 178, whiteScript);
+  tft.drawLine(166, 186, 166, 188, whiteScript);
+  tft.drawPixel(166, 196, whiteScript);
+
+  tft.drawPixel(199, 78, whiteScript);
+  tft.drawLine(199, 86, 199, 88, whiteScript);
+  tft.drawLine(199, 96, 199, 98, whiteScript);
+  tft.drawLine(199, 106, 199, 108, whiteScript);
+  tft.drawLine(199, 116, 199, 118, whiteScript);
+  tft.drawLine(199, 126, 199, 128, whiteScript);
+  tft.drawLine(199, 136, 199, 138, whiteScript);
+  tft.drawLine(199, 146, 199, 148, whiteScript);
+  tft.drawLine(199, 156, 199, 158, whiteScript);
+  tft.drawLine(199, 166, 199, 168, whiteScript);
+  tft.drawLine(199, 176, 199, 178, whiteScript);
+  tft.drawLine(199, 186, 199, 188, whiteScript);
+  tft.drawPixel(199, 196, whiteScript);
+
+  tft.drawPixel(233, 78, whiteScript);
+  tft.drawLine(233, 86, 233, 88, whiteScript);
+  tft.drawLine(233, 96, 233, 98, whiteScript);
+  tft.drawLine(233, 106, 233, 108, whiteScript);
+  tft.drawLine(233, 116, 233, 118, whiteScript);
+  tft.drawLine(233, 126, 233, 128, whiteScript);
+  tft.drawLine(233, 136, 233, 138, whiteScript);
+  tft.drawLine(233, 146, 233, 148, whiteScript);
+  tft.drawLine(233, 156, 233, 158, whiteScript);
+  tft.drawLine(233, 166, 233, 168, whiteScript);
+  tft.drawLine(233, 176, 233, 178, whiteScript);
+  tft.drawLine(233, 186, 233, 188, whiteScript);
+  tft.drawPixel(233, 196, whiteScript);
+
+  tft.drawPixel(266, 78, whiteScript);
+  tft.drawLine(266, 86, 266, 88, whiteScript);
+  tft.drawLine(266, 96, 266, 98, whiteScript);
+  tft.drawLine(266, 106, 266, 108, whiteScript);
+  tft.drawLine(266, 116, 266, 118, whiteScript);
+  tft.drawLine(266, 126, 266, 128, whiteScript);
+  tft.drawLine(266, 136, 266, 138, whiteScript);
+  tft.drawLine(266, 146, 266, 148, whiteScript);
+  tft.drawLine(266, 156, 266, 158, whiteScript);
+  tft.drawLine(266, 166, 266, 168, whiteScript);
+  tft.drawLine(266, 176, 266, 178, whiteScript);
+  tft.drawLine(266, 186, 266, 188, whiteScript);
+  tft.drawPixel(266, 196, whiteScript);
+
+  tft.drawPixel(299, 78, whiteScript);
+  tft.drawLine(299, 86, 299, 88, whiteScript);
+  tft.drawLine(299, 96, 299, 98, whiteScript);
+  tft.drawLine(299, 106, 299, 108, whiteScript);
+  tft.drawLine(299, 116, 299, 118, whiteScript);
+  tft.drawLine(299, 126, 299, 128, whiteScript);
+  tft.drawLine(299, 136, 299, 138, whiteScript);
+  tft.drawLine(299, 146, 299, 148, whiteScript);
+  tft.drawLine(299, 156, 299, 158, whiteScript);
+  tft.drawLine(299, 166, 299, 168, whiteScript);
+  tft.drawLine(299, 176, 299, 178, whiteScript);
+  tft.drawLine(299, 186, 299, 188, whiteScript);
+  tft.drawPixel(299, 196, whiteScript);
+
+  tft.drawPixel(333, 78, whiteScript);
+  tft.drawLine(333, 86, 333, 88, whiteScript);
+  tft.drawLine(333, 96, 333, 98, whiteScript);
+  tft.drawLine(333, 106, 333, 108, whiteScript);
+  tft.drawLine(333, 116, 333, 118, whiteScript);
+  tft.drawLine(333, 126, 333, 128, whiteScript);
+  tft.drawLine(333, 136, 333, 138, whiteScript);
+  tft.drawLine(333, 146, 333, 148, whiteScript);
+  tft.drawLine(333, 156, 333, 158, whiteScript);
+  tft.drawLine(333, 166, 333, 168, whiteScript);
+  tft.drawLine(333, 176, 333, 178, whiteScript);
+  tft.drawLine(333, 186, 333, 188, whiteScript);
+  tft.drawPixel(333, 196, whiteScript);
+
+  tft.drawPixel(367, 78, whiteScript);
+  tft.drawLine(367, 86, 367, 88, whiteScript);
+  tft.drawLine(367, 96, 367, 98, whiteScript);
+  tft.drawLine(367, 106, 367, 108, whiteScript);
+  tft.drawLine(367, 116, 367, 118, whiteScript);
+  tft.drawLine(367, 126, 367, 128, whiteScript);
+  tft.drawLine(367, 136, 367, 138, whiteScript);
+  tft.drawLine(367, 146, 367, 148, whiteScript);
+  tft.drawLine(367, 156, 367, 158, whiteScript);
+  tft.drawLine(367, 166, 367, 168, whiteScript);
+  tft.drawLine(367, 176, 367, 178, whiteScript);
+  tft.drawLine(367, 186, 367, 188, whiteScript);
+  tft.drawPixel(367, 196, whiteScript);
+
+  tft.drawPixel(399, 78, whiteScript);
+  tft.drawLine(399, 86, 399, 88, whiteScript);
+  tft.drawLine(399, 96, 399, 98, whiteScript);
+  tft.drawLine(399, 106, 399, 108, whiteScript);
+  tft.drawLine(399, 116, 399, 118, whiteScript);
+  tft.drawLine(399, 126, 399, 128, whiteScript);
+  tft.drawLine(399, 136, 399, 138, whiteScript);
+  tft.drawLine(399, 146, 399, 148, whiteScript);
+  tft.drawLine(399, 156, 399, 158, whiteScript);
+  tft.drawLine(399, 166, 399, 168, whiteScript);
+  tft.drawLine(399, 176, 399, 178, whiteScript);
+  tft.drawLine(399, 186, 399, 188, whiteScript);
+  tft.drawPixel(399, 196, whiteScript);
+
+  tft.drawPixel(433, 78, whiteScript);
+  tft.drawLine(433, 86, 433, 88, whiteScript);
+  tft.drawLine(433, 96, 433, 98, whiteScript);
+  tft.drawLine(433, 106, 433, 108, whiteScript);
+  tft.drawLine(433, 116, 433, 118, whiteScript);
+  tft.drawLine(433, 126, 433, 128, whiteScript);
+  tft.drawLine(433, 136, 433, 138, whiteScript);
+  tft.drawLine(433, 146, 433, 148, whiteScript);
+  tft.drawLine(433, 156, 433, 158, whiteScript);
+  tft.drawLine(433, 166, 433, 168, whiteScript);
+  tft.drawLine(433, 176, 433, 178, whiteScript);
+  tft.drawLine(433, 186, 433, 188, whiteScript);
+  tft.drawPixel(433, 196, whiteScript);
+
+  tft.drawLine(32, 208, 32, 213, highValueColor);
+  tft.drawLine(33, 208, 33, 213, highValueColor);
+
+  tft.drawLine(132, 208, 132, 213, highValueColor);
+  tft.drawLine(133, 208, 133, 213, highValueColor);
+
+  tft.drawLine(232, 208, 232, 213, highValueColor);
+  tft.drawLine(233, 208, 233, 213, highValueColor);
+
+  tft.drawLine(332, 208, 332, 213, highValueColor);
+  tft.drawLine(333, 208, 333, 213, highValueColor);
+
+  tft.drawLine(432, 208, 432, 213, highValueColor);
+  tft.drawLine(433, 208, 433, 213, highValueColor);
+
+  tft.drawLine(80, 208, 80, 212, middleTimeGraph);
+  tft.drawLine(181, 208, 181, 212, middleTimeGraph);
+  tft.drawLine(282, 208, 282, 212, middleTimeGraph);
+  tft.drawLine(382, 208, 382, 212, middleTimeGraph);
+
+  tft.setTextDatum(ML_DATUM);
+  tft.setTextColor(whiteScript);
+  tft.setFreeFont(latoRegular24);
+
+  tft.drawString("0", 26, 228, GFXFF);
+  tft.drawString("6", 125, 228, GFXFF);
+  tft.drawString("12", 220, 228, GFXFF);
+  tft.drawString("18", 318, 228, GFXFF);
+  tft.drawString("24", 418, 228, GFXFF);
+
+  tft.setFreeFont(latoRegular14);
+
+  tft.drawString("3", 76, 225, GFXFF);
+  tft.drawString("9", 178, 225, GFXFF);
+  tft.drawString("15", 274, 225, GFXFF);
+  tft.drawString("21", 374, 225, GFXFF);
+} 
+
+void dosimeterMonth() { 
+  tft.drawPixel(33, 78, whiteScript);
+  tft.drawLine(33, 86, 33, 88, whiteScript);
+  tft.drawLine(33, 96, 33, 98, whiteScript);
+  tft.drawLine(33, 106, 33, 108, whiteScript);
+  tft.drawLine(33, 116, 33, 118, whiteScript);
+  tft.drawLine(33, 126, 33, 128, whiteScript);
+  tft.drawLine(33, 136, 33, 138, whiteScript);
+  tft.drawLine(33, 146, 33, 148, whiteScript);
+  tft.drawLine(33, 156, 33, 158, whiteScript);
+  tft.drawLine(33, 166, 33, 168, whiteScript);
+  tft.drawLine(33, 176, 33, 178, whiteScript);
+  tft.drawLine(33, 186, 33, 188, whiteScript);
+  tft.drawPixel(33, 196, whiteScript);
+
+  tft.drawPixel(66, 78, whiteScript);
+  tft.drawLine(66, 86, 66, 88, whiteScript);
+  tft.drawLine(66, 96, 66, 98, whiteScript);
+  tft.drawLine(66, 106, 66, 108, whiteScript);
+  tft.drawLine(66, 116, 66, 118, whiteScript);
+  tft.drawLine(66, 126, 66, 128, whiteScript);
+  tft.drawLine(66, 136, 66, 138, whiteScript);
+  tft.drawLine(66, 146, 66, 148, whiteScript);
+  tft.drawLine(66, 156, 66, 158, whiteScript);
+  tft.drawLine(66, 166, 66, 168, whiteScript);
+  tft.drawLine(66, 176, 66, 178, whiteScript);
+  tft.drawLine(66, 186, 66, 188, whiteScript);
+  tft.drawPixel(66, 196, whiteScript);
+
+  tft.drawPixel(99, 78, whiteScript);
+  tft.drawLine(99, 86, 99, 88, whiteScript);
+  tft.drawLine(99, 96, 99, 98, whiteScript);
+  tft.drawLine(99, 106, 99, 108, whiteScript);
+  tft.drawLine(99, 116, 99, 118, whiteScript);
+  tft.drawLine(99, 126, 99, 128, whiteScript);
+  tft.drawLine(99, 136, 99, 138, whiteScript);
+  tft.drawLine(99, 146, 99, 148, whiteScript);
+  tft.drawLine(99, 156, 99, 158, whiteScript);
+  tft.drawLine(99, 166, 99, 168, whiteScript);
+  tft.drawLine(99, 176, 99, 178, whiteScript);
+  tft.drawLine(99, 186, 99, 188, whiteScript);
+  tft.drawPixel(99, 196, whiteScript);
+
+  tft.drawPixel(133, 78, whiteScript);
+  tft.drawLine(133, 86, 133, 88, whiteScript);
+  tft.drawLine(133, 96, 133, 98, whiteScript);
+  tft.drawLine(133, 106, 133, 108, whiteScript);
+  tft.drawLine(133, 116, 133, 118, whiteScript);
+  tft.drawLine(133, 126, 133, 128, whiteScript);
+  tft.drawLine(133, 136, 133, 138, whiteScript);
+  tft.drawLine(133, 146, 133, 148, whiteScript);
+  tft.drawLine(133, 156, 133, 158, whiteScript);
+  tft.drawLine(133, 166, 133, 168, whiteScript);
+  tft.drawLine(133, 176, 133, 178, whiteScript);
+  tft.drawLine(133, 186, 133, 188, whiteScript);
+  tft.drawPixel(133, 196, whiteScript);
+
+  tft.drawPixel(166, 78, whiteScript);
+  tft.drawLine(166, 86, 166, 88, whiteScript);
+  tft.drawLine(166, 96, 166, 98, whiteScript);
+  tft.drawLine(166, 106, 166, 108, whiteScript);
+  tft.drawLine(166, 116, 166, 118, whiteScript);
+  tft.drawLine(166, 126, 166, 128, whiteScript);
+  tft.drawLine(166, 136, 166, 138, whiteScript);
+  tft.drawLine(166, 146, 166, 148, whiteScript);
+  tft.drawLine(166, 156, 166, 158, whiteScript);
+  tft.drawLine(166, 166, 166, 168, whiteScript);
+  tft.drawLine(166, 176, 166, 178, whiteScript);
+  tft.drawLine(166, 186, 166, 188, whiteScript);
+  tft.drawPixel(166, 196, whiteScript);
+
+  tft.drawPixel(199, 78, whiteScript);
+  tft.drawLine(199, 86, 199, 88, whiteScript);
+  tft.drawLine(199, 96, 199, 98, whiteScript);
+  tft.drawLine(199, 106, 199, 108, whiteScript);
+  tft.drawLine(199, 116, 199, 118, whiteScript);
+  tft.drawLine(199, 126, 199, 128, whiteScript);
+  tft.drawLine(199, 136, 199, 138, whiteScript);
+  tft.drawLine(199, 146, 199, 148, whiteScript);
+  tft.drawLine(199, 156, 199, 158, whiteScript);
+  tft.drawLine(199, 166, 199, 168, whiteScript);
+  tft.drawLine(199, 176, 199, 178, whiteScript);
+  tft.drawLine(199, 186, 199, 188, whiteScript);
+  tft.drawPixel(199, 196, whiteScript);
+
+  tft.drawPixel(233, 78, whiteScript);
+  tft.drawLine(233, 86, 233, 88, whiteScript);
+  tft.drawLine(233, 96, 233, 98, whiteScript);
+  tft.drawLine(233, 106, 233, 108, whiteScript);
+  tft.drawLine(233, 116, 233, 118, whiteScript);
+  tft.drawLine(233, 126, 233, 128, whiteScript);
+  tft.drawLine(233, 136, 233, 138, whiteScript);
+  tft.drawLine(233, 146, 233, 148, whiteScript);
+  tft.drawLine(233, 156, 233, 158, whiteScript);
+  tft.drawLine(233, 166, 233, 168, whiteScript);
+  tft.drawLine(233, 176, 233, 178, whiteScript);
+  tft.drawLine(233, 186, 233, 188, whiteScript);
+  tft.drawPixel(233, 196, whiteScript);
+
+  tft.drawPixel(266, 78, whiteScript);
+  tft.drawLine(266, 86, 266, 88, whiteScript);
+  tft.drawLine(266, 96, 266, 98, whiteScript);
+  tft.drawLine(266, 106, 266, 108, whiteScript);
+  tft.drawLine(266, 116, 266, 118, whiteScript);
+  tft.drawLine(266, 126, 266, 128, whiteScript);
+  tft.drawLine(266, 136, 266, 138, whiteScript);
+  tft.drawLine(266, 146, 266, 148, whiteScript);
+  tft.drawLine(266, 156, 266, 158, whiteScript);
+  tft.drawLine(266, 166, 266, 168, whiteScript);
+  tft.drawLine(266, 176, 266, 178, whiteScript);
+  tft.drawLine(266, 186, 266, 188, whiteScript);
+  tft.drawPixel(266, 196, whiteScript);
+
+  tft.drawPixel(299, 78, whiteScript);
+  tft.drawLine(299, 86, 299, 88, whiteScript);
+  tft.drawLine(299, 96, 299, 98, whiteScript);
+  tft.drawLine(299, 106, 299, 108, whiteScript);
+  tft.drawLine(299, 116, 299, 118, whiteScript);
+  tft.drawLine(299, 126, 299, 128, whiteScript);
+  tft.drawLine(299, 136, 299, 138, whiteScript);
+  tft.drawLine(299, 146, 299, 148, whiteScript);
+  tft.drawLine(299, 156, 299, 158, whiteScript);
+  tft.drawLine(299, 166, 299, 168, whiteScript);
+  tft.drawLine(299, 176, 299, 178, whiteScript);
+  tft.drawLine(299, 186, 299, 188, whiteScript);
+  tft.drawPixel(299, 196, whiteScript);
+
+  tft.drawPixel(333, 78, whiteScript);
+  tft.drawLine(333, 86, 333, 88, whiteScript);
+  tft.drawLine(333, 96, 333, 98, whiteScript);
+  tft.drawLine(333, 106, 333, 108, whiteScript);
+  tft.drawLine(333, 116, 333, 118, whiteScript);
+  tft.drawLine(333, 126, 333, 128, whiteScript);
+  tft.drawLine(333, 136, 333, 138, whiteScript);
+  tft.drawLine(333, 146, 333, 148, whiteScript);
+  tft.drawLine(333, 156, 333, 158, whiteScript);
+  tft.drawLine(333, 166, 333, 168, whiteScript);
+  tft.drawLine(333, 176, 333, 178, whiteScript);
+  tft.drawLine(333, 186, 333, 188, whiteScript);
+  tft.drawPixel(333, 196, whiteScript);
+
+  tft.drawPixel(367, 78, whiteScript);
+  tft.drawLine(367, 86, 367, 88, whiteScript);
+  tft.drawLine(367, 96, 367, 98, whiteScript);
+  tft.drawLine(367, 106, 367, 108, whiteScript);
+  tft.drawLine(367, 116, 367, 118, whiteScript);
+  tft.drawLine(367, 126, 367, 128, whiteScript);
+  tft.drawLine(367, 136, 367, 138, whiteScript);
+  tft.drawLine(367, 146, 367, 148, whiteScript);
+  tft.drawLine(367, 156, 367, 158, whiteScript);
+  tft.drawLine(367, 166, 367, 168, whiteScript);
+  tft.drawLine(367, 176, 367, 178, whiteScript);
+  tft.drawLine(367, 186, 367, 188, whiteScript);
+  tft.drawPixel(367, 196, whiteScript);
+
+  tft.drawPixel(399, 78, whiteScript);
+  tft.drawLine(399, 86, 399, 88, whiteScript);
+  tft.drawLine(399, 96, 399, 98, whiteScript);
+  tft.drawLine(399, 106, 399, 108, whiteScript);
+  tft.drawLine(399, 116, 399, 118, whiteScript);
+  tft.drawLine(399, 126, 399, 128, whiteScript);
+  tft.drawLine(399, 136, 399, 138, whiteScript);
+  tft.drawLine(399, 146, 399, 148, whiteScript);
+  tft.drawLine(399, 156, 399, 158, whiteScript);
+  tft.drawLine(399, 166, 399, 168, whiteScript);
+  tft.drawLine(399, 176, 399, 178, whiteScript);
+  tft.drawLine(399, 186, 399, 188, whiteScript);
+  tft.drawPixel(399, 196, whiteScript);
+
+  tft.drawPixel(433, 78, whiteScript);
+  tft.drawLine(433, 86, 433, 88, whiteScript);
+  tft.drawLine(433, 96, 433, 98, whiteScript);
+  tft.drawLine(433, 106, 433, 108, whiteScript);
+  tft.drawLine(433, 116, 433, 118, whiteScript);
+  tft.drawLine(433, 126, 433, 128, whiteScript);
+  tft.drawLine(433, 136, 433, 138, whiteScript);
+  tft.drawLine(433, 146, 433, 148, whiteScript);
+  tft.drawLine(433, 156, 433, 158, whiteScript);
+  tft.drawLine(433, 166, 433, 168, whiteScript);
+  tft.drawLine(433, 176, 433, 178, whiteScript);
+  tft.drawLine(433, 186, 433, 188, whiteScript);
+  tft.drawPixel(433, 196, whiteScript);
+
+  tft.drawLine(32, 208, 32, 213, highValueColor);
+  tft.drawLine(33, 208, 33, 213, highValueColor);
+
+  tft.drawLine(132, 208, 132, 213, highValueColor);
+  tft.drawLine(133, 208, 133, 213, highValueColor);
+
+  tft.drawLine(232, 208, 232, 213, highValueColor);
+  tft.drawLine(233, 208, 233, 213, highValueColor);
+
+  tft.drawLine(332, 208, 332, 213, highValueColor);
+  tft.drawLine(333, 208, 333, 213, highValueColor);
+
+  tft.drawLine(432, 208, 432, 213, highValueColor);
+  tft.drawLine(433, 208, 433, 213, highValueColor);
+
+  tft.drawLine(80, 208, 80, 212, middleTimeGraph);
+  tft.drawLine(181, 208, 181, 212, middleTimeGraph);
+  tft.drawLine(282, 208, 282, 212, middleTimeGraph);
+  tft.drawLine(382, 208, 382, 212, middleTimeGraph);
+
+  tft.setTextDatum(ML_DATUM);
+  tft.setTextColor(whiteScript);
+  tft.setFreeFont(latoRegular24);
+
+  tft.drawString("0", 26, 228, GFXFF);
+  tft.drawString("6", 125, 228, GFXFF);
+  tft.drawString("12", 220, 228, GFXFF);
+  tft.drawString("18", 318, 228, GFXFF);
+  tft.drawString("24", 418, 228, GFXFF);
+
+  tft.setFreeFont(latoRegular14);
+
+  tft.drawString("3", 76, 225, GFXFF);
+  tft.drawString("9", 178, 225, GFXFF);
+  tft.drawString("15", 274, 225, GFXFF);
+  tft.drawString("21", 374, 225, GFXFF);
+} 
+
+void dosimeterYear() { 
   tft.drawPixel(33, 78, whiteScript);
   tft.drawLine(33, 86, 33, 88, whiteScript);
   tft.drawLine(33, 96, 33, 98, whiteScript);
@@ -4779,6 +5491,8 @@ void telaMenu2() {
   lockLevel();
 }
 
+byte dosimeterSelection = 1;
+
 void telaMenu3() {
   tft.fillScreen(blackScript);
   i = 1;
@@ -4796,7 +5510,20 @@ void telaMenu3() {
   tft.drawRoundRect(75, 267, 40, 30, 5, icon_9);
   tft.drawRoundRect(125, 267, 40, 30, 5, icon_9);
 
-  dosimeterLoad();
+  switch (dosimeterSelection) {
+    case 1:
+      dosimeterWeek();
+    break;
+    case 2:
+      dosimeterMonth();
+    break;
+    case 3:
+      dosimeterYear();
+    break;
+    default:
+    dosimeterDay();    
+  }
+
   home();
   wifiLevel();
   batteryLevel();
