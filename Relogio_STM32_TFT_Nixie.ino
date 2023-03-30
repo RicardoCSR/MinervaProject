@@ -118,10 +118,10 @@ int writerTemp = 0;             // Armazena dado da posição do Gráfico em nã
 int writerHumi = 0;             // Armazena dado da posição do Gráfico em não uso
 int writerPres = 0;             // Armazena dado da posição do Gráfico em não uso
 
-int geigerCalc [220] = {0};     // Armazena dados de Geiger
-int tempCalc [220] = {0};       // Armazena dados de Temperatura 
-int humiCalc [220] = {0};       // Armazena dados de Umidade 
-int presCalc [220] = {0};       // Armazena dados de Pressão Atmosferica
+int geigerCalc [400] = {0};     // Armazena dados de Geiger
+int tempCalc [400] = {0};       // Armazena dados de Temperatura 
+int humiCalc [400] = {0};       // Armazena dados de Umidade 
+int presCalc [400] = {0};       // Armazena dados de Pressão Atmosferica
 
 byte encoderPos = 0;
 byte lastPos;
@@ -360,8 +360,8 @@ void setup() {
     fuso = 11;
   }
 
-  hours = 0;
-  mins = 0;
+  hours = 23;
+  mins = 59;
   day = 27;
   month = 3;
   year = 2023;
@@ -417,7 +417,7 @@ unsigned long time;
 int dosimetervalue = 0;
 byte geigerCurve = 0;
 byte updateGeigerCurve = 0;
-
+int geigerValue [24] = {0};
 void loop(void) {
 
   // ------------------------------- TOUCHSCREEN LEITURA -------------
@@ -738,13 +738,13 @@ void loop(void) {
             dosimetervalue = 200;
             break;
           case 8:
-            dosimetervalue = 50;
+            dosimetervalue = 175;
             break;
           case 9:
             dosimetervalue = 150;
             break;
           case 10:
-            dosimetervalue = 100;
+            dosimetervalue = 125;
             break;
           default:
             dosimetervalue = 50;
@@ -756,36 +756,91 @@ void loop(void) {
         writerGeiger = bankGeiger;
         functGeiger = map(geigerCalc[writerGeiger], 0, 200, 196, 78); 
       }
+
+
+
+
+
+
+
       rgbColorGeiger();
       tft.drawPixel(bankGeiger, functGeiger, geigerColor);
 
       if (hours != updateGeigerCurve) {
         updateGeigerCurve = hours;
         switch (bankGeiger) {
-          case 32: geigerCurve = 1; break; 
-          case 48: geigerCurve = 2; break; 
-          case 64: geigerCurve = 3; break; 
-          case 82: geigerCurve = 4; break;
-          case 98: geigerCurve = 5; break;
-          case 114: geigerCurve = 6; break;
-          case 132: geigerCurve = 7; break;
-          case 148: geigerCurve = 8; break;
-          case 164: geigerCurve = 9; break;
-          case 182: geigerCurve = 10; break;
-          case 198: geigerCurve = 11; break;
-          case 214: geigerCurve = 12; break;
-          case 232: geigerCurve = 13; break;
-          case 248: geigerCurve = 14; break;
-          case 264: geigerCurve = 15; break;
-          case 282: geigerCurve = 16; break;
-          case 298: geigerCurve = 17; break;
-          case 314: geigerCurve = 18; break;
-          case 332: geigerCurve = 19; break;
-          case 348: geigerCurve = 20; break;
-          case 364: geigerCurve = 21; break;
-          case 382: geigerCurve = 22; break;
-          case 398: geigerCurve = 23; break;
-          case 414: geigerCurve = 24; break;
+          case 32: geigerCurve = 1; 
+            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
+            geigerValue[hours] = geigerValue[hours] / 16; break;
+          case 48: geigerCurve = 2; 
+            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
+            geigerValue[hours] = geigerValue[hours] / 16; break;
+          case 64: geigerCurve = 3; 
+            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
+            geigerValue[hours] = geigerValue[hours] / 16; break;
+          case 82: geigerCurve = 4; 
+            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
+            geigerValue[hours] = geigerValue[hours] / 16; break;
+          case 98: geigerCurve = 5; 
+            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
+            geigerValue[hours] = geigerValue[hours] / 16; break;
+          case 114: geigerCurve = 6; 
+            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
+            geigerValue[hours] = geigerValue[hours] / 16; break;
+          case 132: geigerCurve = 7; 
+            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
+            geigerValue[hours] = geigerValue[hours] / 16; break;
+          case 148: geigerCurve = 8; 
+            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
+            geigerValue[hours] = geigerValue[hours] / 16; break;
+          case 164: geigerCurve = 9; 
+            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
+            geigerValue[hours] = geigerValue[hours] / 16; break;
+          case 182: geigerCurve = 10; 
+            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
+            geigerValue[hours] = geigerValue[hours] / 16; break;
+          case 198: geigerCurve = 11; 
+            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
+            geigerValue[hours] = geigerValue[hours] / 16; break;
+          case 214: geigerCurve = 12; 
+            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
+            geigerValue[hours] = geigerValue[hours] / 16; break;
+          case 232: geigerCurve = 13; 
+            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
+            geigerValue[hours] = geigerValue[hours] / 16; break;
+          case 248: geigerCurve = 14; 
+            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
+            geigerValue[hours] = geigerValue[hours] / 16; break;
+          case 264: geigerCurve = 15; 
+            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
+            geigerValue[hours] = geigerValue[hours] / 16; break;
+          case 282: geigerCurve = 16; 
+            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
+            geigerValue[hours] = geigerValue[hours] / 16; break;
+          case 298: geigerCurve = 17; 
+            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
+            geigerValue[hours] = geigerValue[hours] / 16; break;
+          case 314: geigerCurve = 18; 
+            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
+            geigerValue[hours] = geigerValue[hours] / 16; break;
+          case 332: geigerCurve = 19; 
+            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
+            geigerValue[hours] = geigerValue[hours] / 16; break;
+          case 348: geigerCurve = 20; 
+            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
+            geigerValue[hours] = geigerValue[hours] / 16; break;
+          case 364: geigerCurve = 21; 
+            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
+            geigerValue[hours] = geigerValue[hours] / 16; break;
+          case 382: geigerCurve = 22; 
+            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
+            geigerValue[hours] = geigerValue[hours] / 16; break;
+          case 398: geigerCurve = 23; 
+            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
+            geigerValue[hours] = geigerValue[hours] / 16; break;
+          case 414: geigerCurve = 24; 
+            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
+            geigerValue[hours] = geigerValue[hours] / 16; break;
         }
         Serial.println(geigerCurve);
 
