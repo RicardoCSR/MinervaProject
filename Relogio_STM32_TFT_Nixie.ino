@@ -531,7 +531,7 @@ void loop(void) {
       case 3:
         // do something
       break; 
-      default:
+      default: 
         if (touchSet == 0) {
           defaultSetup();
         } else if (i == 0){
@@ -659,12 +659,13 @@ void loop(void) {
       tft.drawString(stringYear, 143, 30, GFXFF);
     }
 
-  // ------------------------ ATUALIZA POSICAO GRAFICO DOSIMETRO GEIGER OPERACIONAL -------
-    if (minsCalcGeiger != mins) {
+  // ------------------------ ATUALIZA GRAFICO DOSIMETRO GEIGER -------------------
+    if (telaMenu == 3) {
       //33 - 433 X
       //78 - 196 Y
-      minsCalcGeiger = mins;
-      switch(hours) {
+      if (minsCalcGeiger != bankGeiger) {
+        minsCalcGeiger = bankGeiger;
+        switch(hours) {
         case 0: bankGeiger = 32; break; 
         case 1: bankGeiger = 48; break; 
         case 2: bankGeiger = 64; break; 
@@ -690,79 +691,45 @@ void loop(void) {
         case 22: bankGeiger = 398; break;
         case 23: bankGeiger = 414; break;
       }
-    }
-    switch(mins) {
-      case 3: bankGeiger = bankGeiger + 0; break;
-      case 6: bankGeiger = bankGeiger + 1; break;
-      case 10: bankGeiger = bankGeiger + 2; break;
-      case 13: bankGeiger = bankGeiger + 3; break;
-      case 16: bankGeiger = bankGeiger + 4; break;
-      case 19: bankGeiger = bankGeiger + 5; break;
-      case 22: bankGeiger = bankGeiger + 6; break;
-      case 25: bankGeiger = bankGeiger + 7; break;
-      case 28: bankGeiger = bankGeiger + 8; break;
-      case 31: bankGeiger = bankGeiger + 9; break;
-      case 36: bankGeiger = bankGeiger + 10; break;
-      case 37: bankGeiger = bankGeiger + 11; break;
-      case 40: bankGeiger = bankGeiger + 12; break;
-      case 43: bankGeiger = bankGeiger + 13; break;
-      case 46: bankGeiger = bankGeiger + 14; break;
-      case 49: bankGeiger = bankGeiger + 15; break;
-      case 53: bankGeiger = bankGeiger + 16; break;
-      case 56: bankGeiger = bankGeiger + 17; break;
-    }
-
-  // ------------------------ ATUALIZA GRAFICO DOSIMETRO GEIGER -------------------
-    if (minsCalcGeiger != bankGeiger) {
-      minsCalcGeiger = bankGeiger;
-      switch (hours) {
-          case 1:
-            dosimetervalue = 150;
-            break;
-          case 2:
-            dosimetervalue = 200;
-            break;
-          case 3:
-            dosimetervalue = 100;
-            break;
-          case 4:
-            dosimetervalue = 50;
-            break;
-          case 5:
-            dosimetervalue = 100;
-            break;
-          case 6:
-            dosimetervalue = 150;
-            break;
-          case 7:
-            dosimetervalue = 200;
-            break;
-          case 8:
-            dosimetervalue = 175;
-            break;
-          case 9:
-            dosimetervalue = 150;
-            break;
-          case 10:
-            dosimetervalue = 125;
-            break;
-          default:
-            dosimetervalue = 50;
+      switch(mins) {
+        case 3: bankGeiger = bankGeiger + 0; break;
+        case 6: bankGeiger = bankGeiger + 1; break;
+        case 10: bankGeiger = bankGeiger + 2; break;
+        case 13: bankGeiger = bankGeiger + 3; break;
+        case 16: bankGeiger = bankGeiger + 4; break;
+        case 19: bankGeiger = bankGeiger + 5; break;
+        case 22: bankGeiger = bankGeiger + 6; break;
+        case 25: bankGeiger = bankGeiger + 7; break;
+        case 28: bankGeiger = bankGeiger + 8; break;
+        case 31: bankGeiger = bankGeiger + 9; break;
+        case 36: bankGeiger = bankGeiger + 10; break;
+        case 37: bankGeiger = bankGeiger + 11; break;
+        case 40: bankGeiger = bankGeiger + 12; break;
+        case 43: bankGeiger = bankGeiger + 13; break;
+        case 46: bankGeiger = bankGeiger + 14; break;
+        case 49: bankGeiger = bankGeiger + 15; break;
+        case 53: bankGeiger = bankGeiger + 16; break;
+        case 56: bankGeiger = bankGeiger + 17; break;
       }
-      geigerCalc[bankGeiger] = dosimetervalue;
-    }
-    if (telaMenu == 3) {
+      switch (hours) {
+        case 1: dosimetervalue = 150; break;
+        case 2: dosimetervalue = 200; break;
+        case 3: dosimetervalue = 100; break;
+        case 4: dosimetervalue = 50; break;
+        case 5: dosimetervalue = 100; break;
+        case 6: dosimetervalue = 150; break;
+        case 7: dosimetervalue = 200; break;
+        case 8: dosimetervalue = 175; break;
+        case 9: dosimetervalue = 150; break;
+        case 10: dosimetervalue = 125; break;
+        default: dosimetervalue = 50;
+        }
+        geigerCalc[bankGeiger] = dosimetervalue;
+      }
       if (bankGeiger != writerGeiger) {
         writerGeiger = bankGeiger;
         functGeiger = map(geigerCalc[writerGeiger], 0, 200, 196, 78); 
       }
-
-
-
-
-
-
-
       rgbColorGeiger();
       tft.drawPixel(bankGeiger, functGeiger, geigerColor);
 
@@ -842,9 +809,6 @@ void loop(void) {
             for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
             geigerValue[hours] = geigerValue[hours] / 16; break;
         }
-        Serial.println(geigerCurve);
-
-
       }
     }
 
@@ -5673,7 +5637,7 @@ void telaMenu8() {
 
 void telaMenu9() {
   tft.fillScreen(blackScript);
-
+  i = 1;
   tft.drawSmoothArc(60, 100, 35, 25, 30, 145, temperatureColor2, blackScript, squareEnd);
   tft.pushImage(52, 86, 20, 35, temperatureImage);
   tft.drawCircle(60, 100, 35, temperatureColor2);
@@ -5686,7 +5650,7 @@ void telaMenu9() {
 }
 void telaMenu10() {
   tft.fillScreen(blackScript);
-
+  i = 1;
   tft.pushImage(15, 50, 48, 48, profile1);
   tft.pushImage(65, 50, 48, 48, profile2);
   tft.pushImage(115, 50, 48, 48, profile3);
