@@ -663,152 +663,60 @@ void loop(void) {
     if (telaMenu == 3) {
       //33 - 433 X
       //78 - 196 Y
-      if (minsCalcGeiger != bankGeiger) {
-        minsCalcGeiger = bankGeiger;
+      if (minsCalcGeiger != mins) {
+        minsCalcGeiger = mins;
         switch(hours) {
-        case 0: bankGeiger = 32; break; 
-        case 1: bankGeiger = 48; break; 
-        case 2: bankGeiger = 64; break; 
-        case 3: bankGeiger = 82; break;
-        case 4: bankGeiger = 98; break;
-        case 5: bankGeiger = 114; break;
-        case 6: bankGeiger = 132; break;
-        case 7: bankGeiger = 148; break;
-        case 8: bankGeiger = 164; break;
-        case 9: bankGeiger = 182; break;
-        case 10: bankGeiger = 198; break;
-        case 11: bankGeiger = 214; break;
-        case 12: bankGeiger = 232; break;
-        case 13: bankGeiger = 248; break;
-        case 14: bankGeiger = 264; break;
-        case 15: bankGeiger = 282; break;
-        case 16: bankGeiger = 298; break;
-        case 17: bankGeiger = 314; break;
-        case 18: bankGeiger = 332; break;
-        case 19: bankGeiger = 348; break;
-        case 20: bankGeiger = 364; break;
-        case 21: bankGeiger = 382; break;
-        case 22: bankGeiger = 398; break;
-        case 23: bankGeiger = 414; break;
-      }
-      switch(mins) {
-        case 3: bankGeiger = bankGeiger + 0; break;
-        case 6: bankGeiger = bankGeiger + 1; break;
-        case 10: bankGeiger = bankGeiger + 2; break;
-        case 13: bankGeiger = bankGeiger + 3; break;
-        case 16: bankGeiger = bankGeiger + 4; break;
-        case 19: bankGeiger = bankGeiger + 5; break;
-        case 22: bankGeiger = bankGeiger + 6; break;
-        case 25: bankGeiger = bankGeiger + 7; break;
-        case 28: bankGeiger = bankGeiger + 8; break;
-        case 31: bankGeiger = bankGeiger + 9; break;
-        case 36: bankGeiger = bankGeiger + 10; break;
-        case 37: bankGeiger = bankGeiger + 11; break;
-        case 40: bankGeiger = bankGeiger + 12; break;
-        case 43: bankGeiger = bankGeiger + 13; break;
-        case 46: bankGeiger = bankGeiger + 14; break;
-        case 49: bankGeiger = bankGeiger + 15; break;
-        case 53: bankGeiger = bankGeiger + 16; break;
-        case 56: bankGeiger = bankGeiger + 17; break;
-      }
-      switch (hours) {
-        case 1: dosimetervalue = 150; break;
-        case 2: dosimetervalue = 200; break;
-        case 3: dosimetervalue = 100; break;
-        case 4: dosimetervalue = 50; break;
-        case 5: dosimetervalue = 100; break;
-        case 6: dosimetervalue = 150; break;
-        case 7: dosimetervalue = 200; break;
-        case 8: dosimetervalue = 175; break;
-        case 9: dosimetervalue = 150; break;
-        case 10: dosimetervalue = 125; break;
-        default: dosimetervalue = 50;
+          case 0: bankGeiger = 32; break; 
+          case 1: bankGeiger = 48; break; 
+          case 2: bankGeiger = 64; break; 
+          case 3: bankGeiger = 82; break;
+          case 4: bankGeiger = 98; break;
+          case 5: bankGeiger = 114; break;
+          case 6: bankGeiger = 132; break;
+          case 7: bankGeiger = 148; break;
+          case 8: bankGeiger = 164; break;
+          case 9: bankGeiger = 182; break;
+          case 10: bankGeiger = 198; break;
+          case 11: bankGeiger = 214; break;
+          case 12: bankGeiger = 232; break;
+          case 13: bankGeiger = 248; break;
+          case 14: bankGeiger = 264; break;
+          case 15: bankGeiger = 282; break;
+          case 16: bankGeiger = 298; break;
+          case 17: bankGeiger = 314; break;
+          case 18: bankGeiger = 332; break;
+          case 19: bankGeiger = 348; break;
+          case 20: bankGeiger = 364; break;
+          case 21: bankGeiger = 382; break;
+          case 22: bankGeiger = 398; break;
+          case 23: bankGeiger = 414; break;
         }
-        geigerCalc[bankGeiger] = dosimetervalue;
-      }
-      if (bankGeiger != writerGeiger) {
-        writerGeiger = bankGeiger;
-        functGeiger = map(geigerCalc[writerGeiger], 0, 200, 196, 78); 
-      }
-      rgbColorGeiger();
-      tft.drawPixel(bankGeiger, functGeiger, geigerColor);
-
-      if (hours != updateGeigerCurve) {
-        updateGeigerCurve = hours;
-        switch (bankGeiger) {
-          case 32: geigerCurve = 1; 
-            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
-            geigerValue[hours] = geigerValue[hours] / 16; break;
-          case 48: geigerCurve = 2; 
-            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
-            geigerValue[hours] = geigerValue[hours] / 16; break;
-          case 64: geigerCurve = 3; 
-            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
-            geigerValue[hours] = geigerValue[hours] / 16; break;
-          case 82: geigerCurve = 4; 
-            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
-            geigerValue[hours] = geigerValue[hours] / 16; break;
-          case 98: geigerCurve = 5; 
-            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
-            geigerValue[hours] = geigerValue[hours] / 16; break;
-          case 114: geigerCurve = 6; 
-            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
-            geigerValue[hours] = geigerValue[hours] / 16; break;
-          case 132: geigerCurve = 7; 
-            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
-            geigerValue[hours] = geigerValue[hours] / 16; break;
-          case 148: geigerCurve = 8; 
-            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
-            geigerValue[hours] = geigerValue[hours] / 16; break;
-          case 164: geigerCurve = 9; 
-            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
-            geigerValue[hours] = geigerValue[hours] / 16; break;
-          case 182: geigerCurve = 10; 
-            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
-            geigerValue[hours] = geigerValue[hours] / 16; break;
-          case 198: geigerCurve = 11; 
-            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
-            geigerValue[hours] = geigerValue[hours] / 16; break;
-          case 214: geigerCurve = 12; 
-            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
-            geigerValue[hours] = geigerValue[hours] / 16; break;
-          case 232: geigerCurve = 13; 
-            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
-            geigerValue[hours] = geigerValue[hours] / 16; break;
-          case 248: geigerCurve = 14; 
-            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
-            geigerValue[hours] = geigerValue[hours] / 16; break;
-          case 264: geigerCurve = 15; 
-            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
-            geigerValue[hours] = geigerValue[hours] / 16; break;
-          case 282: geigerCurve = 16; 
-            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
-            geigerValue[hours] = geigerValue[hours] / 16; break;
-          case 298: geigerCurve = 17; 
-            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
-            geigerValue[hours] = geigerValue[hours] / 16; break;
-          case 314: geigerCurve = 18; 
-            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
-            geigerValue[hours] = geigerValue[hours] / 16; break;
-          case 332: geigerCurve = 19; 
-            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
-            geigerValue[hours] = geigerValue[hours] / 16; break;
-          case 348: geigerCurve = 20; 
-            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
-            geigerValue[hours] = geigerValue[hours] / 16; break;
-          case 364: geigerCurve = 21; 
-            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
-            geigerValue[hours] = geigerValue[hours] / 16; break;
-          case 382: geigerCurve = 22; 
-            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
-            geigerValue[hours] = geigerValue[hours] / 16; break;
-          case 398: geigerCurve = 23; 
-            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
-            geigerValue[hours] = geigerValue[hours] / 16; break;
-          case 414: geigerCurve = 24; 
-            for (int i = 0; i < 16; ++i) { geigerValue[hours] = (geigerCalc[bankGeiger - i] + geigerValue[hours]); }
-            geigerValue[hours] = geigerValue[hours] / 16; break;
+        switch(mins) {
+          case 3: bankGeiger = bankGeiger + 0; break;
+          case 6: bankGeiger = bankGeiger + 1; break;
+          case 10: bankGeiger = bankGeiger + 2; break;
+          case 13: bankGeiger = bankGeiger + 3; break;
+          case 16: bankGeiger = bankGeiger + 4; break;
+          case 19: bankGeiger = bankGeiger + 5; break;
+          case 22: bankGeiger = bankGeiger + 6; break;
+          case 25: bankGeiger = bankGeiger + 7; break;
+          case 28: bankGeiger = bankGeiger + 8; break;
+          case 31: bankGeiger = bankGeiger + 9; break;
+          case 36: bankGeiger = bankGeiger + 10; break;
+          case 37: bankGeiger = bankGeiger + 11; break;
+          case 40: bankGeiger = bankGeiger + 12; break;
+          case 43: bankGeiger = bankGeiger + 13; break;
+          case 46: bankGeiger = bankGeiger + 14; break;
+          case 49: bankGeiger = bankGeiger + 15; break;
+          case 53: bankGeiger = bankGeiger + 16; break;
+          case 56: bankGeiger = bankGeiger + 17; break;
         }
+        if (bankGeiger != writerGeiger) {
+          writerGeiger = bankGeiger;
+          functGeiger = map(geigerCalc[writerGeiger], 0, 200, 196, 78); 
+        }
+        rgbColorGeiger();
+        tft.drawPixel(bankGeiger, functGeiger, geigerColor);
       }
     }
 
@@ -960,7 +868,6 @@ void defaultSetup() {
     screenLoad = 1;
   }
 }
-
 
 void wifiLevel() {
   switch (wifiRead) {
@@ -1472,7 +1379,7 @@ void geigerLoad() {
   tft.drawLine(412, 186, 412, 187, whiteScript);
 }
 
-void dosimeter() {
+void dosimeterAnalogic() {
   tft.drawRect(34, 112, 400, 25, whiteScript);
   tft.fillRect(184, 107, 35, 5, geigerLevel1);
 
@@ -1497,7 +1404,7 @@ void dosimeterAlarm() {
   tft.pushImage(46, 205, 71, 71, icon1);
 }
 
-void dosimeterDay() { 
+void dosimeterDigital() { 
   tft.drawPixel(33, 78, whiteScript);
   tft.drawLine(33, 86, 33, 88, whiteScript);
   tft.drawLine(33, 96, 33, 98, whiteScript);
@@ -1679,7 +1586,50 @@ void dosimeterDay() {
   tft.drawLine(433, 176, 433, 178, whiteScript);
   tft.drawLine(433, 186, 433, 188, whiteScript);
   tft.drawPixel(433, 196, whiteScript);
+} 
 
+void dosimeterMin() { 
+  tft.drawLine(32, 208, 32, 213, highValueColor);
+  tft.drawLine(33, 208, 33, 213, highValueColor);
+
+  tft.drawLine(432, 208, 432, 213, highValueColor);
+  tft.drawLine(433, 208, 433, 213, highValueColor);
+
+  tft.drawLine(65, 208, 65, 212, middleTimeGraph);
+  tft.drawLine(98, 208, 98, 212, middleTimeGraph);
+  tft.drawLine(132, 208, 132, 212, middleTimeGraph);
+  tft.drawLine(165, 208, 165, 212, middleTimeGraph);
+  tft.drawLine(198, 208, 198, 212, middleTimeGraph);
+  tft.drawLine(232, 208, 232, 212, middleTimeGraph);
+  tft.drawLine(265, 208, 265, 212, middleTimeGraph);
+  tft.drawLine(298, 208, 298, 212, middleTimeGraph);
+  tft.drawLine(332, 208, 332, 212, middleTimeGraph);
+  tft.drawLine(365, 208, 365, 212, middleTimeGraph);
+  tft.drawLine(398, 208, 398, 212, middleTimeGraph);
+
+  tft.setTextDatum(ML_DATUM);
+  tft.setTextColor(whiteScript);
+  tft.setFreeFont(latoRegular24);
+
+  tft.drawString("0", 26, 228, GFXFF);
+  tft.drawString("59", 418, 228, GFXFF);
+
+  tft.setFreeFont(latoRegular14);
+
+  tft.drawString("5", 61, 225, GFXFF);
+  tft.drawString("10", 90, 225, GFXFF);
+  tft.drawString("15", 124, 225, GFXFF);
+  tft.drawString("20", 157, 225, GFXFF);
+  tft.drawString("25", 190, 225, GFXFF);
+  tft.drawString("30", 223, 225, GFXFF);
+  tft.drawString("35", 257, 225, GFXFF);
+  tft.drawString("40", 290, 225, GFXFF);
+  tft.drawString("45", 324, 225, GFXFF);
+  tft.drawString("50", 357, 225, GFXFF);
+  tft.drawString("55", 390, 225, GFXFF);
+} 
+
+void dosimeterHour() {
   tft.drawLine(32, 208, 32, 213, highValueColor);
   tft.drawLine(33, 208, 33, 213, highValueColor);
 
@@ -1716,449 +1666,19 @@ void dosimeterDay() {
   tft.drawString("9", 178, 225, GFXFF);
   tft.drawString("15", 274, 225, GFXFF);
   tft.drawString("21", 374, 225, GFXFF);
-} 
+}
 
-void dosimeterWeek() { 
-  tft.drawPixel(33, 78, whiteScript);
-  tft.drawLine(33, 86, 33, 88, whiteScript);
-  tft.drawLine(33, 96, 33, 98, whiteScript);
-  tft.drawLine(33, 106, 33, 108, whiteScript);
-  tft.drawLine(33, 116, 33, 118, whiteScript);
-  tft.drawLine(33, 126, 33, 128, whiteScript);
-  tft.drawLine(33, 136, 33, 138, whiteScript);
-  tft.drawLine(33, 146, 33, 148, whiteScript);
-  tft.drawLine(33, 156, 33, 158, whiteScript);
-  tft.drawLine(33, 166, 33, 168, whiteScript);
-  tft.drawLine(33, 176, 33, 178, whiteScript);
-  tft.drawLine(33, 186, 33, 188, whiteScript);
-  tft.drawPixel(33, 196, whiteScript);
+void dosimeterDay() {
 
-  tft.drawPixel(66, 78, whiteScript);
-  tft.drawLine(66, 86, 66, 88, whiteScript);
-  tft.drawLine(66, 96, 66, 98, whiteScript);
-  tft.drawLine(66, 106, 66, 108, whiteScript);
-  tft.drawLine(66, 116, 66, 118, whiteScript);
-  tft.drawLine(66, 126, 66, 128, whiteScript);
-  tft.drawLine(66, 136, 66, 138, whiteScript);
-  tft.drawLine(66, 146, 66, 148, whiteScript);
-  tft.drawLine(66, 156, 66, 158, whiteScript);
-  tft.drawLine(66, 166, 66, 168, whiteScript);
-  tft.drawLine(66, 176, 66, 178, whiteScript);
-  tft.drawLine(66, 186, 66, 188, whiteScript);
-  tft.drawPixel(66, 196, whiteScript);
+}
 
-  tft.drawPixel(99, 78, whiteScript);
-  tft.drawLine(99, 86, 99, 88, whiteScript);
-  tft.drawLine(99, 96, 99, 98, whiteScript);
-  tft.drawLine(99, 106, 99, 108, whiteScript);
-  tft.drawLine(99, 116, 99, 118, whiteScript);
-  tft.drawLine(99, 126, 99, 128, whiteScript);
-  tft.drawLine(99, 136, 99, 138, whiteScript);
-  tft.drawLine(99, 146, 99, 148, whiteScript);
-  tft.drawLine(99, 156, 99, 158, whiteScript);
-  tft.drawLine(99, 166, 99, 168, whiteScript);
-  tft.drawLine(99, 176, 99, 178, whiteScript);
-  tft.drawLine(99, 186, 99, 188, whiteScript);
-  tft.drawPixel(99, 196, whiteScript);
+void dosimeterWeek(){
 
-  tft.drawPixel(133, 78, whiteScript);
-  tft.drawLine(133, 86, 133, 88, whiteScript);
-  tft.drawLine(133, 96, 133, 98, whiteScript);
-  tft.drawLine(133, 106, 133, 108, whiteScript);
-  tft.drawLine(133, 116, 133, 118, whiteScript);
-  tft.drawLine(133, 126, 133, 128, whiteScript);
-  tft.drawLine(133, 136, 133, 138, whiteScript);
-  tft.drawLine(133, 146, 133, 148, whiteScript);
-  tft.drawLine(133, 156, 133, 158, whiteScript);
-  tft.drawLine(133, 166, 133, 168, whiteScript);
-  tft.drawLine(133, 176, 133, 178, whiteScript);
-  tft.drawLine(133, 186, 133, 188, whiteScript);
-  tft.drawPixel(133, 196, whiteScript);
+}
 
-  tft.drawPixel(166, 78, whiteScript);
-  tft.drawLine(166, 86, 166, 88, whiteScript);
-  tft.drawLine(166, 96, 166, 98, whiteScript);
-  tft.drawLine(166, 106, 166, 108, whiteScript);
-  tft.drawLine(166, 116, 166, 118, whiteScript);
-  tft.drawLine(166, 126, 166, 128, whiteScript);
-  tft.drawLine(166, 136, 166, 138, whiteScript);
-  tft.drawLine(166, 146, 166, 148, whiteScript);
-  tft.drawLine(166, 156, 166, 158, whiteScript);
-  tft.drawLine(166, 166, 166, 168, whiteScript);
-  tft.drawLine(166, 176, 166, 178, whiteScript);
-  tft.drawLine(166, 186, 166, 188, whiteScript);
-  tft.drawPixel(166, 196, whiteScript);
+void dosimeterMonth(){
 
-  tft.drawPixel(199, 78, whiteScript);
-  tft.drawLine(199, 86, 199, 88, whiteScript);
-  tft.drawLine(199, 96, 199, 98, whiteScript);
-  tft.drawLine(199, 106, 199, 108, whiteScript);
-  tft.drawLine(199, 116, 199, 118, whiteScript);
-  tft.drawLine(199, 126, 199, 128, whiteScript);
-  tft.drawLine(199, 136, 199, 138, whiteScript);
-  tft.drawLine(199, 146, 199, 148, whiteScript);
-  tft.drawLine(199, 156, 199, 158, whiteScript);
-  tft.drawLine(199, 166, 199, 168, whiteScript);
-  tft.drawLine(199, 176, 199, 178, whiteScript);
-  tft.drawLine(199, 186, 199, 188, whiteScript);
-  tft.drawPixel(199, 196, whiteScript);
-
-  tft.drawPixel(233, 78, whiteScript);
-  tft.drawLine(233, 86, 233, 88, whiteScript);
-  tft.drawLine(233, 96, 233, 98, whiteScript);
-  tft.drawLine(233, 106, 233, 108, whiteScript);
-  tft.drawLine(233, 116, 233, 118, whiteScript);
-  tft.drawLine(233, 126, 233, 128, whiteScript);
-  tft.drawLine(233, 136, 233, 138, whiteScript);
-  tft.drawLine(233, 146, 233, 148, whiteScript);
-  tft.drawLine(233, 156, 233, 158, whiteScript);
-  tft.drawLine(233, 166, 233, 168, whiteScript);
-  tft.drawLine(233, 176, 233, 178, whiteScript);
-  tft.drawLine(233, 186, 233, 188, whiteScript);
-  tft.drawPixel(233, 196, whiteScript);
-
-  tft.drawPixel(266, 78, whiteScript);
-  tft.drawLine(266, 86, 266, 88, whiteScript);
-  tft.drawLine(266, 96, 266, 98, whiteScript);
-  tft.drawLine(266, 106, 266, 108, whiteScript);
-  tft.drawLine(266, 116, 266, 118, whiteScript);
-  tft.drawLine(266, 126, 266, 128, whiteScript);
-  tft.drawLine(266, 136, 266, 138, whiteScript);
-  tft.drawLine(266, 146, 266, 148, whiteScript);
-  tft.drawLine(266, 156, 266, 158, whiteScript);
-  tft.drawLine(266, 166, 266, 168, whiteScript);
-  tft.drawLine(266, 176, 266, 178, whiteScript);
-  tft.drawLine(266, 186, 266, 188, whiteScript);
-  tft.drawPixel(266, 196, whiteScript);
-
-  tft.drawPixel(299, 78, whiteScript);
-  tft.drawLine(299, 86, 299, 88, whiteScript);
-  tft.drawLine(299, 96, 299, 98, whiteScript);
-  tft.drawLine(299, 106, 299, 108, whiteScript);
-  tft.drawLine(299, 116, 299, 118, whiteScript);
-  tft.drawLine(299, 126, 299, 128, whiteScript);
-  tft.drawLine(299, 136, 299, 138, whiteScript);
-  tft.drawLine(299, 146, 299, 148, whiteScript);
-  tft.drawLine(299, 156, 299, 158, whiteScript);
-  tft.drawLine(299, 166, 299, 168, whiteScript);
-  tft.drawLine(299, 176, 299, 178, whiteScript);
-  tft.drawLine(299, 186, 299, 188, whiteScript);
-  tft.drawPixel(299, 196, whiteScript);
-
-  tft.drawPixel(333, 78, whiteScript);
-  tft.drawLine(333, 86, 333, 88, whiteScript);
-  tft.drawLine(333, 96, 333, 98, whiteScript);
-  tft.drawLine(333, 106, 333, 108, whiteScript);
-  tft.drawLine(333, 116, 333, 118, whiteScript);
-  tft.drawLine(333, 126, 333, 128, whiteScript);
-  tft.drawLine(333, 136, 333, 138, whiteScript);
-  tft.drawLine(333, 146, 333, 148, whiteScript);
-  tft.drawLine(333, 156, 333, 158, whiteScript);
-  tft.drawLine(333, 166, 333, 168, whiteScript);
-  tft.drawLine(333, 176, 333, 178, whiteScript);
-  tft.drawLine(333, 186, 333, 188, whiteScript);
-  tft.drawPixel(333, 196, whiteScript);
-
-  tft.drawPixel(367, 78, whiteScript);
-  tft.drawLine(367, 86, 367, 88, whiteScript);
-  tft.drawLine(367, 96, 367, 98, whiteScript);
-  tft.drawLine(367, 106, 367, 108, whiteScript);
-  tft.drawLine(367, 116, 367, 118, whiteScript);
-  tft.drawLine(367, 126, 367, 128, whiteScript);
-  tft.drawLine(367, 136, 367, 138, whiteScript);
-  tft.drawLine(367, 146, 367, 148, whiteScript);
-  tft.drawLine(367, 156, 367, 158, whiteScript);
-  tft.drawLine(367, 166, 367, 168, whiteScript);
-  tft.drawLine(367, 176, 367, 178, whiteScript);
-  tft.drawLine(367, 186, 367, 188, whiteScript);
-  tft.drawPixel(367, 196, whiteScript);
-
-  tft.drawPixel(399, 78, whiteScript);
-  tft.drawLine(399, 86, 399, 88, whiteScript);
-  tft.drawLine(399, 96, 399, 98, whiteScript);
-  tft.drawLine(399, 106, 399, 108, whiteScript);
-  tft.drawLine(399, 116, 399, 118, whiteScript);
-  tft.drawLine(399, 126, 399, 128, whiteScript);
-  tft.drawLine(399, 136, 399, 138, whiteScript);
-  tft.drawLine(399, 146, 399, 148, whiteScript);
-  tft.drawLine(399, 156, 399, 158, whiteScript);
-  tft.drawLine(399, 166, 399, 168, whiteScript);
-  tft.drawLine(399, 176, 399, 178, whiteScript);
-  tft.drawLine(399, 186, 399, 188, whiteScript);
-  tft.drawPixel(399, 196, whiteScript);
-
-  tft.drawPixel(433, 78, whiteScript);
-  tft.drawLine(433, 86, 433, 88, whiteScript);
-  tft.drawLine(433, 96, 433, 98, whiteScript);
-  tft.drawLine(433, 106, 433, 108, whiteScript);
-  tft.drawLine(433, 116, 433, 118, whiteScript);
-  tft.drawLine(433, 126, 433, 128, whiteScript);
-  tft.drawLine(433, 136, 433, 138, whiteScript);
-  tft.drawLine(433, 146, 433, 148, whiteScript);
-  tft.drawLine(433, 156, 433, 158, whiteScript);
-  tft.drawLine(433, 166, 433, 168, whiteScript);
-  tft.drawLine(433, 176, 433, 178, whiteScript);
-  tft.drawLine(433, 186, 433, 188, whiteScript);
-  tft.drawPixel(433, 196, whiteScript);
-
-  tft.drawLine(32, 208, 32, 213, highValueColor);
-  tft.drawLine(33, 208, 33, 213, highValueColor);
-
-  tft.drawLine(132, 208, 132, 213, highValueColor);
-  tft.drawLine(133, 208, 133, 213, highValueColor);
-
-  tft.drawLine(232, 208, 232, 213, highValueColor);
-  tft.drawLine(233, 208, 233, 213, highValueColor);
-
-  tft.drawLine(332, 208, 332, 213, highValueColor);
-  tft.drawLine(333, 208, 333, 213, highValueColor);
-
-  tft.drawLine(432, 208, 432, 213, highValueColor);
-  tft.drawLine(433, 208, 433, 213, highValueColor);
-
-  tft.drawLine(80, 208, 80, 212, middleTimeGraph);
-  tft.drawLine(181, 208, 181, 212, middleTimeGraph);
-  tft.drawLine(282, 208, 282, 212, middleTimeGraph);
-  tft.drawLine(382, 208, 382, 212, middleTimeGraph);
-
-  tft.setTextDatum(ML_DATUM);
-  tft.setTextColor(whiteScript);
-  tft.setFreeFont(latoRegular24);
-
-  tft.drawString("0", 26, 228, GFXFF);
-  tft.drawString("6", 125, 228, GFXFF);
-  tft.drawString("12", 220, 228, GFXFF);
-  tft.drawString("18", 318, 228, GFXFF);
-  tft.drawString("24", 418, 228, GFXFF);
-
-  tft.setFreeFont(latoRegular14);
-
-  tft.drawString("3", 76, 225, GFXFF);
-  tft.drawString("9", 178, 225, GFXFF);
-  tft.drawString("15", 274, 225, GFXFF);
-  tft.drawString("21", 374, 225, GFXFF);
-} 
-
-void dosimeterMonth() { 
-  tft.drawPixel(33, 78, whiteScript);
-  tft.drawLine(33, 86, 33, 88, whiteScript);
-  tft.drawLine(33, 96, 33, 98, whiteScript);
-  tft.drawLine(33, 106, 33, 108, whiteScript);
-  tft.drawLine(33, 116, 33, 118, whiteScript);
-  tft.drawLine(33, 126, 33, 128, whiteScript);
-  tft.drawLine(33, 136, 33, 138, whiteScript);
-  tft.drawLine(33, 146, 33, 148, whiteScript);
-  tft.drawLine(33, 156, 33, 158, whiteScript);
-  tft.drawLine(33, 166, 33, 168, whiteScript);
-  tft.drawLine(33, 176, 33, 178, whiteScript);
-  tft.drawLine(33, 186, 33, 188, whiteScript);
-  tft.drawPixel(33, 196, whiteScript);
-
-  tft.drawPixel(66, 78, whiteScript);
-  tft.drawLine(66, 86, 66, 88, whiteScript);
-  tft.drawLine(66, 96, 66, 98, whiteScript);
-  tft.drawLine(66, 106, 66, 108, whiteScript);
-  tft.drawLine(66, 116, 66, 118, whiteScript);
-  tft.drawLine(66, 126, 66, 128, whiteScript);
-  tft.drawLine(66, 136, 66, 138, whiteScript);
-  tft.drawLine(66, 146, 66, 148, whiteScript);
-  tft.drawLine(66, 156, 66, 158, whiteScript);
-  tft.drawLine(66, 166, 66, 168, whiteScript);
-  tft.drawLine(66, 176, 66, 178, whiteScript);
-  tft.drawLine(66, 186, 66, 188, whiteScript);
-  tft.drawPixel(66, 196, whiteScript);
-
-  tft.drawPixel(99, 78, whiteScript);
-  tft.drawLine(99, 86, 99, 88, whiteScript);
-  tft.drawLine(99, 96, 99, 98, whiteScript);
-  tft.drawLine(99, 106, 99, 108, whiteScript);
-  tft.drawLine(99, 116, 99, 118, whiteScript);
-  tft.drawLine(99, 126, 99, 128, whiteScript);
-  tft.drawLine(99, 136, 99, 138, whiteScript);
-  tft.drawLine(99, 146, 99, 148, whiteScript);
-  tft.drawLine(99, 156, 99, 158, whiteScript);
-  tft.drawLine(99, 166, 99, 168, whiteScript);
-  tft.drawLine(99, 176, 99, 178, whiteScript);
-  tft.drawLine(99, 186, 99, 188, whiteScript);
-  tft.drawPixel(99, 196, whiteScript);
-
-  tft.drawPixel(133, 78, whiteScript);
-  tft.drawLine(133, 86, 133, 88, whiteScript);
-  tft.drawLine(133, 96, 133, 98, whiteScript);
-  tft.drawLine(133, 106, 133, 108, whiteScript);
-  tft.drawLine(133, 116, 133, 118, whiteScript);
-  tft.drawLine(133, 126, 133, 128, whiteScript);
-  tft.drawLine(133, 136, 133, 138, whiteScript);
-  tft.drawLine(133, 146, 133, 148, whiteScript);
-  tft.drawLine(133, 156, 133, 158, whiteScript);
-  tft.drawLine(133, 166, 133, 168, whiteScript);
-  tft.drawLine(133, 176, 133, 178, whiteScript);
-  tft.drawLine(133, 186, 133, 188, whiteScript);
-  tft.drawPixel(133, 196, whiteScript);
-
-  tft.drawPixel(166, 78, whiteScript);
-  tft.drawLine(166, 86, 166, 88, whiteScript);
-  tft.drawLine(166, 96, 166, 98, whiteScript);
-  tft.drawLine(166, 106, 166, 108, whiteScript);
-  tft.drawLine(166, 116, 166, 118, whiteScript);
-  tft.drawLine(166, 126, 166, 128, whiteScript);
-  tft.drawLine(166, 136, 166, 138, whiteScript);
-  tft.drawLine(166, 146, 166, 148, whiteScript);
-  tft.drawLine(166, 156, 166, 158, whiteScript);
-  tft.drawLine(166, 166, 166, 168, whiteScript);
-  tft.drawLine(166, 176, 166, 178, whiteScript);
-  tft.drawLine(166, 186, 166, 188, whiteScript);
-  tft.drawPixel(166, 196, whiteScript);
-
-  tft.drawPixel(199, 78, whiteScript);
-  tft.drawLine(199, 86, 199, 88, whiteScript);
-  tft.drawLine(199, 96, 199, 98, whiteScript);
-  tft.drawLine(199, 106, 199, 108, whiteScript);
-  tft.drawLine(199, 116, 199, 118, whiteScript);
-  tft.drawLine(199, 126, 199, 128, whiteScript);
-  tft.drawLine(199, 136, 199, 138, whiteScript);
-  tft.drawLine(199, 146, 199, 148, whiteScript);
-  tft.drawLine(199, 156, 199, 158, whiteScript);
-  tft.drawLine(199, 166, 199, 168, whiteScript);
-  tft.drawLine(199, 176, 199, 178, whiteScript);
-  tft.drawLine(199, 186, 199, 188, whiteScript);
-  tft.drawPixel(199, 196, whiteScript);
-
-  tft.drawPixel(233, 78, whiteScript);
-  tft.drawLine(233, 86, 233, 88, whiteScript);
-  tft.drawLine(233, 96, 233, 98, whiteScript);
-  tft.drawLine(233, 106, 233, 108, whiteScript);
-  tft.drawLine(233, 116, 233, 118, whiteScript);
-  tft.drawLine(233, 126, 233, 128, whiteScript);
-  tft.drawLine(233, 136, 233, 138, whiteScript);
-  tft.drawLine(233, 146, 233, 148, whiteScript);
-  tft.drawLine(233, 156, 233, 158, whiteScript);
-  tft.drawLine(233, 166, 233, 168, whiteScript);
-  tft.drawLine(233, 176, 233, 178, whiteScript);
-  tft.drawLine(233, 186, 233, 188, whiteScript);
-  tft.drawPixel(233, 196, whiteScript);
-
-  tft.drawPixel(266, 78, whiteScript);
-  tft.drawLine(266, 86, 266, 88, whiteScript);
-  tft.drawLine(266, 96, 266, 98, whiteScript);
-  tft.drawLine(266, 106, 266, 108, whiteScript);
-  tft.drawLine(266, 116, 266, 118, whiteScript);
-  tft.drawLine(266, 126, 266, 128, whiteScript);
-  tft.drawLine(266, 136, 266, 138, whiteScript);
-  tft.drawLine(266, 146, 266, 148, whiteScript);
-  tft.drawLine(266, 156, 266, 158, whiteScript);
-  tft.drawLine(266, 166, 266, 168, whiteScript);
-  tft.drawLine(266, 176, 266, 178, whiteScript);
-  tft.drawLine(266, 186, 266, 188, whiteScript);
-  tft.drawPixel(266, 196, whiteScript);
-
-  tft.drawPixel(299, 78, whiteScript);
-  tft.drawLine(299, 86, 299, 88, whiteScript);
-  tft.drawLine(299, 96, 299, 98, whiteScript);
-  tft.drawLine(299, 106, 299, 108, whiteScript);
-  tft.drawLine(299, 116, 299, 118, whiteScript);
-  tft.drawLine(299, 126, 299, 128, whiteScript);
-  tft.drawLine(299, 136, 299, 138, whiteScript);
-  tft.drawLine(299, 146, 299, 148, whiteScript);
-  tft.drawLine(299, 156, 299, 158, whiteScript);
-  tft.drawLine(299, 166, 299, 168, whiteScript);
-  tft.drawLine(299, 176, 299, 178, whiteScript);
-  tft.drawLine(299, 186, 299, 188, whiteScript);
-  tft.drawPixel(299, 196, whiteScript);
-
-  tft.drawPixel(333, 78, whiteScript);
-  tft.drawLine(333, 86, 333, 88, whiteScript);
-  tft.drawLine(333, 96, 333, 98, whiteScript);
-  tft.drawLine(333, 106, 333, 108, whiteScript);
-  tft.drawLine(333, 116, 333, 118, whiteScript);
-  tft.drawLine(333, 126, 333, 128, whiteScript);
-  tft.drawLine(333, 136, 333, 138, whiteScript);
-  tft.drawLine(333, 146, 333, 148, whiteScript);
-  tft.drawLine(333, 156, 333, 158, whiteScript);
-  tft.drawLine(333, 166, 333, 168, whiteScript);
-  tft.drawLine(333, 176, 333, 178, whiteScript);
-  tft.drawLine(333, 186, 333, 188, whiteScript);
-  tft.drawPixel(333, 196, whiteScript);
-
-  tft.drawPixel(367, 78, whiteScript);
-  tft.drawLine(367, 86, 367, 88, whiteScript);
-  tft.drawLine(367, 96, 367, 98, whiteScript);
-  tft.drawLine(367, 106, 367, 108, whiteScript);
-  tft.drawLine(367, 116, 367, 118, whiteScript);
-  tft.drawLine(367, 126, 367, 128, whiteScript);
-  tft.drawLine(367, 136, 367, 138, whiteScript);
-  tft.drawLine(367, 146, 367, 148, whiteScript);
-  tft.drawLine(367, 156, 367, 158, whiteScript);
-  tft.drawLine(367, 166, 367, 168, whiteScript);
-  tft.drawLine(367, 176, 367, 178, whiteScript);
-  tft.drawLine(367, 186, 367, 188, whiteScript);
-  tft.drawPixel(367, 196, whiteScript);
-
-  tft.drawPixel(399, 78, whiteScript);
-  tft.drawLine(399, 86, 399, 88, whiteScript);
-  tft.drawLine(399, 96, 399, 98, whiteScript);
-  tft.drawLine(399, 106, 399, 108, whiteScript);
-  tft.drawLine(399, 116, 399, 118, whiteScript);
-  tft.drawLine(399, 126, 399, 128, whiteScript);
-  tft.drawLine(399, 136, 399, 138, whiteScript);
-  tft.drawLine(399, 146, 399, 148, whiteScript);
-  tft.drawLine(399, 156, 399, 158, whiteScript);
-  tft.drawLine(399, 166, 399, 168, whiteScript);
-  tft.drawLine(399, 176, 399, 178, whiteScript);
-  tft.drawLine(399, 186, 399, 188, whiteScript);
-  tft.drawPixel(399, 196, whiteScript);
-
-  tft.drawPixel(433, 78, whiteScript);
-  tft.drawLine(433, 86, 433, 88, whiteScript);
-  tft.drawLine(433, 96, 433, 98, whiteScript);
-  tft.drawLine(433, 106, 433, 108, whiteScript);
-  tft.drawLine(433, 116, 433, 118, whiteScript);
-  tft.drawLine(433, 126, 433, 128, whiteScript);
-  tft.drawLine(433, 136, 433, 138, whiteScript);
-  tft.drawLine(433, 146, 433, 148, whiteScript);
-  tft.drawLine(433, 156, 433, 158, whiteScript);
-  tft.drawLine(433, 166, 433, 168, whiteScript);
-  tft.drawLine(433, 176, 433, 178, whiteScript);
-  tft.drawLine(433, 186, 433, 188, whiteScript);
-  tft.drawPixel(433, 196, whiteScript);
-
-  tft.drawLine(32, 208, 32, 213, highValueColor);
-  tft.drawLine(33, 208, 33, 213, highValueColor);
-
-  tft.drawLine(132, 208, 132, 213, highValueColor);
-  tft.drawLine(133, 208, 133, 213, highValueColor);
-
-  tft.drawLine(232, 208, 232, 213, highValueColor);
-  tft.drawLine(233, 208, 233, 213, highValueColor);
-
-  tft.drawLine(332, 208, 332, 213, highValueColor);
-  tft.drawLine(333, 208, 333, 213, highValueColor);
-
-  tft.drawLine(432, 208, 432, 213, highValueColor);
-  tft.drawLine(433, 208, 433, 213, highValueColor);
-
-  tft.drawLine(80, 208, 80, 212, middleTimeGraph);
-  tft.drawLine(181, 208, 181, 212, middleTimeGraph);
-  tft.drawLine(282, 208, 282, 212, middleTimeGraph);
-  tft.drawLine(382, 208, 382, 212, middleTimeGraph);
-
-  tft.setTextDatum(ML_DATUM);
-  tft.setTextColor(whiteScript);
-  tft.setFreeFont(latoRegular24);
-
-  tft.drawString("0", 26, 228, GFXFF);
-  tft.drawString("6", 125, 228, GFXFF);
-  tft.drawString("12", 220, 228, GFXFF);
-  tft.drawString("18", 318, 228, GFXFF);
-  tft.drawString("24", 418, 228, GFXFF);
-
-  tft.setFreeFont(latoRegular14);
-
-  tft.drawString("3", 76, 225, GFXFF);
-  tft.drawString("9", 178, 225, GFXFF);
-  tft.drawString("15", 274, 225, GFXFF);
-  tft.drawString("21", 374, 225, GFXFF);
-} 
+}
 
 void dosimeterYear() { 
   tft.drawPixel(33, 78, whiteScript);
@@ -5502,7 +5022,7 @@ void telaMenu2() {
   tft.setFreeFont(latoRegular24);
   tft.drawString("Sieverts", 132, 205, GFXFF);
 
-  dosimeter();
+  dosimeterAnalogic();
   dosimeterAlarm();
   home();
   wifiLevel();
@@ -5510,7 +5030,7 @@ void telaMenu2() {
   lockLevel();
 }
 
-byte dosimeterSelection = 1;
+byte dosimeterSelection = 2;
 
 void telaMenu3() {
   tft.fillScreen(blackScript);
@@ -5520,27 +5040,27 @@ void telaMenu3() {
   tft.setTextColor(geigerColor1);
   tft.setFreeFont(latoRegular14);
   tft.drawString("Now:", 245, 279, GFXFF);
-    tft.setTextColor(whiteScript);
-  tft.drawString("W", 37, 280, GFXFF);
-  tft.drawString("M", 88, 280, GFXFF);
-  tft.drawString("Y", 140, 280, GFXFF);
 
-  tft.drawRoundRect(25, 267, 40, 30, 5, icon_9);
+  tft.drawRoundRect(25, 267, 40, 30, 5, highValueColor);
   tft.drawRoundRect(75, 267, 40, 30, 5, icon_9);
   tft.drawRoundRect(125, 267, 40, 30, 5, icon_9);
+  tft.drawRoundRect(175, 267, 40, 30, 5, icon_9);
+
+  tft.setTextDatum(ML_DATUM);
+  tft.setTextColor(geigerColor1);
+  tft.setFreeFont(latoRegular14);
+  tft.setTextColor(whiteScript);
+  tft.drawString("W", 88, 280, GFXFF);
+  tft.drawString("M", 138, 280, GFXFF);
+  tft.drawString("Y", 190, 280, GFXFF);
 
   switch (dosimeterSelection) {
-    case 1:
-      dosimeterWeek();
-    break;
-    case 2:
-      dosimeterMonth();
-    break;
-    case 3:
-      dosimeterYear();
-    break;
-    default:
-    dosimeterDay();    
+    case 1: dosimeterDigital(); dosimeterMin(); tft.drawString("m", 40, 280, GFXFF); break;
+    case 2: dosimeterDigital(); dosimeterHour(); tft.drawString("H", 40, 280, GFXFF); break;
+    case 3: dosimeterDigital(); dosimeterDay(); tft.drawString("D", 40, 280, GFXFF); break;
+    case 4: dosimeterDigital(); dosimeterWeek(); tft.drawString("W", 88, 280, GFXFF); break;
+    case 5: dosimeterDigital(); dosimeterMonth(); tft.drawString("M", 138, 280, GFXFF); break;
+    case 6: dosimeterDigital(); dosimeterYear(); tft.drawString("Y", 190, 280, GFXFF); break;
   }
 
   home();
