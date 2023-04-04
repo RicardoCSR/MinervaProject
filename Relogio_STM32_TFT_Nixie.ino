@@ -1669,7 +1669,199 @@ void dosimeterHour() {
 }
 
 void dosimeterDay() {
+  if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) {
+    monthLengh = 31;
+  } else {
+    monthLengh = 30;
+  }
+  if (month == 2) {
+    if (year%400 == 0) {
+      monthLengh = 29;
+    } else if((year%4==0) && (year%100!=0)) {
+      monthLengh = 29;
+    }else {
+      monthLengh = 28;
+    }
+  }
 
+  switch (monthLengh) {
+      case 28: dosimeterday28(); break;
+      case 29: dosimeterday29(); break;
+      case 30: dosimeterday30(); break;
+      case 31: dosimeterday31(); break;
+  }
+
+/*
+  tft.fillRoundRect(32, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(46, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(60, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(74, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(88, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(102, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(116, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(130, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(144, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(158, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(172, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(186, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(200, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(214, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(228, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(242, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(256, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(270, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(284, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(298, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(312, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(326, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(340, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(354, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(368, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(382, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(396, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(410, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(424, 127, 10, 71, 2, icon_11);
+*/
+  tft.fillRoundRect(32, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(47, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(62, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(77, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(92, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(107, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(122, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(137, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(152, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(167, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(182, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(197, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(212, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(227, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(242, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(257, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(272, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(287, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(302, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(317, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(332, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(347, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(362, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(377, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(392, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(407, 127, 10, 71, 2, icon_11);
+  tft.fillRoundRect(422, 127, 10, 71, 2, icon_11);
+
+
+}
+
+void dosimeterday28() {
+  tft.drawLine(32, 208, 32, 213, highValueColor);
+  tft.drawLine(33, 208, 33, 213, highValueColor);
+
+  tft.drawLine(432, 208, 432, 213, highValueColor);
+  tft.drawLine(433, 208, 433, 213, highValueColor);
+
+  tft.drawLine(162, 208, 162, 212, middleTimeGraph);
+  tft.drawLine(303, 208, 303, 212, middleTimeGraph);
+
+  tft.setTextDatum(ML_DATUM);
+  tft.setTextColor(whiteScript);
+  tft.setFreeFont(latoRegular24);
+
+  tft.drawString("0", 26, 228, GFXFF);
+  tft.drawString("28", 418, 228, GFXFF);
+
+  tft.setFreeFont(latoRegular14);
+
+  tft.drawString("10", 154, 225, GFXFF);
+  tft.drawString("20", 295, 225, GFXFF);
+
+  tft.setFreeFont(latoRegular10);
+  tft.drawString("100", 445, 185, GFXFF);
+  tft.drawString("500", 445, 159, GFXFF);
+  tft.drawString("1K", 445, 128, GFXFF);
+  tft.drawString("2K", 445, 82, GFXFF);
+
+}
+
+void dosimeterday29() {
+  tft.drawLine(32, 208, 32, 213, highValueColor);
+  tft.drawLine(33, 208, 33, 213, highValueColor);
+
+  tft.drawLine(432, 208, 432, 213, highValueColor);
+  tft.drawLine(433, 208, 433, 213, highValueColor);
+
+  tft.drawLine(162, 208, 162, 212, middleTimeGraph);
+  tft.drawLine(303, 208, 303, 212, middleTimeGraph);
+
+  tft.setTextDatum(ML_DATUM);
+  tft.setTextColor(whiteScript);
+  tft.setFreeFont(latoRegular24);
+  tft.drawString("0", 26, 228, GFXFF);
+  tft.drawString("29", 418, 228, GFXFF);
+
+  tft.setFreeFont(latoRegular14);
+  tft.drawString("10", 154, 225, GFXFF);
+  tft.drawString("20", 295, 225, GFXFF);
+
+  tft.setFreeFont(latoRegular10);
+  tft.drawString("100", 445, 185, GFXFF);
+  tft.drawString("500", 445, 159, GFXFF);
+  tft.drawString("1K", 445, 128, GFXFF);
+  tft.drawString("2K", 445, 82, GFXFF);
+}
+
+void dosimeterday30() {
+  tft.drawLine(32, 208, 32, 213, highValueColor);
+  tft.drawLine(33, 208, 33, 213, highValueColor);
+
+  tft.drawLine(432, 208, 432, 213, highValueColor);
+  tft.drawLine(433, 208, 433, 213, highValueColor);
+
+  tft.drawLine(162, 208, 162, 212, middleTimeGraph);
+  tft.drawLine(303, 208, 303, 212, middleTimeGraph);
+
+  tft.setTextDatum(ML_DATUM);
+  tft.setTextColor(whiteScript);
+  tft.setFreeFont(latoRegular24);
+  tft.drawString("0", 26, 228, GFXFF);
+  tft.drawString("30", 418, 228, GFXFF);
+
+  tft.setFreeFont(latoRegular14);
+  tft.drawString("10", 154, 225, GFXFF);
+  tft.drawString("20", 295, 225, GFXFF);
+
+  tft.setFreeFont(latoRegular10);
+  tft.drawString("100", 445, 185, GFXFF);
+  tft.drawString("500", 445, 159, GFXFF);
+  tft.drawString("1K", 445, 128, GFXFF);
+  tft.drawString("2K", 445, 82, GFXFF);
+}
+
+void dosimeterday31() {
+  tft.drawLine(32, 208, 32, 213, highValueColor);
+  tft.drawLine(33, 208, 33, 213, highValueColor);
+
+  tft.drawLine(432, 208, 432, 213, highValueColor);
+  tft.drawLine(433, 208, 433, 213, highValueColor);
+
+  tft.drawLine(162, 208, 162, 212, middleTimeGraph);
+  tft.drawLine(303, 208, 303, 212, middleTimeGraph);
+
+  tft.setTextDatum(ML_DATUM);
+  tft.setTextColor(whiteScript);
+  tft.setFreeFont(latoRegular24);
+  tft.drawString("0", 26, 228, GFXFF);
+  tft.drawString("31", 418, 228, GFXFF);
+
+  tft.setFreeFont(latoRegular14);
+  tft.drawString("10", 154, 225, GFXFF);
+  tft.drawString("20", 295, 225, GFXFF);
+
+  tft.setFreeFont(latoRegular10);
+  tft.drawString("100", 445, 185, GFXFF);
+  tft.drawString("500", 445, 159, GFXFF);
+  tft.drawString("1K", 445, 128, GFXFF);
+  tft.drawString("2K", 445, 82, GFXFF);
 }
 
 void dosimeterWeek(){
@@ -5030,7 +5222,7 @@ void telaMenu2() {
   lockLevel();
 }
 
-byte dosimeterSelection = 2;
+byte dosimeterSelection = 3;
 
 void telaMenu3() {
   tft.fillScreen(blackScript);
@@ -5057,7 +5249,7 @@ void telaMenu3() {
   switch (dosimeterSelection) {
     case 1: dosimeterDigital(); dosimeterMin(); tft.drawString("m", 40, 280, GFXFF); break;
     case 2: dosimeterDigital(); dosimeterHour(); tft.drawString("H", 40, 280, GFXFF); break;
-    case 3: dosimeterDigital(); dosimeterDay(); tft.drawString("D", 40, 280, GFXFF); break;
+    case 3: dosimeterDay(); tft.drawString("D", 40, 280, GFXFF); break;
     case 4: dosimeterDigital(); dosimeterWeek(); tft.drawString("W", 88, 280, GFXFF); break;
     case 5: dosimeterDigital(); dosimeterMonth(); tft.drawString("M", 138, 280, GFXFF); break;
     case 6: dosimeterDigital(); dosimeterYear(); tft.drawString("Y", 190, 280, GFXFF); break;
