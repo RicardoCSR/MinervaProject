@@ -98,7 +98,8 @@ byte fuso = 1;
 //fuso = 1 24 Horas
 
 // GERACAO DE GRAFICOS
-int minsCalcGeiger = 0;         // Armazena Horario marcação gráfico Geiger
+int secsCalcGeiger = 0;         // Armazena segundos marcação gráfico Geiger
+int minsCalcGeiger = 0;         // Armazena minutos marcação gráfico Geiger
 int minsCalcTemp = 0;           // Armazena Horario marcação gráfico Temperatura
 int minsCalcHumi = 0;           // Armazena Horario marcação gráfico Umidade
 int minsCalcPres = 0;           // Armazena Horario marcação gráfico Pressão Atmosferica
@@ -170,6 +171,13 @@ byte wifiRead = 0;
 // wifiRead = 1 WiFi em media potência
 // wifiRead = 2 WiFi em baixa potência
 // wifiRead = 3 WiFi sem Sinal
+
+byte dosimeterSelection = 1;
+// dosimeterSelection = 1 
+// dosimeterSelection = 2
+// dosimeterSelection = 3 
+// dosimeterSelection = 4 
+// dosimeterSelection = 5 
 
 byte telaMenu = 3;
 // telaMenu = 0 Menu Principal
@@ -454,7 +462,7 @@ void loop(void) {
   // ------------------------------- HORARIO VIA MILLIS() OPERACIONAL -----------------------
     time = millis();
 
-    if(time - UtlTime >= 1) {
+    if(time - UtlTime >= 250) {
       UtlTime = time;
       secs ++;
     }
@@ -540,6 +548,20 @@ void loop(void) {
     } 
 
   // ------------------------ ATUALIZA RELOGIO SERIAL OPERACIONAL -----------
+    if (secs != compareSecs) {
+      compareSecs = secs;
+      Serial.print(day);
+      Serial.print("/");
+      Serial.print(month);
+      Serial.print("/");
+      Serial.print(year); 
+      Serial.print("     ");
+      Serial.print(hours);
+      Serial.print(":");
+      Serial.print(mins);
+      Serial.print(":");
+      Serial.println(secs);  
+    }
 
   // ------------------------ ATUALIZACAO VISUAL DATA E HORA OPERACIONAL --------
     if (i == 1) {
@@ -663,61 +685,130 @@ void loop(void) {
     if (telaMenu == 3) {
       //33 - 433 X
       //78 - 196 Y
-      if (minsCalcGeiger != mins) {
-        minsCalcGeiger = mins;
-        switch(hours) {
-          case 0: bankGeiger = 32; break; 
-          case 1: bankGeiger = 48; break; 
-          case 2: bankGeiger = 64; break; 
-          case 3: bankGeiger = 82; break;
-          case 4: bankGeiger = 98; break;
-          case 5: bankGeiger = 114; break;
-          case 6: bankGeiger = 132; break;
-          case 7: bankGeiger = 148; break;
-          case 8: bankGeiger = 164; break;
-          case 9: bankGeiger = 182; break;
-          case 10: bankGeiger = 198; break;
-          case 11: bankGeiger = 214; break;
-          case 12: bankGeiger = 232; break;
-          case 13: bankGeiger = 248; break;
-          case 14: bankGeiger = 264; break;
-          case 15: bankGeiger = 282; break;
-          case 16: bankGeiger = 298; break;
-          case 17: bankGeiger = 314; break;
-          case 18: bankGeiger = 332; break;
-          case 19: bankGeiger = 348; break;
-          case 20: bankGeiger = 364; break;
-          case 21: bankGeiger = 382; break;
-          case 22: bankGeiger = 398; break;
-          case 23: bankGeiger = 414; break;
+      if (dosimeterSelection == 1) {
+        if (secsCalcGeiger != secs) {
+          secsCalcGeiger = secs;
+          switch(secs) {
+            case 0: bankGeiger = 32; break;
+            case 1: bankGeiger = 39; break;
+            case 2: bankGeiger = 45; break;
+            case 3: bankGeiger = 52; break;
+            case 4: bankGeiger = 59; break;
+            case 5: bankGeiger = 65; break;
+            case 6: bankGeiger = 72; break;
+            case 7: bankGeiger = 77; break;
+            case 8: bankGeiger = 85; break;
+            case 9: bankGeiger = 92; break;
+            case 10: bankGeiger = 99; break;
+            case 11: bankGeiger = 105; break;
+            case 12: bankGeiger = 112; break;
+            case 13: bankGeiger = 119; break;
+            case 14: bankGeiger = 125; break;
+            case 15: bankGeiger = 132; break;
+            case 16: bankGeiger = 139; break;
+            case 17: bankGeiger = 145; break;
+            case 18: bankGeiger = 152; break;
+            case 19: bankGeiger = 159; break;
+            case 20: bankGeiger = 165; break;
+            case 21: bankGeiger = 172; break;
+            case 22: bankGeiger = 179; break;
+            case 23: bankGeiger = 185; break;
+            case 24: bankGeiger = 192; break;
+            case 25: bankGeiger = 199; break;
+            case 26: bankGeiger = 205; break;
+            case 27: bankGeiger = 212; break;
+            case 28: bankGeiger = 219; break;
+            case 29: bankGeiger = 225; break;
+            case 30: bankGeiger = 232; break;
+            case 31: bankGeiger = 239; break;
+            case 32: bankGeiger = 245; break;
+            case 33: bankGeiger = 252; break;
+            case 34: bankGeiger = 259; break;
+            case 35: bankGeiger = 265; break;
+            case 36: bankGeiger = 272; break;
+            case 37: bankGeiger = 279; break;
+            case 38: bankGeiger = 285; break;
+            case 39: bankGeiger = 292; break;
+            case 40: bankGeiger = 299; break;
+            case 41: bankGeiger = 305; break;
+            case 42: bankGeiger = 312; break;
+            case 43: bankGeiger = 319; break;
+            case 44: bankGeiger = 325; break;
+            case 45: bankGeiger = 332; break;
+            case 46: bankGeiger = 339; break;
+            case 47: bankGeiger = 345; break;
+            case 48: bankGeiger = 352; break;
+            case 49: bankGeiger = 359; break;
+            case 50: bankGeiger = 365; break;
+            case 51: bankGeiger = 372; break;
+            case 52: bankGeiger = 379; break;
+            case 53: bankGeiger = 385; break;
+            case 54: bankGeiger = 392; break;
+            case 55: bankGeiger = 399; break;
+            case 56: bankGeiger = 405; break;
+            case 57: bankGeiger = 412; break;
+            case 58: bankGeiger = 418; break;
+            case 59: bankGeiger = 425; break;
+          }
         }
-        switch(mins) {
-          case 3: bankGeiger = bankGeiger + 0; break;
-          case 6: bankGeiger = bankGeiger + 1; break;
-          case 10: bankGeiger = bankGeiger + 2; break;
-          case 13: bankGeiger = bankGeiger + 3; break;
-          case 16: bankGeiger = bankGeiger + 4; break;
-          case 19: bankGeiger = bankGeiger + 5; break;
-          case 22: bankGeiger = bankGeiger + 6; break;
-          case 25: bankGeiger = bankGeiger + 7; break;
-          case 28: bankGeiger = bankGeiger + 8; break;
-          case 31: bankGeiger = bankGeiger + 9; break;
-          case 36: bankGeiger = bankGeiger + 10; break;
-          case 37: bankGeiger = bankGeiger + 11; break;
-          case 40: bankGeiger = bankGeiger + 12; break;
-          case 43: bankGeiger = bankGeiger + 13; break;
-          case 46: bankGeiger = bankGeiger + 14; break;
-          case 49: bankGeiger = bankGeiger + 15; break;
-          case 53: bankGeiger = bankGeiger + 16; break;
-          case 56: bankGeiger = bankGeiger + 17; break;
-        }
-        if (bankGeiger != writerGeiger) {
-          writerGeiger = bankGeiger;
-          functGeiger = map(geigerCalc[writerGeiger], 0, 200, 196, 78); 
-        }
-        rgbColorGeiger();
-        tft.drawPixel(bankGeiger, functGeiger, geigerColor);
       }
+      if (dosimeterSelection > 1) {
+        if (minsCalcGeiger != mins) {
+          minsCalcGeiger = mins;
+          switch(hours) {
+            case 0: bankGeiger = 32; break; 
+            case 1: bankGeiger = 48; break; 
+            case 2: bankGeiger = 64; break; 
+            case 3: bankGeiger = 82; break;
+            case 4: bankGeiger = 98; break;
+            case 5: bankGeiger = 114; break;
+            case 6: bankGeiger = 132; break;
+            case 7: bankGeiger = 148; break;
+            case 8: bankGeiger = 164; break;
+            case 9: bankGeiger = 182; break;
+            case 10: bankGeiger = 198; break;
+            case 11: bankGeiger = 214; break;
+            case 12: bankGeiger = 232; break;
+            case 13: bankGeiger = 248; break;
+            case 14: bankGeiger = 264; break;
+            case 15: bankGeiger = 282; break;
+            case 16: bankGeiger = 298; break;
+            case 17: bankGeiger = 314; break;
+            case 18: bankGeiger = 332; break;
+            case 19: bankGeiger = 348; break;
+            case 20: bankGeiger = 364; break;
+            case 21: bankGeiger = 382; break;
+            case 22: bankGeiger = 398; break;
+            case 23: bankGeiger = 414; break;
+          }
+          switch(mins) {
+            case 3: bankGeiger = bankGeiger + 0; break;
+            case 6: bankGeiger = bankGeiger + 1; break;
+            case 10: bankGeiger = bankGeiger + 2; break;
+            case 13: bankGeiger = bankGeiger + 3; break;
+            case 16: bankGeiger = bankGeiger + 4; break;
+            case 19: bankGeiger = bankGeiger + 5; break;
+            case 22: bankGeiger = bankGeiger + 6; break;
+            case 25: bankGeiger = bankGeiger + 7; break;
+            case 28: bankGeiger = bankGeiger + 8; break;
+            case 31: bankGeiger = bankGeiger + 9; break;
+            case 36: bankGeiger = bankGeiger + 10; break;
+            case 37: bankGeiger = bankGeiger + 11; break;
+            case 40: bankGeiger = bankGeiger + 12; break;
+            case 43: bankGeiger = bankGeiger + 13; break;
+            case 46: bankGeiger = bankGeiger + 14; break;
+            case 49: bankGeiger = bankGeiger + 15; break;
+            case 53: bankGeiger = bankGeiger + 16; break;
+            case 56: bankGeiger = bankGeiger + 17; break;
+          }
+        }
+      }
+      if (bankGeiger != writerGeiger) {
+        writerGeiger = bankGeiger;
+        functGeiger = map(100, 0, 200, 196, 78); 
+      }
+      rgbColorGeiger();
+      tft.drawPixel(bankGeiger, functGeiger, geigerColor);
     }
 
   // ------------------------ ATUALIZACAO CALENDARIO OPERACIONAL -----------
@@ -946,7 +1037,7 @@ void batteryStyle2() {
 }
 void batteryStyle3() {
   tft.drawRoundRect(362, 18, 47, 21, 3, whiteScript);
-  tft.drawRoundRect(363, 19, 45, 20, 2, whiteScript);
+  tft.drawRoundRect(363, 20, 45, 20, 2, whiteScript);
   tft.drawSmoothArc(408, 28, 1, 4, 180, 359, whiteScript, whiteScript, squareEnd);
 
   tft.fillRectHGradient(366, 21, 39, 16, pressureColor1, pressureColor2);
@@ -1629,7 +1720,7 @@ void dosimeterMin() {
   tft.drawString("55", 390, 225, GFXFF);
 } 
 
-void dosimeterHour() {
+void dosimeterDay() {
   tft.drawLine(32, 208, 32, 213, highValueColor);
   tft.drawLine(33, 208, 33, 213, highValueColor);
 
@@ -1668,14 +1759,7 @@ void dosimeterHour() {
   tft.drawString("21", 374, 225, GFXFF);
 }
 
-void dosimeterDay() {
-
-
-}
-
-
 void dosimeterWeek() {
-
   tft.fillRoundRect(32, 104, 41, 94, 5, icon_11);
   tft.fillRoundRect(92, 104, 41, 94, 5, icon_11);
   tft.fillRoundRect(152, 104, 41, 94, 5, icon_11);
@@ -5122,8 +5206,6 @@ void telaMenu2() {
   lockLevel();
 }
 
-byte dosimeterSelection = 5;
-
 void telaMenu3() {
   tft.fillScreen(blackScript);
   i = 1;
@@ -5148,11 +5230,10 @@ void telaMenu3() {
 
   switch (dosimeterSelection) {
     case 1: dosimeterDigital(); dosimeterMin(); tft.drawString("m", 40, 280, GFXFF); break;
-    case 2: dosimeterDigital(); dosimeterHour(); tft.drawString("H", 40, 280, GFXFF); break;
-    case 3: dosimeterDay(); tft.drawString("D", 40, 280, GFXFF); break;
-    case 4: dosimeterWeek(); tft.drawString("W", 88, 280, GFXFF); break;
-    case 5: dosimeterMonth(); tft.drawString("M", 138, 280, GFXFF); break;
-    case 6: dosimeterYear(); tft.drawString("Y", 190, 280, GFXFF); break;
+    case 2: dosimeterDay(); tft.drawString("D", 40, 280, GFXFF); break;
+    case 3: dosimeterWeek(); tft.drawString("W", 88, 280, GFXFF); break;
+    case 4: dosimeterMonth(); tft.drawString("M", 138, 280, GFXFF); break;
+    case 5: dosimeterYear(); tft.drawString("Y", 190, 280, GFXFF); break;
   }
 
   home();
