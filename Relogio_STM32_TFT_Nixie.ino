@@ -114,15 +114,18 @@ int bankTemp = 0;               // Armazena dado da posição do Gráfico em uso
 int bankHumi = 0;               // Armazena dado da posição do Gráfico em uso
 int bankPres = 0;               // Armazena dado da posição do Gráfico em uso
 
+byte functGeiger = 0;
+
+
 int writerGeiger = 0;           // Armazena dado da posição do Gráfico em não uso
 int writerTemp = 0;             // Armazena dado da posição do Gráfico em não uso
 int writerHumi = 0;             // Armazena dado da posição do Gráfico em não uso
 int writerPres = 0;             // Armazena dado da posição do Gráfico em não uso
 
-int geigerCalc [400] = {0};     // Armazena dados de Geiger
-int tempCalc [400] = {0};       // Armazena dados de Temperatura 
-int humiCalc [400] = {0};       // Armazena dados de Umidade 
-int presCalc [400] = {0};       // Armazena dados de Pressão Atmosferica
+int arrayGeiger [400] = {0};     // Armazena dados de Geiger
+int arrayTemp [400] = {0};       // Armazena dados de Temperatura 
+int arrayHumi [400] = {0};       // Armazena dados de Umidade 
+int arrayPres [400] = {0};       // Armazena dados de Pressão Atmosferica
 
 byte encoderPos = 0;
 byte lastPos;
@@ -141,8 +144,6 @@ byte displayMode = 0;
 
 byte displayTFT = 0;     
 // displayTFT = 0 Sistema aguardando comando
-
-byte functGeiger = 0;
 
 // BANCO DE DADOS DE COMPARADORES
 byte logoStarted = 0;
@@ -425,7 +426,11 @@ unsigned long time;
 int dosimetervalue = 0;
 byte geigerCurve = 0;
 byte updateGeigerCurve = 0;
-int geigerValue [24] = {0};   
+byte arrayDosi [480] = {0};  
+
+
+
+
 void loop(void) {
 
   // ------------------------------- TOUCHSCREEN LEITURA -------------
@@ -752,7 +757,7 @@ void loop(void) {
           }
         }
       }
-      if (dosimeterSelection > 1) {
+      if (dosimeterSelection == 2) {
         if (minsCalcGeiger != mins) {
           minsCalcGeiger = mins;
           switch(hours) {
@@ -803,12 +808,16 @@ void loop(void) {
           }
         }
       }
+      byte undoWriterGeiger;
       if (bankGeiger != writerGeiger) {
+        functGeiger = map(random(0, 200), 0, 200, 196, 78); 
+        undoWriterGeiger = writerGeiger - 1;
         writerGeiger = bankGeiger;
-        functGeiger = map(100, 0, 200, 196, 78); 
       }
       rgbColorGeiger();
-      tft.drawPixel(bankGeiger, functGeiger, geigerColor);
+      arrayDosi[writerGeiger] = functGeiger;
+      //tft.drawPixel(bankGeiger, arrayDosi[writerGeiger], geigerColor);
+      tft.drawLine(bankGeiger, arrayDosi[writerGeiger], bankGeiger - 6, arrayDosi[undoWriterGeiger], geigerColor);
     }
 
   // ------------------------ ATUALIZACAO CALENDARIO OPERACIONAL -----------
