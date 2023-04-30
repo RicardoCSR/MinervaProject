@@ -344,9 +344,6 @@ uint16_t icon_white = 0xD6BA;           //0xD9D9D9
 #define latoRegular12 &Lato_Regular_12
 #define latoRegular10 &Lato_Regular_10
 
-byte i = 0;  // ATUALIZACAO VISUAL DATA E HORA 
-byte language = 1; // TELA DE ABERTURA
-
 #define GFXFF 1
   // TL_DATUM = Top left (default)
   // TC_DATUM = Top centre
@@ -401,51 +398,123 @@ byte geigerCurve = 0;
 byte updateGeigerCurve = 0;
 byte arrayDosi [480] = {0};  
 
+byte i = 0;  // ATUALIZACAO VISUAL DATA E HORA 
+byte language = 1; // TELA DE ABERTURA
+
   uint16_t x = 0, y = 0; // To store the touch coordinates
 
 
-byte switchPressedRecalibrate = 0;
+
+byte switchPressedRecalibrate = 0; 
+// switchPressedRecalibrate = 0 Aguardando comando
+// switchPressedRecalibrate = 1 Tela de Calibracao
+
 byte switchPressedTest = 0;
+// switchPressedTest = 0 Aguardando comando
+// switchPressedTest = 1 Tela de Teste do Touch
+
 byte switchPressedExit = 0;
+// switchPressedExit = 0 Aguardando comando
+// switchPressedExit = 1 Saida da calibracao para welcome()
+
+byte touchScreenMode = 0;
+// switchPressedExit = 0 Aguardando comando
+// switchPressedExit = 1 Habilita o test_calibration()
+
+byte switchLanguage = 0;
+// switchLanguage = 0 Aguardando comando
+// switchLanguage = 1 Altera valor de language
+
+byte switchStartWelcome = 0;
+// swtichStartWelcome = 0 Aguardando comando
+// swtichStartWelcome = 1 Saida de welcome para knowname()
+
+byte languageScreen = 0;
+// languageScreen = 0 Aguardando comando
+// languageScreen = 1 Habilita alteracao da byte language
 
 void loop(void) {
-  // ------------------------------- TOUCHSCREEN OPERACIONAL ----------------------
+  // ------------------------------- touchScreen OPERACIONAL ----------------------
 
     bool pressed = tft.getTouch(&x, &y);
 
-    if (timeSystem - timePressed >= 200) {
-      timePressed = timeSystem;
-      while (pressed) {
-        touchPressedRectRound(70, 250, 100, 30, 5, temperatureColor2, 1);
-        tft.drawString("Recalibrar", 120, 264, GFXFF);
-        //touch_calibrate();
-            
-        if (switchPressedTest == 0) {
-          touchPressedRectRound(190, 250, 100, 30, 5, icon_9, 1);
-          tft.drawString("Testar", 240, 264, GFXFF);
-          switchPressedTest = 1;
-        } else {
-          tft.fillRoundRect(190, 250, 100, 30, 5, blackScript);
-          tft.drawRoundRect(190, 250, 100, 30, 5, icon_9);
-          tft.drawString("Testar", 240, 264, GFXFF);
-          switchPressedTest = 0;
+    if (pressed) {
+      if (timeSystem - timePressed >= 50) {
+        Serial.print("x, y, z = ");
+        Serial.print(x);
+        Serial.print(",");
+        Serial.print(y);
+        Serial.print(",");
+        Serial.printf("%i \n", tft.getTouchRawZ());
+        timePressed = timeSystem;
+
+  // ------------------------------ TOUCHSCREEN DISPLAY TFT 16 E 17 ---------------------
+
+        if (displayTFT == 16 || displayTFT == 17) {
+          touchRectRound(70, 250, 100, 30, 5, nixieColor, blackScript, switchPressedRecalibrate);
+          tft.drawString("Recalibrar", 120, 264, GFXFF);
+          if (switchPressedRecalibrate == 1) {
+            switchPressedRecalibrate = 0;
+            touchScreenMode = 0;
+            touch_calibrate();
+          }
+
+          touchRectRound(190, 250, 100, 30, 5, autumnMenu, blackScript, switchPressedTest);
+          Serial.print("switchPressedTest: ");
+          Serial.println(switchPressedTest);
+          if (touchScreenMode == 0) {
+            tft.drawString("Testar", 240, 264, GFXFF);
+          }
+          if (switchPressedTest == 1) {
+            test_calibration();
+          } 
+
+          touchRectRound(310, 250, 100, 30, 5, winterMenu, blackScript, switchPressedExit);
+          tft.drawString("Sair", 360, 264, GFXFF);
+          if (switchPressedExit == 1) {
+            switchPressedExit = 0;
+            touchScreenMode = 0;
+            displayTFT = 18;
+            tft.fillScreen(blackScript);
+            welcome();
+          }
+        }
+      }
+
+  // ------------------------------ TOUCHSCREEN DISPLAY TFT 18 ---------------------
+        if (displayTFT == 18) {
+          touchRect(390, 280, 90, 40, blackScript, blackScript, languageScreen);
+          if (languageScreen == 1) {
+            tft.fillScreen(blackScript);
+            if (language == 1) {
+              language = 0;
+              languageScreen = 0;
+              welcome();
+            } else {
+              language = 1;
+              languageScreen = 0;
+              welcome();
+            }
+          }
+          touchRect(390, 280, 90, 40, blackScript, blackScript, switchStartWelcome);
+          if (switchStartWelcome == 1) {
+            switchStartWelcome = 0;
+            displayTFT = 19;
+            tft.fillScreen(blackScript);
+            knowname();
+          }
         }
 
-        if (switchPressedExit == 0) {
-          touchPressedRectRound(310, 250, 100, 30, 5, humidityColor1, 1);
-          tft.drawString("Sair", 360, 264, GFXFF);
-          switchPressedExit = 1;
-        } else {
-          tft.fillRoundRect(310, 250, 100, 30, 5, blackScript);
-          tft.drawRoundRect(310, 250, 100, 30, 5, humidityColor1);
-          tft.drawString("Sair", 360, 264, GFXFF);
-          switchPressedExit = 0;
-        }
-        break;
-      }        
+
+
+
+
+
+
+
     }
 
-  // ------------------------------- HORARIO VIA MILLIS() OPERACIONAL -----------------------
+  // ------------------------ HORARIO VIA MILLIS() OPERACIONAL -----------------------
     timeSystem = millis();
 
     if(timeSystem - UtlTime >= 1000) {
@@ -499,7 +568,7 @@ void loop(void) {
       }
     }
 
-  // ---------------------- COMANDO DE LOGO ----------
+  // ------------------------ COMANDO DE LOGO ----------
 
     if (logoStarted == 0) {
       logoStarted = 1;
@@ -514,7 +583,7 @@ void loop(void) {
       }
     } 
 
-  // ---------------------- PERFIL SETUP -----------
+  // ------------------------ PERFIL SETUP -----------
     switch (backgroundSetup) {
       case 1:
         // do something
@@ -814,29 +883,35 @@ void loop(void) {
 
 }
 
-void touchPressedRectRound(int startX, int startY, int sizeX, int sizeY, int round, int color, int pressed) {
-  tft.getTouch(&x, &y);
-  int button_x = startX;
-  int button_y = startY;
-  int button_w = sizeX;
-  int button_h = sizeY;
 
-  Serial.print("x,y = ");
-  Serial.print(x);
-  Serial.print(",");
-  Serial.println(y);
-  switch (pressed) {
-    case 1:
-      if ((x > button_x) && (x < (button_x + button_w))) {
-        if ((y > button_y) && (y <= (button_y + button_h))) {
-          tft.fillRoundRect(startX, startY, sizeX, sizeY, round, color);
-        }    
-      }
-    break;
-    default:
-      tft.fillRoundRect(startX, startY, sizeX, sizeY, round, blackScript);
+
+void touchRectRound(int startX, int startY, int sizeX, int sizeY, int round, int color, int erase, byte& status) {
+  bool pressed = tft.getTouch(&x, &y);
+
+  if (x > startX && x < startX + sizeX && y > startY && y < startY + sizeY) {
+    if (status == 0) {
       tft.fillRoundRect(startX, startY, sizeX, sizeY, round, color);
-    break;
+      status = 1;
+    } else {
+      tft.fillRoundRect(startX, startY, sizeX, sizeY, round, erase);
+      tft.drawRoundRect(startX, startY, sizeX, sizeY, round, color);
+      status = 0;
+    }
+  }
+}
+
+void touchRect(int startX, int startY, int sizeX, int sizeY, int color, int erase, byte& status) {
+  bool pressed = tft.getTouch(&x, &y);
+
+  if (x > startX && x < startX + sizeX && y > startY && y < startY + sizeY) {
+    if (status == 0) {
+      tft.fillRect(startX, startY, sizeX, sizeY, color);
+      status = 1;
+    } else {
+      tft.fillRect(startX, startY, sizeX, sizeY, erase);
+      tft.drawRect(startX, startY, sizeX, sizeY, color);
+      status = 0;
+    }
   }
 }
 
@@ -851,7 +926,8 @@ void touch_calibrate() {
   tft.setTextDatum(MC_DATUM);
   tft.setTextColor(whiteScript);
   tft.setFreeFont(latoRegular24);
-  tft.drawString("Toque nas setas indicados", 240, 144, GFXFF);
+  tft.drawString("Toque nas setas indicados", 240, 124, GFXFF);
+  tft.drawString("Touch in the indicated corners", 240, 154, GFXFF);
 
   tft.println();
 
@@ -878,7 +954,8 @@ void touch_calibrate() {
   tft.setTextDatum(MC_DATUM);
   tft.setTextColor(whiteScript);
   tft.setFreeFont(latoRegular24);
-  tft.drawString("Calibracao Concluida!", 240, 144, GFXFF);
+  tft.drawString("Calibracao Concluida!", 240, 124, GFXFF);
+  tft.drawString("Calibration Completed!", 240, 154, GFXFF);
 
   tft.drawRoundRect(70, 250, 100, 30, 5, temperatureColor2);
   tft.drawRoundRect(190, 250, 100, 30, 5, icon_9);
@@ -887,6 +964,37 @@ void touch_calibrate() {
   tft.drawString("Recalibrar", 120, 264, GFXFF);
   tft.drawString("Testar", 240, 264, GFXFF);
   tft.drawString("Sair", 360, 264, GFXFF);
+}
+
+void test_calibration() {
+  if (touchScreenMode == 0) {
+    tft.fillScreen(blackScript);
+    touchScreenMode ++;
+    tft.drawRoundRect(70, 250, 100, 30, 5, nixieColor);
+    tft.fillRoundRect(190, 250, 100, 30, 5, autumnMenu);
+    tft.drawRoundRect(310, 250, 100, 30, 5, winterMenu);
+ 
+    tft.drawString("Recalibrar", 120, 264, GFXFF);
+    tft.drawString("Limpar", 240, 264, GFXFF);
+    tft.drawString("Sair", 360, 264, GFXFF);
+  }
+  displayTFT = 17;
+  uint16_t x, y;
+
+  if (tft.getTouch(&x, &y)) {
+    tft.fillRect(10, 0, 40, 35, blackScript);
+    tft.setCursor(5, 15, 2);
+    tft.printf("x: %i     ", x);
+    tft.setCursor(5, 30, 2);
+    tft.printf("y: %i    ", y);
+
+    tft.fillCircle(x, y, 2, green_battery);
+
+    if (switchPressedTest == 0 && touchScreenMode == 1) {
+      touchScreenMode == 0;
+      test_calibration();
+    }
+  }
 }
 
 void rgbColorGeiger() {
@@ -961,6 +1069,15 @@ void selectFunctionDisplay() {
       break;
       case 15:
         telaMenu15();
+      break;
+      case 16:
+        touch_calibrate();
+      break;
+      case 17:
+        test_calibration();
+      break;
+      case 18:
+        welcome();
       break;
       default:
         defaultSetup();
@@ -5070,13 +5187,14 @@ void keyboard() {
 }
 
 void welcome() {
+  displayTFT = 18;
   if (language == 1) {
     tft.setTextDatum(MC_DATUM);
     tft.setTextColor(whiteScript);
     tft.setFreeFont(latoRegular14);
     tft.drawString("Minerva Project came by the passion of the classic Nixie tubes", 240, 129, GFXFF);
-    tft.drawString("developed in 50`s decade to the moderns LCD display", 240, 149, GFXFF);
-    tft.drawString("by the inspiration came the challeger of joining the old to the new.", 240, 169, GFXFF);
+    tft.drawString("developed in 50`s decade to the moderns LCD display by", 240, 149, GFXFF);
+    tft.drawString("the inspiration came the challenger of joining the old to the new.", 240, 169, GFXFF);
     tft.setFreeFont(latoBold48);
     tft.drawString("WELCOME", 240, 79, GFXFF);
     tft.setTextDatum(ML_DATUM);
@@ -5840,4 +5958,3 @@ void telaMenu15() {
   batteryLevel();
   lockLevel();
 }
-
