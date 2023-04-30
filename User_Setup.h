@@ -21,21 +21,21 @@
 // ##################################################################################
 
 // Define STM32 to invoke optimised processor support (only for STM32)
-#define STM32
+//#define STM32
 
 // Defining the STM32 board allows the library to optimise the performance
 // for UNO compatible "MCUfriend" style shields
-#define NUCLEO_64_TFT
+//#define NUCLEO_64_TFT
 //#define NUCLEO_144_TFT
 
 // STM32 8 bit parallel only:
 // If STM32 Port A or B pins 0-7 are used for 8 bit parallel data bus bits 0-7
 // then this will improve rendering performance by a factor of ~8x
-#define STM_PORTA_DATA_BUS
-#define STM_PORTB_DATA_BUS
+//#define STM_PORTA_DATA_BUS
+//#define STM_PORTB_DATA_BUS
 
 // Tell the library to use parallel mode (otherwise SPI is assumed)
-#define TFT_PARALLEL_8_BIT
+//#define TFT_PARALLEL_8_BIT
 //#defined TFT_PARALLEL_16_BIT // **** 16 bit parallel ONLY for RP2040 processor ****
 
 // Display type -  only define if RPi display
@@ -50,8 +50,8 @@
 //#define RPI_ILI9486_DRIVER // 20MHz maximum SPI
 //#define HX8357D_DRIVER
 //#define ILI9481_DRIVER
-#define ILI9486_DRIVER
-//#define ILI9488_DRIVER     // WARNING: Do not connect ILI9488 display SDO to MISO if other devices share the SPI bus (TFT SDO does NOT tristate when CS is high)
+//#define ILI9486_DRIVER
+#define ILI9488_DRIVER     // WARNING: Do not connect ILI9488 display SDO to MISO if other devices share the SPI bus (TFT SDO does NOT tristate when CS is high)
 //#define ST7789_DRIVER      // Full configuration option, define additional parameters below for this display
 //#define ST7789_2_DRIVER    // Minimal configuration option, define additional parameters below for this display
 //#define R61581_DRIVER
@@ -127,7 +127,7 @@
 // driven with a PWM signal or turned OFF/ON then this must be handled by the user
 // sketch. e.g. with digitalWrite(TFT_BL, LOW);
 
-//#define TFT_BL   32            // LED back-light control pin
+//#define TFT_BL   PB4            // LED back-light control pin
 //#define TFT_BACKLIGHT_ON HIGH  // Level to turn ON back-light (HIGH or LOW)
 
 
@@ -202,13 +202,17 @@
 // For ESP32 Dev board (only tested with ILI9341 display)
 // The hardware SPI can be mapped to any pins
 
-//#define TFT_MISO 19
-//#define TFT_MOSI 23
-//#define TFT_SCLK 18
-//#define TFT_CS   15  // Chip select control pin
-//#define TFT_DC    2  // Data Command control pin
-//#define TFT_RST   4  // Reset pin (could connect to RST pin)
-//#define TFT_RST  -1  // Set TFT_RST to -1 if display RESET is connected to ESP32 board RST
+#define TFT_MISO 19 // (leave TFT SDO disconnected if other SPI devices share MISO)
+#define TFT_MOSI 23
+#define TFT_SCLK 18
+#define TFT_CS   33  // Chip select control pin (library pulls permanently low
+#define TFT_DC   15  // Data Command control pin - must use a pin in the range 0-31
+#define TFT_RST  32  // Reset pin, toggles on startup
+// #define TFT_RST   -1  // Reset pin (could connect to RST pin)
+
+#define TOUCH_CS 5     // Chip select pin (T_CS) of touch screen
+
+//#define TFT_WR 22    // Write strobe for modified Raspberry Pi TFT only
 
 // For ESP32 Dev board (only tested with GC9A01 display)
 // The hardware SPI can be mapped to any pins
@@ -244,33 +248,33 @@
 // Example below is for ESP32 Parallel interface with UNO displays
 
 // Tell the library to use 8 bit parallel mode (otherwise SPI is assumed)
-#define TFT_PARALLEL_8_BIT
+//#define TFT_PARALLEL_8_BIT
 
-// The ESP32 and TFT the pins used for testing are:
+// The STM32L476RG and TFT the pins used for testing are:
 
-#define TFT_CS   PB0  // Chip select control pin (library pulls permanently low
-#define TFT_DC   PA4  // Data Command control pin - must use a pin in the range 0-31
-#define TFT_RST  PC1  // Reset pin, toggles on startup
+//#define TFT_CS   PB0  // Chip select control pin (library pulls permanently low
+//#define TFT_DC   PA4  // Data Command control pin - must use a pin in the range 0-31
+//#define TFT_RST  -1   // Reset pin, toggles on startup
 
-#define TFT_WR   PA1  // Write strobe control pin - must use a pin in the range 0-31
-#define TFT_RD   PA0  // Read strobe control pin
+//#define TFT_WR   PA1  // Write strobe control pin - must use a pin in the range 0-31
+//#define TFT_RD   PA0  // Read strobe control pin
 
-#define TFT_D0   PC7  // Must use pins in the range 0-31 for the data bus
-#define TFT_D1   PA9 // so a single register write sets/clears all bits.
-#define TFT_D2   PA10 // Pins can be randomly assigned, this does not affect
-#define TFT_D3   PB3  // TFT screen update performance.
-#define TFT_D4   PB5
-#define TFT_D5   PB4
-#define TFT_D6   PB10
-#define TFT_D7   PA8
+//#define TFT_D0   PC7  // Must use pins in the range 0-31 for the data bus
+//#define TFT_D1   PA9 // so a single register write sets/clears all bits.
+//#define TFT_D2   PA10 // Pins can be randomly assigned, this does not affect
+//#define TFT_D3   PB3  // TFT screen update performance.
+//#define TFT_D4   PB5
+//#define TFT_D5   PB4
+//#define TFT_D6   PB10
+//#define TFT_D7   PA8
 
 // ######       EDIT THE PINs BELOW TO SUIT YOUR STM32 SPI TFT SETUP        ######
 
 // The TFT can be connected to SPI port 1 or 2
 //#define TFT_SPI_PORT 1 // SPI port 1 maximum clock rate is 55MHz
-//#define TFT_MOSI PA7
-//#define TFT_MISO PA6
 //#define TFT_SCLK PA5
+//#define TFT_MISO PA6
+//#define TFT_MOSI PA7
 
 //#define TFT_SPI_PORT 2 // SPI port 2 maximum clock rate is 27MHz
 //#define TFT_MOSI PB15
@@ -340,16 +344,16 @@
 // #define SPI_FREQUENCY   5000000
 // #define SPI_FREQUENCY  10000000
 // #define SPI_FREQUENCY  20000000
-//#define SPI_FREQUENCY  27000000
+ #define SPI_FREQUENCY  27000000
 // #define SPI_FREQUENCY  40000000
-// #define SPI_FREQUENCY  55000000 // STM32 SPI1 only (SPI2 maximum is 27MHz)
+//#define SPI_FREQUENCY  55000000 // STM32 SPI1 only (SPI2 maximum is 27MHz)
 // #define SPI_FREQUENCY  80000000
 
 // Optional reduced SPI frequency for reading TFT
-//#define SPI_READ_FREQUENCY  20000000
+#define SPI_READ_FREQUENCY  20000000
 
 // The XPT2046 requires a lower SPI clock rate of 2.5MHz so we define that here:
-//#define SPI_TOUCH_FREQUENCY  2500000
+#define SPI_TOUCH_FREQUENCY  2500000
 
 // The ESP32 has 2 free SPI ports i.e. VSPI and HSPI, the VSPI is the default.
 // If the VSPI port is in use and pins are not accessible (e.g. TTGO T-Beam)
@@ -366,4 +370,4 @@
 // Transactions are automatically enabled by the library for an ESP32 (to use HAL mutex)
 // so changing it here has no effect
 
-// #define SUPPORT_TRANSACTIONS
+ #define SUPPORT_TRANSACTIONS

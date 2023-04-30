@@ -59,6 +59,12 @@ byte compareUpdateBattery;      // Armazena atualização de updateBattery
 byte compareUpdateWiFi;         // Armazena atualização de updateBattery
 
 
+// DADOS TOUCHSCREEN
+int xMax;
+int xMin;
+int yMax;
+int yMin;
+
 // DADOS TIMERS
 unsigned long period = 0;
 
@@ -180,7 +186,7 @@ byte dosimeterSelection = 1;
 // dosimeterSelection = 4 
 // dosimeterSelection = 5 
 
-byte telaMenu = 3;
+byte telaMenu = 0;
 // telaMenu = 0 Menu Principal
 // telaMenu = 1 Tela  
 // telaMenu = 2 Tela  
@@ -198,7 +204,11 @@ byte telaMenu = 3;
 // telaMenu = 14 Tela 
 // telaMenu = 15 Tela 
 
-byte touchSet = 1; // ALTERAR PARA 0 white white white white
+byte touchSet = 0; // Indica se o touch esta calibrado
+// touchSet = 0 Display nao calibrado
+// touchSet = 1 Display calibrado
+// touchSet = 2 Usando os valores do DESENVOLVEDOR no setup()
+// touchSet = 3 Em finalizacao de calibracao
 
 bool squareEnd = 0;
 bool roundEnd = 1;
@@ -210,7 +220,7 @@ int pinBatteryCharger;         // Pino de Leitura da Bateria
 
 // ------------------------------ CORES DISPLAY RGB 555 -------------------------------
 
-uint16_t blue_battery = 0x16BB;         //0x15D9E2
+uint16_t blue_battery = 0x16BB;         //0x15D9E1
 uint16_t green_battery = 0x1F22;        //0x19E710
 uint16_t yellow_battery = 0xEF02;       //0xF4E317
 uint16_t yellowed_battery = 0xF523;     //0xF7A619
@@ -334,7 +344,6 @@ uint16_t icon_white = 0xD6BA;           //0xD9D9D9
 #define latoRegular12 &Lato_Regular_12
 #define latoRegular10 &Lato_Regular_10
 
-
 byte i = 0;  // ATUALIZACAO VISUAL DATA E HORA 
 byte language = 1; // TELA DE ABERTURA
 
@@ -361,7 +370,12 @@ void setup() {
   Serial.begin(115200);
   Serial.println("Sistema Inicializado");
   tft.init();
-  tft.setRotation(3);
+  tft.setRotation(1);
+
+  if (touchSet == 2) {
+    uint16_t calData[5] = { 223, 3675, 227, 3503, 7 };
+    tft.setTouch(calData);
+  }
 
   if (fuso == 1) {
     fuso = 23;
@@ -369,106 +383,73 @@ void setup() {
     fuso = 11;
   }
 
-  hours = 23;
-  mins = 59;
-  day = 27;
+  hours = 0;
+  mins = 0;
+  day = 1;
   month = 3;
   year = 2023;
-
-/*
-
-  Serial.print("Insira Hora: ");
-  while (hours == 0) {
-    if (Serial.available() > 0) {
-      hours = Serial.parseInt();
-      Serial.println(hours);
-    }
-  }
-  Serial.print("Insira Minuto: ");
-  while (mins == 0) {
-    if (Serial.available() > 0) {
-      mins = Serial.parseInt();
-      Serial.println(mins);
-    }
-  }
-  Serial.print("Insira Dia: ");
-  while (day == 0) {
-    if (Serial.available() > 0) {
-      day = Serial.parseInt();
-      Serial.println(day);
-    }
-  }
-
-  Serial.print("Insira Mês: ");
-  while (month == 0) {
-    if (Serial.available() > 0) {
-      month = Serial.parseInt();
-      Serial.println(month);
-    }
-  }
-
-  Serial.print("Insira Ano: ");
-  while (year == 0) {
-    if (Serial.available() > 0) {
-      year = Serial.parseInt();
-      Serial.println(year);
-    }
-  }
-
-  */
 }
 
 
 
 unsigned long UtlTime;
-unsigned long time;
+unsigned long timeSystem;
+unsigned long timePressed;
 
 int dosimetervalue = 0;
 byte geigerCurve = 0;
 byte updateGeigerCurve = 0;
 byte arrayDosi [480] = {0};  
 
+  uint16_t x = 0, y = 0; // To store the touch coordinates
 
 
+byte switchPressedRecalibrate = 0;
+byte switchPressedTest = 0;
+byte switchPressedExit = 0;
 
 void loop(void) {
+  // ------------------------------- TOUCHSCREEN OPERACIONAL ----------------------
 
-  // ------------------------------- TOUCHSCREEN LEITURA -------------
-/*
-    TSPoint p = ts.getPoint();
-    if (p.z > minpressure && p.z < maxpressure) {
+    bool pressed = tft.getTouch(&x, &y);
 
-      int touchX = map(p.x, ts_maxX, ts_minX, 0, Xresolution);
-      int touchY = map(p.y, ts_maxY, ts_minY, 0, Yresolution);
+    if (timeSystem - timePressed >= 200) {
+      timePressed = timeSystem;
+      while (pressed) {
+        touchPressedRectRound(70, 250, 100, 30, 5, temperatureColor2, 1);
+        tft.drawString("Recalibrar", 120, 264, GFXFF);
+        //touch_calibrate();
+            
+        if (switchPressedTest == 0) {
+          touchPressedRectRound(190, 250, 100, 30, 5, icon_9, 1);
+          tft.drawString("Testar", 240, 264, GFXFF);
+          switchPressedTest = 1;
+        } else {
+          tft.fillRoundRect(190, 250, 100, 30, 5, blackScript);
+          tft.drawRoundRect(190, 250, 100, 30, 5, icon_9);
+          tft.drawString("Testar", 240, 264, GFXFF);
+          switchPressedTest = 0;
+        }
 
-      Serial.print("X = "); Serial.print(p.x);
-      Serial.print("\tY = "); Serial.print(p.y);
-      Serial.print("\tPressure = "); Serial.print(p.z);
-
-      Serial.print("\tTX"); Serial.print(touchX);
-      Serial.print("\tTY"); Serial.println(touchY);
-
-      i++;
-
-      String stringi = String(i);
-
-      tft.fillRect(432, 295, 35, 15, blackScript);
-
-      tft.setTextDatum(ML_DATUM);
-      tft.setTextColor(greenScript);
-      tft.setFreeFont(latoRegular14);
-
-      tft.drawString(stringi, 440, 300, GFXFF);
-
-      tft.drawPixel(touchX, touchY, greenScript);
+        if (switchPressedExit == 0) {
+          touchPressedRectRound(310, 250, 100, 30, 5, humidityColor1, 1);
+          tft.drawString("Sair", 360, 264, GFXFF);
+          switchPressedExit = 1;
+        } else {
+          tft.fillRoundRect(310, 250, 100, 30, 5, blackScript);
+          tft.drawRoundRect(310, 250, 100, 30, 5, humidityColor1);
+          tft.drawString("Sair", 360, 264, GFXFF);
+          switchPressedExit = 0;
+        }
+        break;
+      }        
     }
 
-*/
   // ------------------------------- HORARIO VIA MILLIS() OPERACIONAL -----------------------
-    time = millis();
+    timeSystem = millis();
 
-    if(time - UtlTime >= 250) {
-      UtlTime = time;
+    if(timeSystem - UtlTime >= 1000) {
+      UtlTime = timeSystem;
       secs ++;
     }
     if(secs > 59) {
@@ -545,10 +526,10 @@ void loop(void) {
         // do something
       break; 
       default: 
-        if (touchSet == 0) {
+        if (touchSet == 1) {
           defaultSetup();
-        } else if (i == 0){
-          telaMenu3();
+        } else if (touchSet == 0){
+          touch_calibrate();
         }
     } 
 
@@ -569,121 +550,123 @@ void loop(void) {
     }
 
   // ------------------------ ATUALIZACAO VISUAL DATA E HORA OPERACIONAL --------
-    if (i == 1) {
-      compareHour = 0;
-      compareMins = 0;
-      compareDay = 0;
-      compareMonth = 0;
-      compareYear = 0;
-      i = 2;
-    }
-  
-    String stringHour = String(hours);
-    String stringMin = String(mins);
-    String stringDay = String(day);
-    String stringMonth = String(month);
-    String stringYear = String(year);
+    if (displayTFT < 16) {
+      if (i == 1) {
+        compareHour = 0;
+        compareMins = 0;
+        compareDay = 0;
+        compareMonth = 0;
+        compareYear = 0;
+        i = 2;
+      }
+    
+      String stringHour = String(hours);
+      String stringMin = String(mins);
+      String stringDay = String(day);
+      String stringMonth = String(month);
+      String stringYear = String(year);
 
-    String stringHourMin = String(hours - 1);
-    String stringMinMin = String(mins - 1);
-    String stringDayMin = String(day - 1);
-    String stringMonthMin = String(month - 1);
-    String stringYearMin = String(year - 1);
-  
-    if (hours != compareHour) {
-      compareHour = hours;
-      tft.setTextDatum(ML_DATUM);
-      tft.setTextColor(blackScript);
-      tft.setFreeFont(latoRegular24);
-      if ((hours > 1) && (hours < 10)) {
-        tft.drawString("0", 219, 30, GFXFF);
-        tft.drawString(stringHourMin, 234, 30, GFXFF);
-      } else {
-        tft.fillRect(219, 22, 28, 20, blackScript);
+      String stringHourMin = String(hours - 1);
+      String stringMinMin = String(mins - 1);
+      String stringDayMin = String(day - 1);
+      String stringMonthMin = String(month - 1);
+      String stringYearMin = String(year - 1);
+    
+      if (hours != compareHour) {
+        compareHour = hours;
+        tft.setTextDatum(ML_DATUM);
+        tft.setTextColor(blackScript);
+        tft.setFreeFont(latoRegular24);
+        if ((hours > 1) && (hours < 10)) {
+          tft.drawString("0", 219, 30, GFXFF);
+          tft.drawString(stringHourMin, 234, 30, GFXFF);
+        } else {
+          tft.fillRect(219, 22, 28, 20, blackScript);
+        }
+        tft.setTextColor(whiteScript);  
+        if (hours < 10) {
+          tft.drawString("0", 219, 30, GFXFF);
+          tft.drawString(stringHour, 234, 30, GFXFF);
+        } else {
+          tft.drawString(stringHour, 219, 30, GFXFF);
+        }
       }
-      tft.setTextColor(whiteScript);  
-      if (hours < 10) {
-        tft.drawString("0", 219, 30, GFXFF);
-        tft.drawString(stringHour, 234, 30, GFXFF);
-      } else {
-        tft.drawString(stringHour, 219, 30, GFXFF);
-      }
-    }
-    if (mins != compareMins) {
-      compareMins = mins;
-      tft.setTextDatum(ML_DATUM);
-      tft.setTextColor(blackScript);
-      tft.setFreeFont(latoRegular24);
-      if ((mins > 1) && (mins < 10)) {
-        tft.drawString("0", 252, 30, GFXFF);
-        tft.drawString(stringMinMin, 267, 30, GFXFF);
-      } else {
-        tft.fillRect(252, 22, 28, 20, blackScript);
-      }
-      tft.setTextColor(whiteScript);  
-      if (mins < 10) {
-        tft.drawString("0", 252, 30, GFXFF);
-        tft.drawString(":", 246, 30, GFXFF);
-        tft.drawString(stringMin, 267, 30, GFXFF);
-      } else {
-        tft.drawString(":", 246, 30, GFXFF);
-        tft.drawString(stringMin, 252, 30, GFXFF);
-      }
-    }
-
-    if (day != compareDay) {
-      compareDay = day;
-      tft.setTextDatum(ML_DATUM);
-      tft.setTextColor(blackScript);
-      tft.setFreeFont(latoRegular24);
-      if ((day > 1) && (day < 10)) {
-        tft.drawString("0", 77, 30, GFXFF);
-        tft.drawString(stringDayMin, 92, 30, GFXFF);
-      } else {
-        tft.fillRect(77, 22, 28, 20, blackScript);
+      if (mins != compareMins) {
+        compareMins = mins;
+        tft.setTextDatum(ML_DATUM);
+        tft.setTextColor(blackScript);
+        tft.setFreeFont(latoRegular24);
+        if ((mins > 1) && (mins < 10)) {
+          tft.drawString("0", 252, 30, GFXFF);
+          tft.drawString(stringMinMin, 267, 30, GFXFF);
+        } else {
+          tft.fillRect(252, 22, 28, 20, blackScript);
+        }
+        tft.setTextColor(whiteScript);  
+        if (mins < 10) {
+          tft.drawString("0", 252, 30, GFXFF);
+          tft.drawString(":", 246, 30, GFXFF);
+          tft.drawString(stringMin, 267, 30, GFXFF);
+        } else {
+          tft.drawString(":", 246, 30, GFXFF);
+          tft.drawString(stringMin, 252, 30, GFXFF);
+        }
       }
 
-      tft.setTextColor(whiteScript);  
-      if (day < 10) {
-        tft.drawString("0", 77, 30, GFXFF);
-        tft.drawString(stringDay, 92, 30, GFXFF);
-      } else {
-        tft.drawString(stringDay, 77, 30, GFXFF);
+      if (day != compareDay) {
+        compareDay = day;
+        tft.setTextDatum(ML_DATUM);
+        tft.setTextColor(blackScript);
+        tft.setFreeFont(latoRegular24);
+        if ((day > 1) && (day < 10)) {
+          tft.drawString("0", 77, 30, GFXFF);
+          tft.drawString(stringDayMin, 92, 30, GFXFF);
+        } else {
+          tft.fillRect(77, 22, 28, 20, blackScript);
+        }
+
+        tft.setTextColor(whiteScript);  
+        if (day < 10) {
+          tft.drawString("0", 77, 30, GFXFF);
+          tft.drawString(stringDay, 92, 30, GFXFF);
+        } else {
+          tft.drawString(stringDay, 77, 30, GFXFF);
+        }
       }
-    }
 
-    if (month != compareMonth) {
-      compareMonth = month;
-      tft.setTextDatum(ML_DATUM);
-      tft.setTextColor(blackScript);
-      tft.setFreeFont(latoRegular24);
-      if ((month > 1) && (month < 10)) {
-        tft.drawString("0", 110, 30, GFXFF);
-        tft.drawString(stringMonthMin, 125, 30, GFXFF);
-      } else {
-        tft.fillRect(110, 22, 28, 20, blackScript);
+      if (month != compareMonth) {
+        compareMonth = month;
+        tft.setTextDatum(ML_DATUM);
+        tft.setTextColor(blackScript);
+        tft.setFreeFont(latoRegular24);
+        if ((month > 1) && (month < 10)) {
+          tft.drawString("0", 110, 30, GFXFF);
+          tft.drawString(stringMonthMin, 125, 30, GFXFF);
+        } else {
+          tft.fillRect(110, 22, 28, 20, blackScript);
+        }
+
+        tft.setTextColor(whiteScript);  
+
+        if (month < 10) {
+          tft.drawString("0", 110, 30, GFXFF);
+          tft.drawString(stringMonth, 125, 30, GFXFF);
+        } else {
+          tft.drawString(stringMonth, 110, 30, GFXFF);
+        }
       }
 
-      tft.setTextColor(whiteScript);  
+      if (year != compareYear) {
+        compareYear = year;
+        tft.setTextDatum(ML_DATUM);
+        tft.setTextColor(blackScript);
+        tft.setFreeFont(latoRegular24);
+        tft.drawString(stringYearMin, 143, 30, GFXFF);
 
-      if (month < 10) {
-        tft.drawString("0", 110, 30, GFXFF);
-        tft.drawString(stringMonth, 125, 30, GFXFF);
-      } else {
-        tft.drawString(stringMonth, 110, 30, GFXFF);
+        tft.setTextColor(whiteScript);  
+
+        tft.drawString(stringYear, 143, 30, GFXFF);
       }
-    }
-
-    if (year != compareYear) {
-      compareYear = year;
-      tft.setTextDatum(ML_DATUM);
-      tft.setTextColor(blackScript);
-      tft.setFreeFont(latoRegular24);
-      tft.drawString(stringYearMin, 143, 30, GFXFF);
-
-      tft.setTextColor(whiteScript);  
-
-      tft.drawString(stringYear, 143, 30, GFXFF);
     }
 
   // ------------------------ ATUALIZA GRAFICO DOSIMETRO GEIGER -------------------
@@ -831,6 +814,81 @@ void loop(void) {
 
 }
 
+void touchPressedRectRound(int startX, int startY, int sizeX, int sizeY, int round, int color, int pressed) {
+  tft.getTouch(&x, &y);
+  int button_x = startX;
+  int button_y = startY;
+  int button_w = sizeX;
+  int button_h = sizeY;
+
+  Serial.print("x,y = ");
+  Serial.print(x);
+  Serial.print(",");
+  Serial.println(y);
+  switch (pressed) {
+    case 1:
+      if ((x > button_x) && (x < (button_x + button_w))) {
+        if ((y > button_y) && (y <= (button_y + button_h))) {
+          tft.fillRoundRect(startX, startY, sizeX, sizeY, round, color);
+        }    
+      }
+    break;
+    default:
+      tft.fillRoundRect(startX, startY, sizeX, sizeY, round, blackScript);
+      tft.fillRoundRect(startX, startY, sizeX, sizeY, round, color);
+    break;
+  }
+}
+
+void touch_calibrate() {
+  displayTFT = 16;
+  uint16_t calData[5];
+
+  // Calibrate
+  tft.fillScreen(blackScript);
+  tft.setCursor(20, 0);
+  
+  tft.setTextDatum(MC_DATUM);
+  tft.setTextColor(whiteScript);
+  tft.setFreeFont(latoRegular24);
+  tft.drawString("Toque nas setas indicados", 240, 144, GFXFF);
+
+  tft.println();
+
+  tft.calibrateTouch(calData, greenScript, blackScript, 15);
+
+  Serial.println(); Serial.println();
+  Serial.println("// Use this calibration code in setup():");
+  Serial.print("  uint16_t calData[5] = ");
+  Serial.print("{ ");
+
+  for (uint8_t i = 0; i < 5; i++) {
+    Serial.print(calData[i]);
+    if (i < 4) Serial.print(", ");
+  }
+
+  Serial.println(" };");
+  Serial.print("  tft.setTouch(calData);");
+  Serial.println(); Serial.println();
+
+  touchSet = 3;
+
+  tft.fillScreen(blackScript);
+
+  tft.setTextDatum(MC_DATUM);
+  tft.setTextColor(whiteScript);
+  tft.setFreeFont(latoRegular24);
+  tft.drawString("Calibracao Concluida!", 240, 144, GFXFF);
+
+  tft.drawRoundRect(70, 250, 100, 30, 5, temperatureColor2);
+  tft.drawRoundRect(190, 250, 100, 30, 5, icon_9);
+  tft.drawRoundRect(310, 250, 100, 30, 5, humidityColor1);
+  tft.setFreeFont(latoRegular14);
+  tft.drawString("Recalibrar", 120, 264, GFXFF);
+  tft.drawString("Testar", 240, 264, GFXFF);
+  tft.drawString("Sair", 360, 264, GFXFF);
+}
+
 void rgbColorGeiger() {
     byte rValue = map (writerGeiger, 33, 433, 255, 228);
     byte gValue = map (writerGeiger, 33, 433, 184, 152);
@@ -913,9 +971,12 @@ void selectFunctionDisplay() {
 // ------------------------ TELA DE ABERTURA -------------
 
 void startLogo() {
+  bool wait = 1;
   tft.fillScreen(blackScript);
   tft.setSwapBytes(true);
-  //tft.pushImage(0, 0, 480, 320, abertura); //white white white white white white ATIVAR PARA USAR
+  tft.pushImage(0, 0, 480, 320, abertura); //white white white white white white ATIVAR PARA USAR
+
+  tft.pushImage(5, 5, 48, 48, profile1);
 
   if (language == 1) {
     tft.setTextDatum(ML_DATUM);
@@ -935,6 +996,20 @@ void startLogo() {
 
     tft.setFreeFont(latoRegular24);
     tft.drawString("PT-BR", 394, 299, GFXFF);
+  }
+  wifiLevel();
+  batteryLevel();
+  lockLevel();
+
+  while (wait) {
+    bool pressed = tft.getTouch(&x, &y);
+    if (pressed) {
+      if (touchSet == 0) {
+        touch_calibrate();
+        wait = 0;
+        break;
+      }
+    }
   }
 }
 
@@ -1707,6 +1782,26 @@ void dosimeterMin() {
   tft.drawLine(365, 208, 365, 212, middleTimeGraph);
   tft.drawLine(398, 208, 398, 212, middleTimeGraph);
 
+  tft.drawPixel(443, 78, redScript);
+  tft.drawLine(443, 86, 443, 88, redScript);
+  tft.drawLine(443, 96, 443, 98, redScript);
+  tft.drawLine(443, 106, 443, 108, redScript);
+  tft.drawLine(443, 116, 443, 118, redScript);
+  tft.drawLine(443, 126, 443, 128, redScript);
+  tft.drawLine(443, 136, 443, 138, redScript);
+  tft.drawLine(443, 146, 443, 148, redScript);
+  tft.drawLine(443, 156, 443, 158, redScript);
+  tft.drawLine(443, 166, 443, 168, redScript);
+  tft.drawLine(443, 176, 443, 178, redScript);
+  tft.drawLine(443, 186, 443, 188, redScript);
+  tft.drawPixel(443, 196, redScript);
+
+  tft.setFreeFont(latoRegular10);
+  tft.drawString("10", 450, 185, GFXFF);
+  tft.drawString("50", 450, 159, GFXFF);
+  tft.drawString("100", 450, 128, GFXFF);
+  tft.drawString("500", 450, 82, GFXFF);
+
   tft.setTextDatum(ML_DATUM);
   tft.setTextColor(whiteScript);
   tft.setFreeFont(latoRegular24);
@@ -1750,6 +1845,26 @@ void dosimeterDay() {
   tft.drawLine(282, 208, 282, 212, middleTimeGraph);
   tft.drawLine(382, 208, 382, 212, middleTimeGraph);
 
+  tft.drawPixel(443, 78, redScript);
+  tft.drawLine(443, 86, 443, 88, redScript);
+  tft.drawLine(443, 96, 443, 98, redScript);
+  tft.drawLine(443, 106, 443, 108, redScript);
+  tft.drawLine(443, 116, 443, 118, redScript);
+  tft.drawLine(443, 126, 443, 128, redScript);
+  tft.drawLine(443, 136, 443, 138, redScript);
+  tft.drawLine(443, 146, 443, 148, redScript);
+  tft.drawLine(443, 156, 443, 158, redScript);
+  tft.drawLine(443, 166, 443, 168, redScript);
+  tft.drawLine(443, 176, 443, 178, redScript);
+  tft.drawLine(443, 186, 443, 188, redScript);
+  tft.drawPixel(443, 196, redScript);
+
+  tft.setFreeFont(latoRegular10);
+  tft.drawString("100", 450, 185, GFXFF);
+  tft.drawString("500", 450, 159, GFXFF);
+  tft.drawString("1K", 450, 128, GFXFF);
+  tft.drawString("2K", 450, 82, GFXFF);
+
   tft.setTextDatum(ML_DATUM);
   tft.setTextColor(whiteScript);
   tft.setFreeFont(latoRegular24);
@@ -1790,11 +1905,25 @@ void dosimeterWeek() {
   tft.drawString("Fri", 345, 225, GFXFF);
   tft.drawString("Sat", 403, 225, GFXFF);
 
+  tft.drawPixel(443, 78, redScript);
+  tft.drawLine(443, 86, 443, 88, redScript);
+  tft.drawLine(443, 96, 443, 98, redScript);
+  tft.drawLine(443, 106, 443, 108, redScript);
+  tft.drawLine(443, 116, 443, 118, redScript);
+  tft.drawLine(443, 126, 443, 128, redScript);
+  tft.drawLine(443, 136, 443, 138, redScript);
+  tft.drawLine(443, 146, 443, 148, redScript);
+  tft.drawLine(443, 156, 443, 158, redScript);
+  tft.drawLine(443, 166, 443, 168, redScript);
+  tft.drawLine(443, 176, 443, 178, redScript);
+  tft.drawLine(443, 186, 443, 188, redScript);
+  tft.drawPixel(443, 196, redScript);
+
   tft.setFreeFont(latoRegular10);
-  tft.drawString("100", 445, 185, GFXFF);
-  tft.drawString("500", 445, 159, GFXFF);
-  tft.drawString("1K", 445, 128, GFXFF);
-  tft.drawString("2K", 445, 82, GFXFF);
+  tft.drawString("100", 450, 185, GFXFF);
+  tft.drawString("500", 450, 159, GFXFF);
+  tft.drawString("1K", 450, 128, GFXFF);
+  tft.drawString("2K", 450, 82, GFXFF);
 }
 
 void dosimeterMonth() {
@@ -1812,6 +1941,26 @@ void dosimeterMonth() {
       monthLengh = 28;
     }
   }
+
+  tft.drawPixel(443, 78, redScript);
+  tft.drawLine(443, 86, 443, 88, redScript);
+  tft.drawLine(443, 96, 443, 98, redScript);
+  tft.drawLine(443, 106, 443, 108, redScript);
+  tft.drawLine(443, 116, 443, 118, redScript);
+  tft.drawLine(443, 126, 443, 128, redScript);
+  tft.drawLine(443, 136, 443, 138, redScript);
+  tft.drawLine(443, 146, 443, 148, redScript);
+  tft.drawLine(443, 156, 443, 158, redScript);
+  tft.drawLine(443, 166, 443, 168, redScript);
+  tft.drawLine(443, 176, 443, 178, redScript);
+  tft.drawLine(443, 186, 443, 188, redScript);
+  tft.drawPixel(443, 196, redScript);
+
+  tft.setFreeFont(latoRegular10);
+  tft.drawString("100", 450, 185, GFXFF);
+  tft.drawString("500", 450, 159, GFXFF);
+  tft.drawString("1K", 450, 128, GFXFF);
+  tft.drawString("2K", 450, 82, GFXFF);  
 
   switch (monthLengh) {
       case 28: dosimeterday28(); break;
@@ -2062,6 +2211,26 @@ void dosimeterYear() {
   tft.drawLine(389, 208, 389, 212, middleTimeGraph);
   tft.drawLine(424, 208, 424, 212, middleTimeGraph);
 
+  tft.drawPixel(443, 78, redScript);
+  tft.drawLine(443, 86, 443, 88, redScript);
+  tft.drawLine(443, 96, 443, 98, redScript);
+  tft.drawLine(443, 106, 443, 108, redScript);
+  tft.drawLine(443, 116, 443, 118, redScript);
+  tft.drawLine(443, 126, 443, 128, redScript);
+  tft.drawLine(443, 136, 443, 138, redScript);
+  tft.drawLine(443, 146, 443, 148, redScript);
+  tft.drawLine(443, 156, 443, 158, redScript);
+  tft.drawLine(443, 166, 443, 168, redScript);
+  tft.drawLine(443, 176, 443, 178, redScript);
+  tft.drawLine(443, 186, 443, 188, redScript);
+  tft.drawPixel(443, 196, redScript);
+
+  tft.setFreeFont(latoRegular10);
+  tft.drawString("100", 450, 185, GFXFF);
+  tft.drawString("500", 450, 159, GFXFF);
+  tft.drawString("1K", 450, 128, GFXFF);
+  tft.drawString("2K", 450, 82, GFXFF);
+
   tft.setTextDatum(ML_DATUM);
   tft.setTextColor(whiteScript);
   tft.setFreeFont(latoRegular14);
@@ -2077,13 +2246,6 @@ void dosimeterYear() {
   tft.drawString("10", 346, 225, GFXFF);
   tft.drawString("11", 381, 225, GFXFF);
   tft.drawString("12", 417, 225, GFXFF);
-
-
-  tft.setFreeFont(latoRegular10);
-  tft.drawString("100", 445, 185, GFXFF);
-  tft.drawString("500", 445, 159, GFXFF);
-  tft.drawString("1K", 445, 128, GFXFF);
-  tft.drawString("2K", 445, 82, GFXFF);
 } 
 
 void temperatureLoad() { 
