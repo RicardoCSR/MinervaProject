@@ -445,24 +445,36 @@ byte switchKeyboard = 0;
 // switchKeyboard = 0 Aguardando comando
 // switchKeyboard = 1 Habita o knowname()
 
-byte switchCaps = 0;
-// switchCaps = 0 Aguardando comando
-// switchCaps = 1 Habita o CAPSLOCK
-
 byte keyboardClose = 0;
 // keyboardClose = 0 Aguardando comando
 // keyboardClose = 1 Habita o knowname()
 
+byte swithContinueKnowname = 0;
+// swithContinueKnowname = 0 Aguardando comando
+// swithContinueKnowname = 1 Habita o profileimage()
+
+
+byte switchCaps = 0;
+// switchCaps = 0 Aguardando comando
+// switchCaps = 1 Habita o CAPSLOCK
+
 byte languageScreen = 0;
 // languageScreen = 0 Aguardando comando
 // languageScreen = 1 Habilita alteracao da byte language
+
+
+#define nameLenght 30
+int lenghtText = 0;
+char textKnowname [nameLenght] = {0};
+char key;
+
 
 void loop(void) {
   // ------------------------------- touchScreen OPERACIONAL ----------------------
     bool pressed = tft.getTouch(&x, &y);
 
     if (pressed) {
-      if (timeSystem - timePressed >= 50) {
+      if (timeSystem - timePressed >= 500) {
         Serial.print("x, y, z = ");
         Serial.print(x);
         Serial.print(",");
@@ -551,6 +563,16 @@ void loop(void) {
             keyboard();
           }
 
+          /*
+          touchRectRound(190, 232, 100, 30, 5, whiteScript, blackScript, swithContinueKnowname);
+          if (swithContinueKnowname == 1) {
+            displayTFT = 21;
+            tft.fillScreen(blackScript);
+            swithContinueKnowname = 0;
+            profileimage();
+          }
+          */
+
           touchCircle(454, 88, 10, whiteScript, wifi_off2, switchMenuStart);
           if (switchMenuStart == 1) {
             displayTFT = 18;
@@ -579,219 +601,317 @@ void loop(void) {
             tft.fillScreen(blackScript);
             knowname();
           }
+
+
+
     // COLUNA 1 TECLADO
           if (x > 2 && x < 2 + 35 && y > 160 && y < 160 + 35) {
             if (switchCaps == 0) {
+              textBoxName(113);
               Serial.println("q");
             } else {
+              textBoxName(81);
               Serial.println("Q");
             }
           }
           if (x > 42 && x < 42 + 35 && y > 160 && y < 160 + 35) {
             if (switchCaps == 0) {
+              textBoxName(119);
               Serial.println("w");
             } else {
+              textBoxName(87);
               Serial.println("W");
             }
           }
           if (x > 82 && x < 82 + 35 && y > 160 && y < 160 + 35) {
             if (switchCaps == 0) {
+              textBoxName(101);
               Serial.println("e");
             } else {
+              textBoxName(69);
               Serial.println("E");
             }
           }
           if (x > 122 && x < 122 + 35 && y > 160 && y < 160 + 35) {
             if (switchCaps == 0) {
+              textBoxName(114);
               Serial.println("r");
             } else {
+              textBoxName(82);
               Serial.println("R");
             }
           }
           if (x > 162 && x < 162 + 35 && y > 160 && y < 160 + 35) {
             if (switchCaps == 0) {
+              textBoxName(116);
               Serial.println("t");
             } else {
+              textBoxName(84);
               Serial.println("T");
             }
           }
           if (x > 202 && x < 202 + 35 && y > 160 && y < 160 + 35) {
             if (switchCaps == 0) {
+              textBoxName(121);
               Serial.println("y");
             } else {
+              textBoxName(89);
               Serial.println("Y");
             }
           }
           if (x > 242 && x < 242 + 35 && y > 160 && y < 160 + 35) {
             if (switchCaps == 0) {
+              textBoxName(117);
               Serial.println("u");
             } else {
+              textBoxName(85);
               Serial.println("U");
             }
           }
           if (x > 282 && x < 282 + 35 && y > 160 && y < 160 + 35) {
             if (switchCaps == 0) {
+              textBoxName(105);
               Serial.println("i");
             } else {
+              textBoxName(73);
               Serial.println("I");
             }
           }
           if (x > 322 && x < 322 + 35 && y > 160 && y < 160 + 35) {
             if (switchCaps == 0) {
+              textBoxName(111);
               Serial.println("o");
             } else {
+              textBoxName(79);
               Serial.println("O");
             }
           }
           if (x > 362 && x < 362 + 35 && y > 160 && y < 160 + 35) {
             if (switchCaps == 0) {
+              textBoxName(112);
               Serial.println("p");
             } else {
+              textBoxName(80);
               Serial.println("P");
             }
           }
           if (x > 402 && x < 402 + 75 && y > 160 && y < 160 + 35) {
+            textBoxName(8);
             Serial.println("Backspace");
           }
 
     // COLUNA 2 TECLADO
           if (x > 24 && x < 24 + 35 && y > 200 && y < 200 + 35) {
             if (switchCaps == 0) {
+              textBoxName(97);
               Serial.println("a");
             } else {
+              textBoxName(65);
               Serial.println("A");
             }
           }
           if (x > 64 && x < 64 + 35 && y > 200 && y < 200 + 35) {
             if (switchCaps == 0) {
+              textBoxName(115);
               Serial.println("s");
             } else {
+              textBoxName(83);
               Serial.println("S");
             }
           }
           if (x > 104 && x < 104 + 35 && y > 200 && y < 200 + 35) {
             if (switchCaps == 0) {
+              textBoxName(100);
               Serial.println("d");
             } else {
+              textBoxName(68);
               Serial.println("D");
             }
           }
           if (x > 144 && x < 144 + 35 && y > 200 && y < 200 + 35) {
             if (switchCaps == 0) {
+              textBoxName(102);
               Serial.println("f");
             } else {
+              textBoxName(70);
               Serial.println("F");
             }
           }
           if (x > 184 && x < 184 + 35 && y > 200 && y < 200 + 35) {
             if (switchCaps == 0) {
+              textBoxName(103);
               Serial.println("g");
             } else {
+              textBoxName(71);
               Serial.println("G");
             }
           }
           if (x > 224 && x < 224 + 35 && y > 200 && y < 200 + 35) {
             if (switchCaps == 0) {
+              textBoxName(104);
               Serial.println("h");
             } else {
+              textBoxName(72);
               Serial.println("H");
             }
           }
           if (x > 264 && x < 264 + 35 && y > 200 && y < 200 + 35) {
             if (switchCaps == 0) {
+              textBoxName(106);
               Serial.println("j");
             } else {
+              textBoxName(74);
               Serial.println("J");
             }
           }
           if (x > 304 && x < 304 + 35 && y > 200 && y < 200 + 35) {
             if (switchCaps == 0) {
+              textBoxName(107);
               Serial.println("k");
             } else {
+              textBoxName(75);
               Serial.println("K");
             }
           }
           if (x > 344 && x < 344 + 35 && y > 200 && y < 200 + 35) {
             if (switchCaps == 0) {
+              textBoxName(108);
               Serial.println("l");
             } else {
+              textBoxName(76);
               Serial.println("L");
             }
           }
           if (x > 384 && x < 384 + 35 && y > 200 && y < 200 + 35) {
+            textBoxName(39);
             Serial.println("'");
           }
           if (x > 424 && x < 424 + 53 && y > 200 && y < 200 + 35) {
+            textBoxName(10);
             Serial.println("Enter");
           }
 
     // COLUNA 3 TECLADO
           if (x > 42 && x < 42 + 35 && y > 240 && y < 240 + 35) {
             if (switchCaps == 0) {
+              textBoxName(122);
               Serial.println("z");
             } else {
+              textBoxName(90);
               Serial.println("Z");
             }
           }
           if (x > 82 && x < 82 + 35 && y > 240 && y < 240 + 35) {
             if (switchCaps == 0) {
+              textBoxName(120);
               Serial.println("x");
             } else {
+              textBoxName(88);
               Serial.println("X");
             }
           }
           if (x > 122 && x < 122 + 35 && y > 240 && y < 240 + 35) {
             if (switchCaps == 0) {
+              textBoxName(99);
               Serial.println("c");
             } else {
+              textBoxName(67);
               Serial.println("C");
             }
           }
           if (x > 162 && x < 162 + 35 && y > 240 && y < 240 + 35) {
             if (switchCaps == 0) {
+              textBoxName(118);
               Serial.println("v");
             } else {
+              textBoxName(86);
               Serial.println("V");
             }
           }
           if (x > 202 && x < 202 + 35 && y > 240 && y < 240 + 35) {
             if (switchCaps == 0) {
+              textBoxName(98);
               Serial.println("b");
             } else {
+              textBoxName(66);
               Serial.println("B");
             }
           }
           if (x > 242 && x < 242 + 35 && y > 240 && y < 240 + 35) {
             if (switchCaps == 0) {
+              textBoxName(110);
               Serial.println("n");
             } else {
+              textBoxName(78);
               Serial.println("N");
             }
           }
           if (x > 282 && x < 282 + 35 && y > 240 && y < 240 + 35) {
             if (switchCaps == 0) {
+              textBoxName(109);
               Serial.println("m");
             } else {
+              textBoxName(77);
               Serial.println("M");
             }
           }
           if (x > 322 && x < 322 + 35 && y > 240 && y < 240 + 35) {
+            textBoxName(44);
             Serial.println(",");
           }
           if (x > 362 && x < 362 + 35 && y > 240 && y < 240 + 35) {
+            textBoxName(46);
             Serial.println(".");
           }
           if (x > 402 && x < 402 + 35 && y > 240 && y < 240 + 35) {
+            textBoxName(63);
             Serial.println("?");
           }
           if (x > 442 && x < 442 + 35 && y > 240 && y < 240 + 35) {
-            Serial.println("Up");
+            textBoxName(127);
+            Serial.println("Del");
           }
 
     // COLUNA 4 TECLADO
           if (x > 122 && x < 122 + 235 && y > 280 && y < 280 + 35) {
+            textBoxName(32);
             Serial.println("Space");
           }
+
+          tft.setTextDatum(ML_DATUM);
+          tft.setTextColor(whiteScript);
+          tft.setFreeFont(latoRegular14);
+          tft.drawString(textKnowname, 69, 95, GFXFF);
+
+
+
+
+
+
+
+
+
+
+        }
+
+  // ------------------------------ PROFILEIMAGE DISPLAY TFT 21 ---------------------
+        if (displayTFT == 21) {
+          touchRect(390, 280, 90, 40, blackScript, blackScript, languageScreen);
+          if (languageScreen == 1) {
+            tft.fillScreen(blackScript);
+            if (language == 1) {
+              language = 0;
+              languageScreen = 0;
+              profileimage();
+            } else {
+              language = 1;
+              languageScreen = 0;
+              profileimage();
+            }
+          }
+
+
+
 
 
 
@@ -802,6 +922,9 @@ void loop(void) {
 
       }
     }
+
+
+
 
   // ------------------------ HORARIO VIA MILLIS() OPERACIONAL -----------------------
     timeSystem = millis();
@@ -1173,49 +1296,153 @@ void loop(void) {
 }
 
 
+void textBoxName(int keys) {
+  Serial.print(keys);
+  Serial.print(":  ");
+  switch (keys) {
+    case 1 : key = ' '; break;
+    case 2 : key = ' '; break;
+    case 3 : key = ' '; break;
+    case 4 : key = ' '; break;
+    case 5 : key = ' '; break;
+    case 6 : key = ' '; break;
+    case 7 : key = ' '; break;
+    case 8 : keyBackspace(); break;
+    case 9 : key = ' '; break;
+    case 10: key = ' '; break;
+    case 11: key = ' '; break;
+    case 12: key = ' '; break;
+    case 13: key = ' '; break;
+    case 14: key = ' '; break;
+    case 15: key = ' '; break;
+    case 16: key = ' '; break;
+    case 17: key = ' '; break;
+    case 18: key = ' '; break;
+    case 19: key = ' '; break;
+    case 20: key = ' '; break;
+    case 21: key = ' '; break;
+    case 22: key = ' '; break;
+    case 23: key = ' '; break;
+    case 24: key = ' '; break;
+    case 25: key = ' '; break;
+    case 26: key = ' '; break;
+    case 27: key = ' '; break;
+    case 28: key = ' '; break;
+    case 29: key = ' '; break;
+    case 30: key = ' '; break;
+    case 31: key = ' '; break;
+    case 32: key = ' '; break;
+    case 33: key = '!'; break;
+    case 34: key = '"'; break;
+    case 35: key = '#'; break;
+    case 36: key = '$'; break;
+    case 37: key = '%'; break;
+    case 38: key = '&'; break;
+    case 39: key = ' '; break;
+    case 40: key = '('; break;
+    case 41: key = ')'; break;
+    case 42: key = '*'; break;
+    case 43: key = '+'; break;
+    case 44: key = ','; break;
+    case 45: key = '-'; break;
+    case 46: key = '.'; break;
+    case 47: key = '/'; break;
+    case 48: key = '0'; break;
+    case 49: key = '1'; break;
+    case 50: key = '2'; break;
+    case 51: key = '3'; break;
+    case 52: key = '4'; break;
+    case 53: key = '5'; break;
+    case 54: key = '6'; break;
+    case 55: key = '7'; break;
+    case 56: key = '8'; break;
+    case 57: key = '9'; break;
+    case 58: key = ':'; break;
+    case 59: key = ';'; break;
+    case 60: key = '<'; break;
+    case 61: key = '='; break;
+    case 62: key = '>'; break;
+    case 63: key = '?'; break;
+    case 64: key = '@'; break;
+    case 65: key = 'A'; break;
+    case 66: key = 'B'; break;
+    case 67: key = 'C'; break;
+    case 68: key = 'D'; break;
+    case 69: key = 'E'; break;
+    case 70: key = 'F'; break;
+    case 71: key = 'G'; break;
+    case 72: key = 'H'; break;
+    case 73: key = 'I'; break;
+    case 74: key = 'J'; break;
+    case 75: key = 'K'; break;
+    case 76: key = 'L'; break;
+    case 77: key = 'M'; break;
+    case 78: key = 'N'; break;
+    case 79: key = 'O'; break;
+    case 80: key = 'P'; break;
+    case 81: key = 'Q'; break;
+    case 82: key = 'R'; break;
+    case 83: key = 'S'; break;
+    case 84: key = 'T'; break;
+    case 85: key = 'U'; break;
+    case 86: key = 'V'; break;
+    case 87: key = 'W'; break;
+    case 88: key = 'X'; break;
+    case 89: key = 'Y'; break;
+    case 90: key = 'Z'; break;
+    case 91: key = '['; break;
+    case 92: key = '\ '; break;
+    case 93: key = ']'; break;
+    case 94: key = '^'; break;
+    case 95: key = '_'; break;
+    case 96: key = '`'; break;
+    case 97: key = 'a'; break;
+    case 98: key = 'b'; break;
+    case 99: key = 'c'; break;
+    case 100: key = 'd'; break;
+    case 101: key = 'e'; break;
+    case 102: key = 'f'; break;
+    case 103: key = 'g'; break;
+    case 104: key = 'h'; break;
+    case 105: key = 'i'; break;
+    case 106: key = 'j'; break;
+    case 107: key = 'k'; break;
+    case 108: key = 'l'; break;
+    case 109: key = 'm'; break;
+    case 110: key = 'n'; break;
+    case 111: key = 'o'; break;
+    case 112: key = 'p'; break;
+    case 113: key = 'q'; break;
+    case 114: key = 'r'; break;
+    case 115: key = 's'; break;
+    case 116: key = 't'; break;
+    case 117: key = 'u'; break;
+    case 118: key = 'v'; break;
+    case 119: key = 'w'; break;
+    case 120: key = 'x'; break;
+    case 121: key = 'y'; break;
+    case 122: key = 'z'; break;
+    case 123: key = '{'; break;
+    case 124: key = '|'; break;
+    case 125: key = '}'; break;
+    case 126: key = '~'; break;
+    case 127: key = ' '; break;
 
-void touchRectRound(int startX, int startY, int sizeX, int sizeY, int round, int color, int erase, byte& status) {
-  bool pressed = tft.getTouch(&x, &y);
 
-  if (x > startX && x < startX + sizeX && y > startY && y < startY + sizeY) {
-    if (status == 0) {
-      tft.fillRoundRect(startX, startY, sizeX, sizeY, round, color);
-      status = 1;
-    } else {
-      tft.fillRoundRect(startX, startY, sizeX, sizeY, round, erase);
-      tft.drawRoundRect(startX, startY, sizeX, sizeY, round, color);
-      status = 0;
-    }
+  }
+
+  if (lenghtText < nameLenght) {
+    textKnowname[lenghtText] = key;
+    lenghtText ++;
+    Serial.println(textKnowname);
+  } else {
+    return;
   }
 }
 
-void touchRect(int startX, int startY, int sizeX, int sizeY, int color, int erase, byte& status) {
-  bool pressed = tft.getTouch(&x, &y);
+void keyBackspace() {
+  if (lenghtText > 0) {
 
-  if (x > startX && x < startX + sizeX && y > startY && y < startY + sizeY) {
-    if (status == 0) {
-      tft.fillRect(startX, startY, sizeX, sizeY, color);
-      status = 1;
-    } else {
-      tft.fillRect(startX, startY, sizeX, sizeY, erase);
-      tft.drawRect(startX, startY, sizeX, sizeY, color);
-      status = 0;
-    }
-  }
-}
-
-void touchCircle(int startX, int startY, int size, int color, int erase, byte& status) {
-  bool pressed = tft.getTouch(&x, &y);
-
-  if (x > startX && x < startX + size && y > startY && y < startY + size) {
-    if (status == 0) {
-      tft.fillCircle(startX, startY, size, color);
-      status = 1;
-    } else {
-      tft.fillCircle(startX, startY, size, erase);
-      tft.fillCircle(startX, startY, size, color);
-      status = 0;
-    }
   }
 }
 
@@ -1395,9 +1622,7 @@ void startLogo() {
   bool wait = 1;
   tft.fillScreen(blackScript);
   tft.setSwapBytes(true);
-  tft.pushImage(0, 0, 480, 320, abertura); //white white white white white white ATIVAR PARA USAR
-
-  tft.pushImage(5, 5, 48, 48, profile1);
+  //tft.pushImage(0, 0, 480, 320, abertura); //white white white white white white ATIVAR PARA USAR
 
   if (language == 1) {
     tft.setTextDatum(ML_DATUM);
@@ -3508,12 +3733,6 @@ void calendar() {
   date();
 }
 
-int startDayOfWeek(int y, int m, int d){
-  static int t[] = {0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4};
-  y -= m < 3;
-  return (y +y/4 -y/100 + y/400 + t[m-1] + d)% 7; 
-}
-
 void calendarLoader() {
   if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) {
     monthLengh = 31;
@@ -5192,22 +5411,6 @@ void compass() {
   tft.drawString("CALIBRAR", 65, 281, GFXFF);
 }
 
-void drawArc(int x, int y, int arcStart, int artEnd, int radius, int color) {
-  /*
-      270
-    /    \
-  180     360-0
-    \    /
-      90
-  */
-  for (int i = arcStart; i < artEnd; i++) { 
-    double radians = i * PI / 180;
-    double px = x + radius * cos(radians);
-    double py = y + radius * sin(radians);
-    tft.drawPixel(px, py, color);
-  }
-}
-
 void keyboard() {
   tft.fillCircle(30, 100, 20, whiteScript);
   tft.drawRoundRect(65, 81, 350, 40, 5, icon_black);
@@ -5275,33 +5478,6 @@ void keyboard() {
   tft.fillRect(362, 280, 35, 35, wifi_off2);
   tft.fillRect(402, 280, 35, 35, wifi_off2);
   tft.fillRect(442, 280, 35, 35, wifi_off2);
-
-
-  // 1 Seta cima
-  tft.drawLine(13, 255, 20, 248, whiteScript);
-  tft.drawLine(13, 256, 20, 249, whiteScript);
-  tft.drawLine(13, 257, 20, 250, whiteScript);
-  tft.drawLine(13, 258, 20, 251, whiteScript);
-  tft.drawLine(20, 248, 27, 255, whiteScript);
-  tft.drawLine(20, 249, 27, 256, whiteScript);
-  tft.drawLine(20, 250, 27, 257, whiteScript);
-  tft.drawLine(20, 251, 27, 258, whiteScript);
-  tft.drawLine(19, 250, 19, 265, whiteScript);
-  tft.drawLine(20, 250, 20, 265, whiteScript);
-  tft.drawLine(21, 250, 21, 265, whiteScript);
-
-  // 2 Seta cima
-  tft.drawLine(453, 255, 460, 248, whiteScript);
-  tft.drawLine(453, 256, 460, 249, whiteScript);
-  tft.drawLine(453, 257, 460, 250, whiteScript);
-  tft.drawLine(453, 258, 460, 251, whiteScript);
-  tft.drawLine(460, 248, 467, 255, whiteScript);
-  tft.drawLine(460, 249, 467, 256, whiteScript);
-  tft.drawLine(460, 250, 467, 257, whiteScript);
-  tft.drawLine(460, 251, 467, 258, whiteScript);
-  tft.drawLine(459, 250, 459, 265, whiteScript);
-  tft.drawLine(460, 250, 460, 265, whiteScript);
-  tft.drawLine(461, 250, 461, 265, whiteScript);
 
   // Seta Esquerda
   tft.drawLine(372, 298, 383, 287, whiteScript);
@@ -5479,10 +5655,13 @@ void keyboard() {
 
     tft.setFreeFont(latoRegular14);
 
-    tft.drawString("ctrl", 58, 295, GFXFF);
-    tft.drawString("fn", 99, 295, GFXFF);
+    tft.drawString("Caps", 20, 258, GFXFF);
+    tft.drawString("Del", 460, 258, GFXFF);
 
-    tft.drawString("ENG", 460, 295, GFXFF);
+    tft.drawString("Ctrl", 58, 295, GFXFF);
+    tft.drawString("Fn", 99, 295, GFXFF);
+
+    tft.drawString("Eng", 460, 295, GFXFF);
 
   }
 }
@@ -5570,7 +5749,7 @@ void profileimage() {
   if (language == 1) {
     tft.setTextDatum(MC_DATUM);
     tft.setFreeFont(latoRegular24);
-    tft.drawString("Choose a image for your Profile!", 240, 90, GFXFF);
+    tft.drawString("Choose a image for your Profile?", 240, 90, GFXFF);
     tft.setTextDatum(ML_DATUM);
     tft.drawString("EN-US", 394, 299, GFXFF);
     tft.setTextDatum(MC_DATUM);
@@ -5931,6 +6110,7 @@ void telaMenu9() {
   tft.pushImage(50, 248, 19, 30, humidityImage);
   tft.drawCircle(60, 265, 35, humidityColor2);
 }
+
 void telaMenu10() {
   tft.fillScreen(blackScript);
   i = 1;
@@ -6258,4 +6438,71 @@ void telaMenu15() {
   wifiLevel();
   batteryLevel();
   lockLevel();
+}
+
+void drawArc(int x, int y, int arcStart, int artEnd, int radius, int color) {
+  /*
+      270
+    /    \
+  180     360-0
+    \    /
+      90
+  */
+  for (int i = arcStart; i < artEnd; i++) { 
+    double radians = i * PI / 180;
+    double px = x + radius * cos(radians);
+    double py = y + radius * sin(radians);
+    tft.drawPixel(px, py, color);
+  }
+}
+
+int startDayOfWeek(int y, int m, int d) {
+  static int t[] = {0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4};
+  y -= m < 3;
+  return (y +y/4 -y/100 + y/400 + t[m-1] + d)% 7; 
+}
+
+void touchRectRound(int startX, int startY, int sizeX, int sizeY, int round, int color, int erase, byte& status) {
+  bool pressed = tft.getTouch(&x, &y);
+
+  if (x > startX && x < startX + sizeX && y > startY && y < startY + sizeY) {
+    if (status == 0) {
+      tft.fillRoundRect(startX, startY, sizeX, sizeY, round, color);
+      status = 1;
+    } else {
+      tft.fillRoundRect(startX, startY, sizeX, sizeY, round, erase);
+      tft.drawRoundRect(startX, startY, sizeX, sizeY, round, color);
+      status = 0;
+    }
+  }
+}
+
+void touchRect(int startX, int startY, int sizeX, int sizeY, int color, int erase, byte& status) {
+  bool pressed = tft.getTouch(&x, &y);
+
+  if (x > startX && x < startX + sizeX && y > startY && y < startY + sizeY) {
+    if (status == 0) {
+      tft.fillRect(startX, startY, sizeX, sizeY, color);
+      status = 1;
+    } else {
+      tft.fillRect(startX, startY, sizeX, sizeY, erase);
+      tft.drawRect(startX, startY, sizeX, sizeY, color);
+      status = 0;
+    }
+  }
+}
+
+void touchCircle(int startX, int startY, int size, int color, int erase, byte& status) {
+  bool pressed = tft.getTouch(&x, &y);
+
+  if (x > startX && x < startX + size && y > startY && y < startY + size) {
+    if (status == 0) {
+      tft.fillCircle(startX, startY, size, color);
+      status = 1;
+    } else {
+      tft.fillCircle(startX, startY, size, erase);
+      tft.fillCircle(startX, startY, size, color);
+      status = 0;
+    }
+  }
 }
