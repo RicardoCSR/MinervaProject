@@ -880,7 +880,7 @@ void loop(void) {
 
           tft.setTextDatum(ML_DATUM);
           tft.setTextColor(whiteScript);
-          tft.setFreeFont(latoRegular14);
+          tft.setFreeFont(latoRegular24);
           tft.drawString(textKnowname, 69, 95, GFXFF);
 
 
@@ -1442,7 +1442,15 @@ void textBoxName(int keys) {
 
 void keyBackspace() {
   if (lenghtText > 0) {
-
+    lenghtText --;
+    if (lenghtText > 0) {
+      lenghtText --;
+      textKnowname[lenghtText] = '\0';
+      tft.fillRect(69, 83, 342, 34, blackScript);
+    } else {
+      textKnowname[lenghtText] = '\0';
+      tft.fillRect(69, 83, 342, 34, blackScript);
+    }
   }
 }
 
