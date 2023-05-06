@@ -419,7 +419,7 @@ byte switchPressedExit = 0;
 
 byte touchScreenMode = 0;
 // switchPressedExit = 0 Aguardando comando
-// switchPressedExit = 1 Habilita o test_calibration()
+// switchPressedExit = 1 Habilita o testCalibration()
 
 byte switchLanguage = 0;
 // switchLanguage = 0 Aguardando comando
@@ -474,13 +474,13 @@ void loop(void) {
     bool pressed = tft.getTouch(&x, &y);
 
     if (pressed) {
-      if (timeSystem - timePressed >= 500) {
+      if (timeSystem - timePressed >= 250) {
         Serial.print("x, y, z = ");
         Serial.print(x);
         Serial.print(",");
         Serial.print(y);
         Serial.print(",");
-        Serial.printf("%i \n", tft.getTouchRawZ());
+        Serial.printf("%i \n", tft.getTouchRawZ()); 
         timePressed = timeSystem;
       
   // ------------------------------ TOUCHSCREEN DISPLAY TFT 16 E 17 ---------------------
@@ -500,7 +500,7 @@ void loop(void) {
             tft.drawString("Testar", 240, 264, GFXFF);
           }
           if (switchPressedTest == 1) {
-            test_calibration();
+            testCalibration();
           } 
 
           touchRectRound(310, 250, 100, 30, 5, winterMenu, blackScript, switchPressedExit);
@@ -595,9 +595,10 @@ void loop(void) {
             keyboard();
           }
 
-          touchCircle(30, 100, 20, whiteScript, blackScript, keyboardClose);
-          if (keyboardClose = 0) {
+          touchCircle(441, 93, 20, blackScript, blackScript, keyboardClose);
+          if (keyboardClose == 1) {
             displayTFT = 19;
+            keyboardClose = 0;
             tft.fillScreen(blackScript);
             knowname();
           }
@@ -877,21 +878,6 @@ void loop(void) {
             textBoxName(32);
             Serial.println("Space");
           }
-
-          tft.setTextDatum(ML_DATUM);
-          tft.setTextColor(whiteScript);
-          tft.setFreeFont(latoRegular24);
-          tft.drawString(textKnowname, 69, 95, GFXFF);
-
-
-
-
-
-
-
-
-
-
         }
 
   // ------------------------------ PROFILEIMAGE DISPLAY TFT 21 ---------------------
@@ -908,10 +894,7 @@ void loop(void) {
               languageScreen = 0;
               profileimage();
             }
-          }
-
-
-
+          } 
 
 
 
@@ -1015,7 +998,7 @@ void loop(void) {
     } 
 
   // ------------------------ ATUALIZA RELOGIO SERIAL OPERACIONAL -----------
-    if (secs != compareSecs) {
+    /*if (secs != compareSecs) {
       compareSecs = secs;
       Serial.print(day);
       Serial.print("/");
@@ -1029,6 +1012,7 @@ void loop(void) {
       Serial.print(":");
       Serial.println(secs);  
     }
+    */
 
   // ------------------------ ATUALIZACAO VISUAL DATA E HORA OPERACIONAL --------
     if (displayTFT < 16) {
@@ -1427,36 +1411,38 @@ void textBoxName(int keys) {
     case 125: key = '}'; break;
     case 126: key = '~'; break;
     case 127: key = ' '; break;
-
-
   }
 
   if (lenghtText < nameLenght) {
     textKnowname[lenghtText] = key;
     lenghtText ++;
+    tft.fillRect(69, 83, 342, 34, blackScript);
     Serial.println(textKnowname);
-  } else {
-    return;
+    Serial.println(lenghtText);
+    tft.setTextDatum(ML_DATUM);
+    tft.setTextColor(whiteScript);
+    tft.setFreeFont(latoRegular24);
+    tft.drawString(textKnowname, 69, 98, GFXFF);
   }
 }
 
 void keyBackspace() {
+  Serial.println(lenghtText);
   if (lenghtText > 0) {
-    lenghtText --;
-    if (lenghtText > 0) {
-      lenghtText --;
-      textKnowname[lenghtText] = '\0';
-      tft.fillRect(69, 83, 342, 34, blackScript);
-    } else {
-      textKnowname[lenghtText] = '\0';
-      tft.fillRect(69, 83, 342, 34, blackScript);
-    }
+    lenghtText ++;
+    textKnowname[lenghtText] = ' ';
+    lenghtText  = lenghtText - 2;
+  } else if (lenghtText < 0) {
+    textKnowname[lenghtText] = ' ';
+    lenghtText ++;
   }
+  tft.fillRect(69, 83, 342, 34, blackScript);
+  Serial.println(lenghtText);
 }
 
 void touch_calibrate() {
   displayTFT = 16;
-  uint16_t calData[5];
+  uint16_t calData[5]; // REMOVER WHITE WHITE WHITE WHITE
 
   // Calibrate
   tft.fillScreen(blackScript);
@@ -1471,20 +1457,6 @@ void touch_calibrate() {
   tft.println();
 
   tft.calibrateTouch(calData, greenScript, blackScript, 15);
-
-  Serial.println(); Serial.println();
-  Serial.println("// Use this calibration code in setup():");
-  Serial.print("  uint16_t calData[5] = ");
-  Serial.print("{ ");
-
-  for (uint8_t i = 0; i < 5; i++) {
-    Serial.print(calData[i]);
-    if (i < 4) Serial.print(", ");
-  }
-
-  Serial.println(" };");
-  Serial.print("  tft.setTouch(calData);");
-  Serial.println(); Serial.println();
 
   touchSet = 3;
 
@@ -1505,7 +1477,7 @@ void touch_calibrate() {
   tft.drawString("Sair", 360, 264, GFXFF);
 }
 
-void test_calibration() {
+void testCalibration() {
   if (touchScreenMode == 0) {
     tft.fillScreen(blackScript);
     touchScreenMode ++;
@@ -1531,7 +1503,7 @@ void test_calibration() {
 
     if (switchPressedTest == 0 && touchScreenMode == 1) {
       touchScreenMode == 0;
-      test_calibration();
+      testCalibration();
     }
   }
 }
@@ -1613,7 +1585,7 @@ void selectFunctionDisplay() {
         touch_calibrate();
       break;
       case 17:
-        test_calibration();
+        testCalibration();
       break;
       case 18:
         welcome();
@@ -5597,6 +5569,9 @@ void keyboard() {
 
     tft.setFreeFont(latoRegular14);
 
+    tft.drawString("Caps", 20, 258, GFXFF);
+    tft.drawString("Del", 460, 258, GFXFF);
+
     tft.drawString("ctrl", 58, 295, GFXFF);
     tft.drawString("fn", 99, 295, GFXFF);
 
@@ -5712,6 +5687,8 @@ void welcome() {
 }
 
 void knowname() {
+  keyboardClose = 0;
+
   tft.fillCircle(454, 88, 10, greyScript);
   tft.fillCircle(454, 123, 10, whiteScript);
   tft.fillCircle(454, 158, 10, greyScript);
