@@ -326,6 +326,8 @@ uint16_t icon_white = 0xD6BA;           //0xD9D9D9
 #include <Wire.h>
 #include "Adafruit_GFX.h"
 
+#include <WiFi.h>
+
 #include <stdint.h>
 
 #include <EasyColor.h>
@@ -392,6 +394,9 @@ void setup() {
 unsigned long UtlTime;
 unsigned long timeSystem;
 unsigned long timePressed;
+unsigned long timePointLenghText;
+unsigned long timeLoadScreen;
+
 
 int dosimetervalue = 0;
 byte geigerCurve = 0;
@@ -462,10 +467,22 @@ byte languageScreen = 0;
 // languageScreen = 0 Aguardando comando
 // languageScreen = 1 Habilita alteracao da byte language
 
+byte switchSearchWiFi = 0;
+// switchSearchWiFi = 0 Aguardando Comando
+// switchSearchWiFi = 1 Habilita procura de rede Wi-Fi
 
-#define nameLenght 30
+byte switchAcessWiFi = 0;
+// switchAcessWiFi = 0 Aguardando Comando
+// switchAcessWiFi = 1 Habilita conexao com a Rede Wi-Fi selecionada
+
+byte switchSelectWiFi = 0;
+// switchSelectWiFi = 0 Aguardando comando
+// switchSelectWiFi = 1 Habita o menuNetworks();
+
+#define nameLenght 15
 int lenghtText = 0;
-char textKnowname [nameLenght] = {0};
+char textKnowName [nameLenght] = {0};
+String userName;
 char key;
 
 
@@ -515,7 +532,8 @@ void loop(void) {
         }
 
   // ------------------------------ WELCOME DISPLAY TFT 18 ---------------------
-        if (displayTFT == 18) {
+        if ((displayTFT == 18) && (millis() - timeLoadScreen >= 500)) {
+          timeLoadScreen = millis();
           touchRect(390, 280, 90, 40, blackScript, blackScript, languageScreen);
           if (languageScreen == 1) {
             tft.fillScreen(blackScript);
@@ -540,7 +558,8 @@ void loop(void) {
         }
 
   // ------------------------------ KNOWNAME DISPLAY TFT 19 ---------------------
-        if (displayTFT == 19) {
+        if ((displayTFT == 19) && (millis() - timeLoadScreen >= 500)) {
+          timeLoadScreen = millis();
           touchRect(390, 280, 90, 40, blackScript, blackScript, languageScreen);
           if (languageScreen == 1) {
             tft.fillScreen(blackScript);
@@ -563,7 +582,7 @@ void loop(void) {
             keyboard();
           }
 
-          /*
+          
           touchRectRound(190, 232, 100, 30, 5, whiteScript, blackScript, swithContinueKnowname);
           if (swithContinueKnowname == 1) {
             displayTFT = 21;
@@ -571,7 +590,7 @@ void loop(void) {
             swithContinueKnowname = 0;
             profileimage();
           }
-          */
+          
 
           touchCircle(454, 88, 10, whiteScript, wifi_off2, switchMenuStart);
           if (switchMenuStart == 1) {
@@ -583,7 +602,8 @@ void loop(void) {
         }
 
   // ------------------------------ KEYBOARD DISPLAY TFT 20 ---------------------
-        if (displayTFT == 20) {
+        if ((displayTFT == 20) && (millis() - timeLoadScreen >= 500)) {
+          timeLoadScreen = millis();
           touchRect(2, 240, 35, 35, wifi_off2, blackScript, switchCaps);
           touchRect(442, 240, 35, 35, wifi_off2, blackScript, switchCaps);
           if (x > 2 && x < 2 + 35 && y > 240 && y < 240 + 35) {
@@ -602,6 +622,12 @@ void loop(void) {
             tft.fillScreen(blackScript);
             knowname();
           }
+
+          /*
+          if (timeSystem - timePointLenghText >= 500) {
+
+          }
+          */
 
 
 
@@ -881,7 +907,8 @@ void loop(void) {
         }
 
   // ------------------------------ PROFILEIMAGE DISPLAY TFT 21 ---------------------
-        if (displayTFT == 21) {
+        if (displayTFT == 21 && (millis() - timeLoadScreen >= 500)) {
+          timeLoadScreen = millis();
           touchRect(390, 280, 90, 40, blackScript, blackScript, languageScreen);
           if (languageScreen == 1) {
             tft.fillScreen(blackScript);
@@ -897,8 +924,146 @@ void loop(void) {
           } 
 
 
+          touchCircle(454, 88, 10, whiteScript, wifi_off2, switchMenuStart);
+          if (switchMenuStart == 1) {
+            displayTFT = 18;
+            tft.fillScreen(blackScript);
+            switchMenuStart = 0;
+            welcome();
+          }
+
+          touchCircle(454, 123, 10, whiteScript, wifi_off2, switchMenuStart);
+          if (switchMenuStart == 1) {
+            displayTFT = 19;
+            tft.fillScreen(blackScript);
+            switchMenuStart = 0;
+            knowname();
+          }
+
+          touchRectRound(190, 232, 100, 30, 5, whiteScript, blackScript, swithContinueKnowname);
+          if (swithContinueKnowname == 1) {
+            displayTFT = 22;
+            tft.fillScreen(blackScript);
+            swithContinueKnowname = 0;
+            internetAcess();
+          }
+        }
+
+  // ------------------------------ INTERNETACESS DISPLAY TFT 22 ---------------------
+        if (displayTFT == 22 && (millis() - timeLoadScreen >= 500)) {
+          timeLoadScreen = millis();
+          touchRect(390, 280, 90, 40, blackScript, blackScript, languageScreen);
+          if (languageScreen == 1) {
+            tft.fillScreen(blackScript);
+            if (language == 1) {
+              language = 0;
+              languageScreen = 0;
+              internetAcess();
+            } else {
+              language = 1;
+              languageScreen = 0;
+              internetAcess();
+            }
+          } 
+
+
+          touchCircle(454, 88, 10, whiteScript, wifi_off2, switchMenuStart);
+          if (switchMenuStart == 1) {
+            displayTFT = 18;
+            tft.fillScreen(blackScript);
+            switchMenuStart = 0;
+            welcome();
+          }
+
+          touchCircle(454, 123, 10, whiteScript, wifi_off2, switchMenuStart);
+          if (switchMenuStart == 1) {
+            displayTFT = 19;
+            tft.fillScreen(blackScript);
+            switchMenuStart = 0;
+            knowname();
+          }
+
+          touchCircle(454, 158, 10, whiteScript, wifi_off2, switchMenuStart);
+          if (switchMenuStart == 1) {
+            displayTFT = 21;
+            tft.fillScreen(blackScript);
+            switchMenuStart = 0;
+            profileimage();
+          }
+
+          touchRect(390, 280, 90, 40, blackScript, blackScript, switchSearchWiFi);
+          if (switchSearchWiFi = 1) {
+            Serial.println("Procurando por redes Wi-Fi...");
+            WiFi.mode(WIFI_STA);
+            WiFi.disconnect();
+
+            Serial.println("Redes encontradas:");
+            int numNetworks = WiFi.scanNetworks();
+            for (int i = 0; i < numNetworks; i++) {
+              Serial.print(i+1);
+              Serial.print(": ");
+              Serial.print(WiFi.SSID(i));
+              Serial.print(" (");
+              Serial.print(WiFi.RSSI(i));
+              Serial.println(")");
+            }
+            switchSearchWiFi = 0;
+          }
+          touchRectRound(115, 112, 250, 30, 5, whiteScript, blackScript, switchSelectWiFi);
+          if (switchSelectWiFi == 1) {
+            displayTFT = 23;
+            tft.fillScreen(blackScript);
+            switchSelectWiFi = 0;
+            menuNetworks();
+          }
+
 
         }
+
+  // ------------------------------ MENUNETWORKS DISPLAY TFT 23 ---------------------
+        if (displayTFT == 23 && (millis() - timeLoadScreen >= 500)) {
+          timeLoadScreen = millis();
+          touchRect(390, 280, 90, 40, blackScript, blackScript, languageScreen);
+          if (languageScreen == 1) {
+            tft.fillScreen(blackScript);
+            if (language == 1) {
+              language = 0;
+              languageScreen = 0;
+              menuNetworks();
+            } else {
+              language = 1;
+              languageScreen = 0;
+              menuNetworks();
+            }
+          } 
+
+
+          touchCircle(454, 88, 10, whiteScript, wifi_off2, switchMenuStart);
+          if (switchMenuStart == 1) {
+            displayTFT = 18;
+            tft.fillScreen(blackScript);
+            switchMenuStart = 0;
+            welcome();
+          }
+
+          touchCircle(454, 123, 10, whiteScript, wifi_off2, switchMenuStart);
+          if (switchMenuStart == 1) {
+            displayTFT = 19;
+            tft.fillScreen(blackScript);
+            switchMenuStart = 0;
+            knowname();
+          }
+
+          touchCircle(454, 158, 10, whiteScript, wifi_off2, switchMenuStart);
+          if (switchMenuStart == 1) {
+            displayTFT = 21;
+            tft.fillScreen(blackScript);
+            switchMenuStart = 0;
+            profileimage();
+          }
+        }
+
+
 
 
 
@@ -998,7 +1163,7 @@ void loop(void) {
     } 
 
   // ------------------------ ATUALIZA RELOGIO SERIAL OPERACIONAL -----------
-    /*if (secs != compareSecs) {
+    if (secs != compareSecs) {
       compareSecs = secs;
       Serial.print(day);
       Serial.print("/");
@@ -1012,7 +1177,6 @@ void loop(void) {
       Serial.print(":");
       Serial.println(secs);  
     }
-    */
 
   // ------------------------ ATUALIZACAO VISUAL DATA E HORA OPERACIONAL --------
     if (displayTFT < 16) {
@@ -1279,6 +1443,28 @@ void loop(void) {
 
 }
 
+void menuNetworks() {
+  tft.fillCircle(454, 88, 10, greyScript);
+  tft.fillCircle(454, 123, 10, greyScript);
+  tft.fillCircle(454, 158, 10, greyScript);
+  tft.fillCircle(454, 193, 10, whiteScript);
+  tft.fillCircle(454, 228, 10, greyScript);
+  tft.setTextColor(whiteScript);
+
+  if (language == 1) {
+    tft.setTextDatum(MC_DATUM);
+    tft.setFreeFont(latoRegular24);
+    tft.drawString("Insert your Wi-Fi data", 240, 90, GFXFF);
+    tft.setTextDatum(ML_DATUM);
+    tft.drawString("EN-US", 394, 299, GFXFF);
+  } else  {
+    tft.setTextDatum(MC_DATUM);
+    tft.setFreeFont(latoRegular24);
+    tft.drawString("Insira os dados Wi-Fi", 240, 90, GFXFF);
+    tft.setTextDatum(ML_DATUM);
+    tft.drawString("PT-BR", 394, 299, GFXFF);
+  }
+}
 
 void textBoxName(int keys) {
   Serial.print(keys);
@@ -1292,8 +1478,8 @@ void textBoxName(int keys) {
     case 6 : key = ' '; break;
     case 7 : key = ' '; break;
     case 8 : keyBackspace(); break;
-    case 9 : key = ' '; break;
-    case 10: key = ' '; break;
+    case 9 : key = ' '; break; 
+    case 10: enter(); break;
     case 11: key = ' '; break;
     case 12: key = ' '; break;
     case 13: key = ' '; break;
@@ -1413,31 +1599,41 @@ void textBoxName(int keys) {
     case 127: key = ' '; break;
   }
 
-  if (lenghtText < nameLenght) {
-    textKnowname[lenghtText] = key;
-    lenghtText ++;
+  if ((keys >= 1 && keys <= 127) && !(keys == 8 || keys == 10)) {   //APLICAR A TECLAS FUNCAO
+    if (lenghtText < nameLenght) {
+      textKnowName[lenghtText++] = key;
+      tft.fillRect(69, 83, 342, 34, blackScript);
+      tft.setTextDatum(ML_DATUM);
+      tft.setTextColor(whiteScript);
+      tft.setFreeFont(latoRegular24);
+      tft.drawString(textKnowName, 69, 98, GFXFF);
+      return;
+    }
+  }
+  else if ((lenghtText < nameLenght) && displayTFT == 20) {
     tft.fillRect(69, 83, 342, 34, blackScript);
-    Serial.println(textKnowname);
-    Serial.println(lenghtText);
     tft.setTextDatum(ML_DATUM);
     tft.setTextColor(whiteScript);
     tft.setFreeFont(latoRegular24);
-    tft.drawString(textKnowname, 69, 98, GFXFF);
+    tft.drawString(textKnowName, 69, 98, GFXFF);
   }
 }
 
 void keyBackspace() {
-  Serial.println(lenghtText);
   if (lenghtText > 0) {
-    lenghtText ++;
-    textKnowname[lenghtText] = ' ';
-    lenghtText  = lenghtText - 2;
-  } else if (lenghtText < 0) {
-    textKnowname[lenghtText] = ' ';
-    lenghtText ++;
+    textKnowName[--lenghtText] = '\0';
   }
   tft.fillRect(69, 83, 342, 34, blackScript);
-  Serial.println(lenghtText);
+}
+
+void enter() {
+  Serial.println(textKnowName);
+  textKnowName[--lenghtText];
+  displayTFT = 19;
+  keyboardClose = 0;
+  tft.fillScreen(blackScript);
+  userName = textKnowName;
+  knowname();
 }
 
 void touch_calibrate() {
@@ -5722,6 +5918,11 @@ void knowname() {
 
     tft.drawRoundRect(115, 150, 250, 30, 5, whiteScript);
   }
+
+  tft.setTextDatum(ML_DATUM);
+  tft.setTextColor(whiteScript);
+  tft.setFreeFont(latoRegular24);
+  tft.drawString(userName, 120, 163, GFXFF);
 }
 
 void profileimage() {
@@ -5790,6 +5991,7 @@ void internetAcess() {
   if (language == 1) {
     tft.setTextDatum(MC_DATUM);
     tft.setFreeFont(latoRegular24);
+    tft.setTextColor(whiteScript);
     tft.drawString("Insert your Wi-Fi data", 240, 90, GFXFF);
     tft.setTextDatum(ML_DATUM);
     tft.drawString("EN-US", 394, 299, GFXFF);
@@ -5802,13 +6004,25 @@ void internetAcess() {
     tft.setTextDatum(MC_DATUM);
     tft.setFreeFont(latoRegular14);
 
+    if (switchSearchWiFi == 1) {
+      tft.setTextColor(whiteScript);
+      tft.drawString("SEARCH", 173, 230, GFXFF);
+    } else {
+      tft.setTextColor(whiteScript);
+      tft.drawString("SEARCH", 173, 230, GFXFF);
+    }
+    if (switchAcessWiFi == 0) {
+      tft.setTextColor(greyScript);
+      tft.drawString("ACESS", 308, 230, GFXFF);
+    } else {
+      tft.setTextColor(greyScript);
+      tft.drawString("ACESS", 308, 230, GFXFF);
+    }
+
     tft.fillRectHGradient(123, 216, 100, 30, humidityColor1, humidityColor2);
-    tft.drawString("SEARCH", 173, 230, GFXFF);
     tft.fillRectHGradient(210, 267, 60, 30, temperatureColor1, temperatureColor2);
-    tft.drawString("SKIP", 240, 280, GFXFF);
     tft.fillRectHGradient(258, 216, 100, 30, pressureColor1, pressureColor2);
-    tft.setTextColor(greyScript);
-    tft.drawString("ACESS", 308, 230, GFXFF);
+    tft.drawString("SKIP", 240, 280, GFXFF);
   } else  {
     tft.setTextDatum(MC_DATUM);
     tft.setFreeFont(latoRegular24);
@@ -5824,13 +6038,26 @@ void internetAcess() {
     tft.setTextDatum(MC_DATUM);
     tft.setFreeFont(latoRegular14);
 
+    if (switchSearchWiFi == 1) {
+      tft.setTextColor(whiteScript);
+      tft.drawString("BUSCAR", 173, 230, GFXFF);
+    } else {
+      tft.setTextColor(greyScript);
+      tft.drawString("BUSCAR", 173, 230, GFXFF);
+    }
+
+    if (switchAcessWiFi == 0) {
+      tft.setTextColor(greyScript);
+      tft.drawString("ACESSAR", 308, 230, GFXFF);
+    } else {
+      tft.setTextColor(whiteScript);
+      tft.drawString("ACESSAR", 308, 230, GFXFF);
+    }
+
     tft.fillRectHGradient(123, 216, 100, 30, humidityColor1, humidityColor2);
-    tft.drawString("BUSCAR", 173, 230, GFXFF);
     tft.fillRectHGradient(210, 267, 60, 30, temperatureColor1, temperatureColor2);
-    tft.drawString("PULAR", 240, 280, GFXFF);
     tft.fillRectHGradient(258, 216, 100, 30, pressureColor1, pressureColor2);
-    tft.setTextColor(greyScript);
-    tft.drawString("ACESSAR", 308, 230, GFXFF);
+    tft.drawString("PULAR", 240, 280, GFXFF);
   }
 }
 
