@@ -173,6 +173,12 @@ byte updateBattery = 0;
 // updateBattery = 5 Apresentação Bateria Level 6
 // updateBattery = 6 Apresentação Bateria Level 7
 
+byte wifiStyle = 0;
+// wifiStyle = 0 Design WiFi default
+// wifiStyle = 1 Design WiFi 1
+// wifiStyle = 2 Design WiFi 2
+// wifiStyle = 3 Design WiFi 3
+
 byte wifiRead = 0;
 // wifiRead = 0 WiFi em alta potência
 // wifiRead = 1 WiFi em media potência
@@ -406,7 +412,7 @@ byte arrayDosi [480] = {0};
 byte i = 0;  // ATUALIZACAO VISUAL DATA E HORA 
 byte language = 1; // TELA DE ABERTURA
 
-  uint16_t x = 0, y = 0; // To store the touch coordinates
+uint16_t x = 0, y = 0; // To store the touch coordinates
 
 
 
@@ -477,14 +483,28 @@ byte switchAcessWiFi = 0;
 
 byte switchSelectWiFi = 0;
 // switchSelectWiFi = 0 Aguardando comando
-// switchSelectWiFi = 1 Habita o menuNetworks();
+// switchSelectWiFi = 1 Habita o menuNetworks()
+
+byte switchMenuNetworks = 0;
+// switchMenuNetworks = 0 Aguardando comando
+// switchMenuNetworks = 1 Habilita menuNetworks()
+
+byte selectedNetwork = 0;
+// selectedNetwork = 0 Aguardando comando
+// selectedNetwork = 1 Marca a rede selecionada menunetworks()
+
+byte selectedSSID = 0;
+// selectedSSID = 0 Aguardando comando
+// selectedSSID = 1 Marca a posicao da rede selecionada
 
 #define nameLenght 15
 int lenghtText = 0;
 char textKnowName [nameLenght] = {0};
 String userName;
+
 char key;
 
+int numNetworks;
 
 void loop(void) {
   // ------------------------------- touchScreen OPERACIONAL ----------------------
@@ -615,7 +635,7 @@ void loop(void) {
             keyboard();
           }
 
-          touchCircle(441, 93, 20, blackScript, blackScript, keyboardClose);
+          touchCircle(20, 90, 20, blackScript, blackScript, keyboardClose);
           if (keyboardClose == 1) {
             displayTFT = 19;
             keyboardClose = 0;
@@ -966,7 +986,6 @@ void loop(void) {
             }
           } 
 
-
           touchCircle(454, 88, 10, whiteScript, wifi_off2, switchMenuStart);
           if (switchMenuStart == 1) {
             displayTFT = 18;
@@ -991,15 +1010,24 @@ void loop(void) {
             profileimage();
           }
 
-          touchRect(390, 280, 90, 40, blackScript, blackScript, switchSearchWiFi);
-          if (switchSearchWiFi = 1) {
+          if (x > 123 && x < 123 + 100 && y > 216 && y < 216 + 30) {
+            switchSearchWiFi = 1;
+            if (language == 1) {
+              tft.setTextColor(greyScript);
+              tft.drawString("SEARCH", 173, 230, GFXFF);
+            } else {
+              tft.setTextColor(greyScript);
+              tft.drawString("BUSCAR", 173, 230, GFXFF);
+            }
+
             Serial.println("Procurando por redes Wi-Fi...");
             WiFi.mode(WIFI_STA);
             WiFi.disconnect();
 
             Serial.println("Redes encontradas:");
-            int numNetworks = WiFi.scanNetworks();
-            for (int i = 0; i < numNetworks; i++) {
+            numNetworks = WiFi.scanNetworks();
+            switchSearchWiFi = 0;
+            for (int i = 0; i < numNetworks; i++) { 
               Serial.print(i+1);
               Serial.print(": ");
               Serial.print(WiFi.SSID(i));
@@ -1007,8 +1035,15 @@ void loop(void) {
               Serial.print(WiFi.RSSI(i));
               Serial.println(")");
             }
-            switchSearchWiFi = 0;
+            if (language == 1) {
+              tft.setTextColor(whiteScript);
+              tft.drawString("SEARCH", 173, 230, GFXFF);
+            } else {
+              tft.setTextColor(whiteScript);
+              tft.drawString("BUSCAR", 173, 230, GFXFF);
+            }
           }
+
           touchRectRound(115, 112, 250, 30, 5, whiteScript, blackScript, switchSelectWiFi);
           if (switchSelectWiFi == 1) {
             displayTFT = 23;
@@ -1016,6 +1051,7 @@ void loop(void) {
             switchSelectWiFi = 0;
             menuNetworks();
           }
+
 
 
         }
@@ -1037,7 +1073,6 @@ void loop(void) {
             }
           } 
 
-
           touchCircle(454, 88, 10, whiteScript, wifi_off2, switchMenuStart);
           if (switchMenuStart == 1) {
             displayTFT = 18;
@@ -1061,12 +1096,63 @@ void loop(void) {
             switchMenuStart = 0;
             profileimage();
           }
+          
+          touchRect(129, 267, 100, 30, whiteScript, blackScript, switchMenuNetworks);
+          if (switchMenuNetworks == 1) {
+            displayTFT = 22;
+            tft.fillScreen(blackScript);
+            switchMenuNetworks = 0;
+            internetAcess();
+          }
+          touchRect(249, 267, 100, 30, whiteScript, blackScript, selectedNetwork);
+          if (selectedNetwork == 1 && selectedSSID > 0) {
+            displayTFT = 22;
+            tft.fillScreen(blackScript);
+            selectedNetwork = 0;
+            internetAcess();
+          }
+
+          if ((x > 96 && x < 96 + 270 && y > 94 && y < 94 + 30) && numNetworks >= 1) {
+            selectedSSID = 1;
+            tft.drawRoundRect(96, 94, 280, 30, 9, whiteScript);
+            tft.drawRoundRect(96, 124, 280, 30, 9, blackScript);
+            tft.drawRoundRect(96, 154, 280, 30, 9, blackScript);
+            tft.drawRoundRect(96, 184, 280, 30, 9, blackScript);
+            tft.drawRoundRect(96, 214, 280, 30, 9, blackScript);
+          }
+          if ((x > 96 && x < 96 + 270 && y > 124 && y < 124 + 30) && numNetworks >= 2) {
+            selectedSSID = 2;
+            tft.drawRoundRect(96, 94, 280, 30, 9, blackScript);
+            tft.drawRoundRect(96, 124, 280, 30, 9, whiteScript);
+            tft.drawRoundRect(96, 154, 280, 30, 9, blackScript);
+            tft.drawRoundRect(96, 184, 280, 30, 9, blackScript);
+            tft.drawRoundRect(96, 214, 280, 30, 9, blackScript);
+          }
+          if ((x > 96 && x < 96 + 270 && y > 154 && y < 154 + 30) && numNetworks >= 3) {
+            selectedSSID = 3;
+            tft.drawRoundRect(96, 94, 280, 30, 9, blackScript);
+            tft.drawRoundRect(96, 124, 280, 30, 9, blackScript);
+            tft.drawRoundRect(96, 154, 280, 30, 9, whiteScript);
+            tft.drawRoundRect(96, 184, 280, 30, 9, blackScript);
+            tft.drawRoundRect(96, 214, 280, 30, 9, blackScript);
+          }
+          if ((x > 96 && x < 96 + 270 && y > 184 && y < 184 + 30) && numNetworks >= 4) {
+            selectedSSID = 4;
+            tft.drawRoundRect(96, 94, 280, 30, 9, blackScript);
+            tft.drawRoundRect(96, 124, 280, 30, 9, blackScript);
+            tft.drawRoundRect(96, 154, 280, 30, 9, blackScript);
+            tft.drawRoundRect(96, 184, 280, 30, 9, whiteScript);
+            tft.drawRoundRect(96, 214, 280, 30, 9, blackScript);
+          }
+          if ((x > 96 && x < 96 + 270 && y > 214 && y < 214 + 30) && numNetworks >= 5) {
+            selectedSSID = 5;
+            tft.drawRoundRect(96, 94, 280, 30, 9, blackScript);
+            tft.drawRoundRect(96, 124, 280, 30, 9, blackScript);
+            tft.drawRoundRect(96, 154, 280, 30, 9, blackScript);
+            tft.drawRoundRect(96, 184, 280, 30, 9, blackScript);
+            tft.drawRoundRect(96, 214, 280, 30, 9, whiteScript);
+          }
         }
-
-
-
-
-
 
       }
     }
@@ -1443,7 +1529,14 @@ void loop(void) {
 
 }
 
+
+byte selectNetwork = 0;
+byte menuStartNetwork = 0;
+byte menuEndNetwork = numNetworks - 1;
+
+
 void menuNetworks() {
+  byte spaceText = 30;
   tft.fillCircle(454, 88, 10, greyScript);
   tft.fillCircle(454, 123, 10, greyScript);
   tft.fillCircle(454, 158, 10, greyScript);
@@ -1451,20 +1544,80 @@ void menuNetworks() {
   tft.fillCircle(454, 228, 10, greyScript);
   tft.setTextColor(whiteScript);
 
+  tft.drawRoundRect(95, 93, 300, 150, 10, whiteScript);
+
+  if (numNetworks > 5) {
+    tft.fillTriangle(379, 109, 389, 109, 384, 100, whiteScript);
+    tft.fillTriangle(379, 225, 389, 225, 384, 234, whiteScript);
+  } else {
+    tft.fillTriangle(379, 109, 389, 109, 384, 100, greyScript);
+    tft.fillTriangle(379, 225, 389, 225, 384, 234, greyScript);
+  }
+
+  tft.fillRectHGradient(249, 267, 100, 30, pressureColor1, pressureColor2);
+  tft.fillRectHGradient(129, 267, 100, 30, temperatureColor1, temperatureColor2);
+
+  for (int i = menuStartNetwork; i <= 5; i++) {
+    tft.setTextDatum(ML_DATUM);
+    tft.setFreeFont(latoRegular14);
+    tft.drawString(WiFi.SSID(i), 105, 106 + (spaceText * i), GFXFF);
+    if (WiFi.RSSI(i) <= -85) {
+      tft.drawSmoothArc(355, 118 + (spaceText * i), 1, 10, 140, 220, wifi_level1, wifi_level1, roundEnd);
+    } else if (WiFi.RSSI(i) >= -84 && WiFi.RSSI(i) <= -43) {
+      tft.drawSmoothArc(355, 118 + (spaceText * i), 1, 10, 140, 220, wifi_level1, wifi_level2, roundEnd);
+      tft.drawSmoothArc(355, 118 + (spaceText * i), 9, 15, 140, 220, wifi_level2, wifi_level2, roundEnd);
+    } else if (WiFi.RSSI(i) >= -42 && WiFi.RSSI(i) <= -1){
+      tft.drawSmoothArc(355, 118 + (spaceText * i), 1, 10, 140, 220, wifi_level1, wifi_level2, roundEnd);
+      tft.drawSmoothArc(355, 118 + (spaceText * i), 9, 15, 140, 220, wifi_level2, wifi_level3, roundEnd);
+      tft.drawSmoothArc(355, 118 + (spaceText * i), 14, 19, 140, 220, wifi_level3, blackScript, roundEnd);
+    }
+  }
+
   if (language == 1) {
     tft.setTextDatum(MC_DATUM);
     tft.setFreeFont(latoRegular24);
-    tft.drawString("Insert your Wi-Fi data", 240, 90, GFXFF);
+    tft.drawString("Select Wi-Fi Network", 240, 74, GFXFF);
     tft.setTextDatum(ML_DATUM);
     tft.drawString("EN-US", 394, 299, GFXFF);
+    tft.setFreeFont(latoRegular14);
+    tft.drawString("BACK", 158, 280, GFXFF);
+    tft.setTextColor(greyScript);
+    tft.drawString("CONFIRM", 262, 280, GFXFF);
   } else  {
     tft.setTextDatum(MC_DATUM);
     tft.setFreeFont(latoRegular24);
-    tft.drawString("Insira os dados Wi-Fi", 240, 90, GFXFF);
+    tft.drawString("Seleciona a rede Wi-Fi", 240, 74, GFXFF);
     tft.setTextDatum(ML_DATUM);
     tft.drawString("PT-BR", 394, 299, GFXFF);
+    tft.setFreeFont(latoRegular14);
+    tft.drawString("VOLTAR", 148, 280, GFXFF);
+    tft.setTextColor(greyScript);
+    tft.drawString("CONFIRMAR", 252, 280, GFXFF);
   }
 }
+
+void scrollUp() {
+  if (selectNetwork > 0) {
+    selectNetwork --;
+    if (selectNetwork < menuStartNetwork) {
+      menuStartNetwork --;
+      menuEndNetwork --;
+    }
+    menuNetworks();
+  }
+}
+
+void scrollDown() {
+  if (selectNetwork < numNetworks - 1) {
+    selectNetwork ++;
+    if (selectNetwork > menuEndNetwork) {
+      menuStartNetwork ++;
+      menuEndNetwork ++;
+    }
+    menuNetworks();
+  }
+}
+
 
 void textBoxName(int keys) {
   Serial.print(keys);
@@ -1867,7 +2020,7 @@ void defaultSetup() {
 }
 
 void wifiLevel() {
-  switch (wifiRead) {
+  switch (wifiStyle) {
     case 1:
       wifiStyle2();
     break;
@@ -1884,27 +2037,57 @@ void wifiLevel() {
 
 void wifiStyle1() {
   tft.fillCircle(333, 36, 2, septemberColor);
-  tft.drawSmoothArc(333, 36, 5, 7, 134, 226, septemberColor, blackScript, roundEnd);
-  tft.drawSmoothArc(333, 36, 10, 12, 134, 226, septemberColor, blackScript, roundEnd);
-  tft.drawSmoothArc(333, 36, 15, 17, 134, 226, septemberColor, blackScript, roundEnd);
+  if (wifiRead == 0) {
+    tft.drawSmoothArc(333, 36, 5, 7, 134, 226, septemberColor, blackScript, roundEnd);
+    tft.drawSmoothArc(333, 36, 10, 12, 134, 226, septemberColor, blackScript, roundEnd);
+    tft.drawSmoothArc(333, 36, 15, 17, 134, 226, septemberColor, blackScript, roundEnd);
+  } else if (wifiRead == 1) {
+    tft.drawSmoothArc(333, 36, 5, 7, 134, 226, septemberColor, blackScript, roundEnd);
+    tft.drawSmoothArc(333, 36, 10, 12, 134, 226, septemberColor, blackScript, roundEnd);
+  } else {
+    tft.drawSmoothArc(333, 36, 5, 7, 134, 226, septemberColor, blackScript, roundEnd);
+  }
 }
 void wifiStyle2() {
   tft.fillRoundRect(322, 15, 30, 30, 5, februeryColor);
   tft.fillCircle(337, 36, 2, whiteScript);
-  tft.drawSmoothArc(337, 36, 6, 7, 134, 226, whiteScript, februeryColor, roundEnd);
-  tft.drawSmoothArc(337, 36, 11, 12, 134, 226, whiteScript, februeryColor, roundEnd);
-  tft.drawSmoothArc(337, 36, 16, 17, 134, 226, whiteScript, februeryColor, roundEnd);
+  if (wifiRead == 0) {
+    tft.drawSmoothArc(337, 36, 6, 7, 134, 226, whiteScript, februeryColor, roundEnd);
+    tft.drawSmoothArc(337, 36, 11, 12, 134, 226, whiteScript, februeryColor, roundEnd);
+    tft.drawSmoothArc(337, 36, 16, 17, 134, 226, whiteScript, februeryColor, roundEnd);
+  } else if (wifiRead == 1) {
+    tft.drawSmoothArc(337, 36, 6, 7, 134, 226, whiteScript, februeryColor, roundEnd);
+    tft.drawSmoothArc(337, 36, 11, 12, 134, 226, whiteScript, februeryColor, roundEnd);
+  }  else {
+    tft.drawSmoothArc(337, 36, 6, 7, 134, 226, whiteScript, februeryColor, roundEnd);
+  }
 }
 void wifiStyle3() {
-  tft.drawSmoothArc(330, 38, 0, 2, 179, 269, whiteScript, blackScript, squareEnd);
-  tft.drawSmoothArc(330, 38, 6, 7, 179, 269, whiteScript, blackScript, squareEnd);
-  tft.drawSmoothArc(330, 38, 11, 12, 179, 269, whiteScript, blackScript, squareEnd);
-  tft.drawSmoothArc(330, 38, 16, 17, 179, 269, whiteScript, blackScript, squareEnd);
+  if (wifiRead == 0) {
+    tft.drawSmoothArc(330, 38, 0, 2, 179, 269, whiteScript, blackScript, squareEnd);
+    tft.drawSmoothArc(330, 38, 6, 7, 179, 269, whiteScript, blackScript, squareEnd);
+    tft.drawSmoothArc(330, 38, 11, 12, 179, 269, whiteScript, blackScript, squareEnd);
+    tft.drawSmoothArc(330, 38, 16, 17, 179, 269, whiteScript, blackScript, squareEnd);
+  }  else if (wifiRead == 1) {
+    tft.drawSmoothArc(330, 38, 0, 2, 179, 269, whiteScript, blackScript, squareEnd);
+    tft.drawSmoothArc(330, 38, 6, 7, 179, 269, whiteScript, blackScript, squareEnd);
+    tft.drawSmoothArc(330, 38, 11, 12, 179, 269, whiteScript, blackScript, squareEnd);
+  } else {
+    tft.drawSmoothArc(330, 38, 0, 2, 179, 269, whiteScript, blackScript, squareEnd);
+    tft.drawSmoothArc(330, 38, 6, 7, 179, 269, whiteScript, blackScript, squareEnd);
+  }
 }
 void wifiStyle4() {
-  tft.drawSmoothArc(337, 36, 0, 4, 134, 226, whiteScript, februeryColor, roundEnd);
-  tft.drawSmoothArc(337, 36, 8, 10, 134, 226, whiteScript, februeryColor, roundEnd);
-  tft.drawSmoothArc(337, 36, 14, 16, 134, 226, whiteScript, februeryColor, roundEnd);
+  if (wifiRead == 0) {
+    tft.drawSmoothArc(337, 36, 0, 4, 134, 226, whiteScript, februeryColor, roundEnd);
+    tft.drawSmoothArc(337, 36, 8, 10, 134, 226, whiteScript, februeryColor, roundEnd);
+    tft.drawSmoothArc(337, 36, 14, 16, 134, 226, whiteScript, februeryColor, roundEnd);
+  }  else if (wifiRead == 1) {
+    tft.drawSmoothArc(337, 36, 0, 4, 134, 226, whiteScript, februeryColor, roundEnd);
+    tft.drawSmoothArc(337, 36, 8, 10, 134, 226, whiteScript, februeryColor, roundEnd);
+  } else {
+    tft.drawSmoothArc(337, 36, 0, 4, 134, 226, whiteScript, februeryColor, roundEnd);
+  }
 }
 
 void batteryLevel() {
@@ -6001,6 +6184,10 @@ void internetAcess() {
     tft.drawRoundRect(115, 161, 215, 30, 5, greyScript);
     tft.drawCircle(350, 176, 15, greyScript);
 
+    tft.fillRectHGradient(123, 216, 100, 30, humidityColor1, humidityColor2);
+    tft.fillRectHGradient(210, 267, 60, 30, temperatureColor1, temperatureColor2);
+    tft.fillRectHGradient(258, 216, 100, 30, pressureColor1, pressureColor2);
+
     tft.setTextDatum(MC_DATUM);
     tft.setFreeFont(latoRegular14);
 
@@ -6019,11 +6206,8 @@ void internetAcess() {
       tft.drawString("ACESS", 308, 230, GFXFF);
     }
 
-    tft.fillRectHGradient(123, 216, 100, 30, humidityColor1, humidityColor2);
-    tft.fillRectHGradient(210, 267, 60, 30, temperatureColor1, temperatureColor2);
-    tft.fillRectHGradient(258, 216, 100, 30, pressureColor1, pressureColor2);
     tft.drawString("SKIP", 240, 280, GFXFF);
-  } else  {
+  } else {
     tft.setTextDatum(MC_DATUM);
     tft.setFreeFont(latoRegular24);
     tft.drawString("Insira os dados Wi-Fi", 240, 90, GFXFF);
@@ -6035,6 +6219,10 @@ void internetAcess() {
     tft.drawRoundRect(115, 161, 215, 30, 5, greyScript);
     tft.drawCircle(350, 176, 15, greyScript);
 
+    tft.fillRectHGradient(123, 216, 100, 30, humidityColor1, humidityColor2);
+    tft.fillRectHGradient(210, 267, 60, 30, temperatureColor1, temperatureColor2);
+    tft.fillRectHGradient(258, 216, 100, 30, pressureColor1, pressureColor2);
+
     tft.setTextDatum(MC_DATUM);
     tft.setFreeFont(latoRegular14);
 
@@ -6054,9 +6242,6 @@ void internetAcess() {
       tft.drawString("ACESSAR", 308, 230, GFXFF);
     }
 
-    tft.fillRectHGradient(123, 216, 100, 30, humidityColor1, humidityColor2);
-    tft.fillRectHGradient(210, 267, 60, 30, temperatureColor1, temperatureColor2);
-    tft.fillRectHGradient(258, 216, 100, 30, pressureColor1, pressureColor2);
     tft.drawString("PULAR", 240, 280, GFXFF);
   }
 }
