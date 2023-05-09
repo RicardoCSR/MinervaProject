@@ -505,9 +505,10 @@ String userName;
 char key;
 
 int numNetworks;
+int numberSSID;
 
 void loop(void) {
-  // ------------------------------- touchScreen OPERACIONAL ----------------------
+  // ------------------------------ touchScreen OPERACIONAL ----------------------
     bool pressed = tft.getTouch(&x, &y);
 
     if (pressed) {
@@ -522,7 +523,7 @@ void loop(void) {
       
   // ------------------------------ TOUCHSCREEN DISPLAY TFT 16 E 17 ---------------------
         if (displayTFT == 16 || displayTFT == 17) {
-          touchRectRound(70, 250, 100, 30, 5, nixieColor, blackScript, switchPressedRecalibrate);
+          touchFillRoundRect(70, 250, 100, 30, 5, nixieColor, blackScript, switchPressedRecalibrate);
           tft.drawString("Recalibrar", 120, 264, GFXFF);
           if (switchPressedRecalibrate == 1) {
             switchPressedRecalibrate = 0;
@@ -530,7 +531,7 @@ void loop(void) {
             touch_calibrate();
           }
 
-          touchRectRound(190, 250, 100, 30, 5, autumnMenu, blackScript, switchPressedTest);
+          touchFillRoundRect(190, 250, 100, 30, 5, autumnMenu, blackScript, switchPressedTest);
           Serial.print("switchPressedTest: ");
           Serial.println(switchPressedTest);
           if (touchScreenMode == 0) {
@@ -540,7 +541,7 @@ void loop(void) {
             testCalibration();
           } 
 
-          touchRectRound(310, 250, 100, 30, 5, winterMenu, blackScript, switchPressedExit);
+          touchFillRoundRect(310, 250, 100, 30, 5, winterMenu, blackScript, switchPressedExit);
           tft.drawString("Sair", 360, 264, GFXFF);
           if (switchPressedExit == 1) {
             switchPressedExit = 0;
@@ -554,7 +555,7 @@ void loop(void) {
   // ------------------------------ WELCOME DISPLAY TFT 18 ---------------------
         if ((displayTFT == 18) && (millis() - timeLoadScreen >= 500)) {
           timeLoadScreen = millis();
-          touchRect(390, 280, 90, 40, blackScript, blackScript, languageScreen);
+          touchFillRect(390, 280, 90, 40, blackScript, blackScript, languageScreen);
           if (languageScreen == 1) {
             tft.fillScreen(blackScript);
             if (language == 1) {
@@ -568,7 +569,7 @@ void loop(void) {
             }
           }
           
-          touchRect(190, 232, 100, 30, blackScript, blackScript, switchStartWelcome);
+          touchFillRect(190, 232, 100, 30, blackScript, blackScript, switchStartWelcome);
           if (switchStartWelcome == 1) {
             switchStartWelcome = 0;
             displayTFT = 19;
@@ -580,7 +581,7 @@ void loop(void) {
   // ------------------------------ KNOWNAME DISPLAY TFT 19 ---------------------
         if ((displayTFT == 19) && (millis() - timeLoadScreen >= 500)) {
           timeLoadScreen = millis();
-          touchRect(390, 280, 90, 40, blackScript, blackScript, languageScreen);
+          touchFillRect(390, 280, 90, 40, blackScript, blackScript, languageScreen);
           if (languageScreen == 1) {
             tft.fillScreen(blackScript);
             if (language == 1) {
@@ -594,7 +595,7 @@ void loop(void) {
             }
           }
 
-          touchRectRound(115, 150, 250, 30, 5, whiteScript, blackScript, switchInputName);
+          touchFillRoundRect(115, 150, 250, 30, 5, whiteScript, blackScript, switchInputName);
           if (switchInputName == 1) {
             displayTFT = 20;
             tft.fillScreen(blackScript);
@@ -603,7 +604,7 @@ void loop(void) {
           }
 
           
-          touchRectRound(190, 232, 100, 30, 5, whiteScript, blackScript, swithContinueKnowname);
+          touchFillRoundRect(190, 232, 100, 30, 5, whiteScript, blackScript, swithContinueKnowname);
           if (swithContinueKnowname == 1) {
             displayTFT = 21;
             tft.fillScreen(blackScript);
@@ -624,8 +625,8 @@ void loop(void) {
   // ------------------------------ KEYBOARD DISPLAY TFT 20 ---------------------
         if ((displayTFT == 20) && (millis() - timeLoadScreen >= 500)) {
           timeLoadScreen = millis();
-          touchRect(2, 240, 35, 35, wifi_off2, blackScript, switchCaps);
-          touchRect(442, 240, 35, 35, wifi_off2, blackScript, switchCaps);
+          touchFillRect(2, 240, 35, 35, wifi_off2, blackScript, switchCaps);
+          touchFillRect(442, 240, 35, 35, wifi_off2, blackScript, switchCaps);
           if (x > 2 && x < 2 + 35 && y > 240 && y < 240 + 35) {
             tft.fillRect(0, 160, 480, 160, blackScript);
             keyboard();
@@ -929,7 +930,7 @@ void loop(void) {
   // ------------------------------ PROFILEIMAGE DISPLAY TFT 21 ---------------------
         if (displayTFT == 21 && (millis() - timeLoadScreen >= 500)) {
           timeLoadScreen = millis();
-          touchRect(390, 280, 90, 40, blackScript, blackScript, languageScreen);
+          touchFillRect(390, 280, 90, 40, blackScript, blackScript, languageScreen);
           if (languageScreen == 1) {
             tft.fillScreen(blackScript);
             if (language == 1) {
@@ -960,7 +961,7 @@ void loop(void) {
             knowname();
           }
 
-          touchRectRound(190, 232, 100, 30, 5, whiteScript, blackScript, swithContinueKnowname);
+          touchFillRoundRect(190, 232, 100, 30, 5, whiteScript, blackScript, swithContinueKnowname);
           if (swithContinueKnowname == 1) {
             displayTFT = 22;
             tft.fillScreen(blackScript);
@@ -972,7 +973,7 @@ void loop(void) {
   // ------------------------------ INTERNETACESS DISPLAY TFT 22 ---------------------
         if (displayTFT == 22 && (millis() - timeLoadScreen >= 500)) {
           timeLoadScreen = millis();
-          touchRect(390, 280, 90, 40, blackScript, blackScript, languageScreen);
+          touchFillRect(390, 280, 90, 40, blackScript, blackScript, languageScreen);
           if (languageScreen == 1) {
             tft.fillScreen(blackScript);
             if (language == 1) {
@@ -1010,6 +1011,13 @@ void loop(void) {
             profileimage();
           }
 
+          if (numberSSID > 0) {
+            tft.setTextDatum(ML_DATUM);
+            tft.setFreeFont(latoRegular14);
+            tft.setTextColor(whiteScript);
+            tft.drawString(WiFi.SSID(numberSSID), 115, 116, GFXFF);
+          }
+
           if (x > 123 && x < 123 + 100 && y > 216 && y < 216 + 30) {
             switchSearchWiFi = 1;
             if (language == 1) {
@@ -1035,6 +1043,15 @@ void loop(void) {
               Serial.print(WiFi.RSSI(i));
               Serial.println(")");
             }
+
+            if (numNetworks > 0) {
+              tft.drawRoundRect(115, 112, 250, 30, 5, whiteScript);
+              tft.fillTriangle(346, 123, 356, 123, 351, 132, whiteScript);
+            } else {
+              tft.drawRoundRect(115, 112, 250, 30, 5, greyScript);
+              tft.fillTriangle(346, 123, 356, 123, 351, 132, greyScript);
+            }
+
             if (language == 1) {
               tft.setTextColor(whiteScript);
               tft.drawString("SEARCH", 173, 230, GFXFF);
@@ -1044,22 +1061,20 @@ void loop(void) {
             }
           }
 
-          touchRectRound(115, 112, 250, 30, 5, whiteScript, blackScript, switchSelectWiFi);
-          if (switchSelectWiFi == 1) {
+          touchRoundRect(115, 112, 250, 30, 5, greyScript, greyScript, switchSelectWiFi);
+          if (switchSelectWiFi == 1 && numNetworks > 0) {
             displayTFT = 23;
             tft.fillScreen(blackScript);
             switchSelectWiFi = 0;
             menuNetworks();
           }
 
-
-
         }
 
   // ------------------------------ MENUNETWORKS DISPLAY TFT 23 ---------------------
         if (displayTFT == 23 && (millis() - timeLoadScreen >= 500)) {
           timeLoadScreen = millis();
-          touchRect(390, 280, 90, 40, blackScript, blackScript, languageScreen);
+          touchFillRect(390, 280, 90, 40, blackScript, blackScript, languageScreen);
           if (languageScreen == 1) {
             tft.fillScreen(blackScript);
             if (language == 1) {
@@ -1097,21 +1112,37 @@ void loop(void) {
             profileimage();
           }
           
-          touchRect(129, 267, 100, 30, whiteScript, blackScript, switchMenuNetworks);
+          touchFillRect(129, 267, 100, 30, whiteScript, blackScript, switchMenuNetworks);
           if (switchMenuNetworks == 1) {
             displayTFT = 22;
             tft.fillScreen(blackScript);
             switchMenuNetworks = 0;
             internetAcess();
           }
-          touchRect(249, 267, 100, 30, whiteScript, blackScript, selectedNetwork);
+
+          if (language == 1 && selectedSSID > 0) {
+            tft.setTextColor(whiteScript);
+            tft.drawString("CONFIRM", 262, 280, GFXFF);
+          } else {
+            tft.setTextColor(whiteScript);
+            tft.drawString("CONFIRMAR", 255, 280, GFXFF);
+          }
+
+          touchFillRect(249, 267, 100, 30, whiteScript, blackScript, selectedNetwork);
           if (selectedNetwork == 1 && selectedSSID > 0) {
             displayTFT = 22;
             tft.fillScreen(blackScript);
             selectedNetwork = 0;
+            if (selectedSSID == 1) {
+              numberSSID = selectedSSID;
+            } else {
+              numberSSID = selectedSSID - 1;
+            }
+            selectedSSID = 0;
             internetAcess();
           }
 
+          //touchFillRect(96, 94, 270, 30, 9, )
           if ((x > 96 && x < 96 + 270 && y > 94 && y < 94 + 30) && numNetworks >= 1) {
             selectedSSID = 1;
             tft.drawRoundRect(96, 94, 280, 30, 9, whiteScript);
@@ -1152,6 +1183,8 @@ void loop(void) {
             tft.drawRoundRect(96, 184, 280, 30, 9, blackScript);
             tft.drawRoundRect(96, 214, 280, 30, 9, whiteScript);
           }
+
+
         }
 
       }
@@ -1544,14 +1577,14 @@ void menuNetworks() {
   tft.fillCircle(454, 228, 10, greyScript);
   tft.setTextColor(whiteScript);
 
-  tft.drawRoundRect(95, 93, 300, 150, 10, whiteScript);
+  tft.drawRoundRect(95, 93, 300, 152, 10, whiteScript);
 
   if (numNetworks > 5) {
-    tft.fillTriangle(379, 109, 389, 109, 384, 100, whiteScript);
-    tft.fillTriangle(379, 225, 389, 225, 384, 234, whiteScript);
+    tft.fillTriangle(379, 110, 389, 110, 384, 101, whiteScript);
+    tft.fillTriangle(379, 226, 389, 226, 384, 235, whiteScript);
   } else {
-    tft.fillTriangle(379, 109, 389, 109, 384, 100, greyScript);
-    tft.fillTriangle(379, 225, 389, 225, 384, 234, greyScript);
+    tft.fillTriangle(379, 110, 389, 110, 384, 101, greyScript);
+    tft.fillTriangle(379, 226, 389, 226, 384, 235, greyScript);
   }
 
   tft.fillRectHGradient(249, 267, 100, 30, pressureColor1, pressureColor2);
@@ -1576,6 +1609,7 @@ void menuNetworks() {
   if (language == 1) {
     tft.setTextDatum(MC_DATUM);
     tft.setFreeFont(latoRegular24);
+    tft.setTextColor(whiteScript);
     tft.drawString("Select Wi-Fi Network", 240, 74, GFXFF);
     tft.setTextDatum(ML_DATUM);
     tft.drawString("EN-US", 394, 299, GFXFF);
@@ -1586,13 +1620,14 @@ void menuNetworks() {
   } else  {
     tft.setTextDatum(MC_DATUM);
     tft.setFreeFont(latoRegular24);
+    tft.setTextColor(whiteScript);
     tft.drawString("Seleciona a rede Wi-Fi", 240, 74, GFXFF);
     tft.setTextDatum(ML_DATUM);
     tft.drawString("PT-BR", 394, 299, GFXFF);
     tft.setFreeFont(latoRegular14);
     tft.drawString("VOLTAR", 148, 280, GFXFF);
     tft.setTextColor(greyScript);
-    tft.drawString("CONFIRMAR", 252, 280, GFXFF);
+    tft.drawString("CONFIRMAR", 255, 280, GFXFF);
   }
 }
 
@@ -6179,8 +6214,14 @@ void internetAcess() {
     tft.setTextDatum(ML_DATUM);
     tft.drawString("EN-US", 394, 299, GFXFF);
 
-    tft.drawRoundRect(115, 112, 250, 30, 5, whiteScript);
-    tft.fillTriangle(346, 123, 356, 123, 351, 132, whiteScript);
+    if (numNetworks > 0) {
+      tft.drawRoundRect(115, 112, 250, 30, 5, whiteScript);
+      tft.fillTriangle(346, 123, 356, 123, 351, 132, whiteScript);
+    } else {
+      tft.drawRoundRect(115, 112, 250, 30, 5, greyScript);
+      tft.fillTriangle(346, 123, 356, 123, 351, 132, greyScript);
+    }
+
     tft.drawRoundRect(115, 161, 215, 30, 5, greyScript);
     tft.drawCircle(350, 176, 15, greyScript);
 
@@ -6190,6 +6231,7 @@ void internetAcess() {
 
     tft.setTextDatum(MC_DATUM);
     tft.setFreeFont(latoRegular14);
+    tft.drawString("SKIP", 240, 280, GFXFF);
 
     if (switchSearchWiFi == 1) {
       tft.setTextColor(whiteScript);
@@ -6205,17 +6247,22 @@ void internetAcess() {
       tft.setTextColor(greyScript);
       tft.drawString("ACESS", 308, 230, GFXFF);
     }
-
-    tft.drawString("SKIP", 240, 280, GFXFF);
   } else {
     tft.setTextDatum(MC_DATUM);
     tft.setFreeFont(latoRegular24);
+    tft.setTextColor(whiteScript);
     tft.drawString("Insira os dados Wi-Fi", 240, 90, GFXFF);
     tft.setTextDatum(ML_DATUM);
     tft.drawString("PT-BR", 394, 299, GFXFF);
 
-    tft.drawRoundRect(115, 112, 250, 30, 5, whiteScript);
-    tft.fillTriangle(346, 123, 356, 123, 351, 132, whiteScript);
+    if (numNetworks > 0) {
+      tft.drawRoundRect(115, 112, 250, 30, 5, whiteScript);
+      tft.fillTriangle(346, 123, 356, 123, 351, 132, whiteScript);
+    } else {
+      tft.drawRoundRect(115, 112, 250, 30, 5, greyScript);
+      tft.fillTriangle(346, 123, 356, 123, 351, 132, greyScript);
+    }
+
     tft.drawRoundRect(115, 161, 215, 30, 5, greyScript);
     tft.drawCircle(350, 176, 15, greyScript);
 
@@ -6225,12 +6272,13 @@ void internetAcess() {
 
     tft.setTextDatum(MC_DATUM);
     tft.setFreeFont(latoRegular14);
+    tft.drawString("PULAR", 240, 280, GFXFF);
 
     if (switchSearchWiFi == 1) {
       tft.setTextColor(whiteScript);
       tft.drawString("BUSCAR", 173, 230, GFXFF);
     } else {
-      tft.setTextColor(greyScript);
+      tft.setTextColor(whiteScript);
       tft.drawString("BUSCAR", 173, 230, GFXFF);
     }
 
@@ -6242,7 +6290,6 @@ void internetAcess() {
       tft.drawString("ACESSAR", 308, 230, GFXFF);
     }
 
-    tft.drawString("PULAR", 240, 280, GFXFF);
   }
 }
 
@@ -6859,7 +6906,7 @@ int startDayOfWeek(int y, int m, int d) {
   return (y +y/4 -y/100 + y/400 + t[m-1] + d)% 7; 
 }
 
-void touchRectRound(int startX, int startY, int sizeX, int sizeY, int round, int color, int erase, byte& status) {
+void touchFillRoundRect(int startX, int startY, int sizeX, int sizeY, int round, int color, int erase, byte& status) {
   bool pressed = tft.getTouch(&x, &y);
 
   if (x > startX && x < startX + sizeX && y > startY && y < startY + sizeY) {
@@ -6874,7 +6921,7 @@ void touchRectRound(int startX, int startY, int sizeX, int sizeY, int round, int
   }
 }
 
-void touchRect(int startX, int startY, int sizeX, int sizeY, int color, int erase, byte& status) {
+void touchFillRect(int startX, int startY, int sizeX, int sizeY, int color, int erase, byte& status) {
   bool pressed = tft.getTouch(&x, &y);
 
   if (x > startX && x < startX + sizeX && y > startY && y < startY + sizeY) {
@@ -6884,6 +6931,34 @@ void touchRect(int startX, int startY, int sizeX, int sizeY, int color, int eras
     } else {
       tft.fillRect(startX, startY, sizeX, sizeY, erase);
       tft.drawRect(startX, startY, sizeX, sizeY, color);
+      status = 0;
+    }
+  }
+}
+
+void touchRoundRect(int startX, int startY, int sizeX, int sizeY, int round, int color, int erase, byte& status) {
+  bool pressed = tft.getTouch(&x, &y);
+
+  if (x > startX && x < startX + sizeX && y > startY && y < startY + sizeY) {
+    if (status == 0) {
+      tft.drawRoundRect(startX, startY, sizeX, sizeY, round, color);
+      status = 1;
+    } else {
+      tft.drawRoundRect(startX, startY, sizeX, sizeY, round, erase);
+      status = 0;
+    }
+  }
+}
+
+void touchRect(int startX, int startY, int sizeX, int sizeY, int color, int erase, byte& status) {
+  bool pressed = tft.getTouch(&x, &y);
+
+  if (x > startX && x < startX + sizeX && y > startY && y < startY + sizeY) {
+    if (status == 0) {
+      tft.drawRect(startX, startY, sizeX, sizeY, color);
+      status = 1;
+    } else {
+      tft.drawRect(startX, startY, sizeX, sizeY, erase);
       status = 0;
     }
   }
