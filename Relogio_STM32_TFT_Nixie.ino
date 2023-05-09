@@ -1011,11 +1011,11 @@ void loop(void) {
             profileimage();
           }
 
-          if (numberSSID > 0) {
+          if (numberSSID >= 0) {
             tft.setTextDatum(ML_DATUM);
             tft.setFreeFont(latoRegular14);
             tft.setTextColor(whiteScript);
-            tft.drawString(WiFi.SSID(numberSSID), 115, 116, GFXFF);
+            tft.drawString(WiFi.SSID(numberSSID), 120, 125, GFXFF);
           }
 
           if (x > 123 && x < 123 + 100 && y > 216 && y < 216 + 30) {
@@ -1121,6 +1121,7 @@ void loop(void) {
           }
 
           if (language == 1 && selectedSSID > 0) {
+
             tft.setTextColor(whiteScript);
             tft.drawString("CONFIRM", 262, 280, GFXFF);
           } else {
@@ -1133,11 +1134,17 @@ void loop(void) {
             displayTFT = 22;
             tft.fillScreen(blackScript);
             selectedNetwork = 0;
-            if (selectedSSID == 1) {
-              numberSSID = selectedSSID;
-            } else {
-              numberSSID = selectedSSID - 1;
-            }
+
+
+
+
+
+              numberSSID = selectedSSID -1;
+
+
+
+
+
             selectedSSID = 0;
             internetAcess();
           }
@@ -6274,20 +6281,20 @@ void internetAcess() {
     tft.setFreeFont(latoRegular14);
     tft.drawString("PULAR", 240, 280, GFXFF);
 
-    if (switchSearchWiFi == 1) {
-      tft.setTextColor(whiteScript);
-      tft.drawString("BUSCAR", 173, 230, GFXFF);
-    } else {
-      tft.setTextColor(whiteScript);
-      tft.drawString("BUSCAR", 173, 230, GFXFF);
-    }
-
     if (switchAcessWiFi == 0) {
       tft.setTextColor(greyScript);
       tft.drawString("ACESSAR", 308, 230, GFXFF);
     } else {
       tft.setTextColor(whiteScript);
       tft.drawString("ACESSAR", 308, 230, GFXFF);
+    }
+
+    if (switchSearchWiFi == 1) {
+      tft.setTextColor(whiteScript);
+      tft.drawString("BUSCAR", 173, 230, GFXFF);
+    } else {
+      tft.setTextColor(whiteScript);
+      tft.drawString("BUSCAR", 173, 230, GFXFF);
     }
 
   }
