@@ -326,6 +326,10 @@ uint16_t icon_15 = 0x634C;              //0x6A6A6A
 uint16_t icon_black = 0x8450;           //0x8A8A8A
 uint16_t icon_white = 0xD6BA;           //0xD9D9D9
 
+// Font file is stored in SPIFFS
+#define FS_NO_GLOBALS
+#include <FS.h>
+
 #include <TFT_eSPI.h> 
 #include <SPI.h>
 #include "MapFloat.h"
@@ -352,6 +356,9 @@ uint16_t icon_white = 0xD6BA;           //0xD9D9D9
 #define latoRegular12 &Lato_Regular_12
 #define latoRegular10 &Lato_Regular_10
 
+#define pinOnOff 16
+#define pinSet 17
+
 #define GFXFF 1
   // TL_DATUM = Top left (default)
   // TC_DATUM = Top centre
@@ -376,6 +383,17 @@ void setup() {
   Serial.println("Sistema Inicializado");
   tft.init();
   tft.setRotation(1);
+
+  pinMode(pinOnOff, INPUT_PULLUP);
+  pinMode(pinSet, INPUT_PULLUP);
+
+
+  if (!SPIFFS.begin()) {
+    Serial.println("SPIFFS initialisation failed!");
+    while (1) yield(); // Stay here twiddling thumbs waiting
+  }
+  listFiles(); // Lists the files so you can see what is in the SPIFFS
+
 
   if (touchSet == 2) {
     uint16_t calData[5] = { 223, 3675, 227, 3503, 7 };
@@ -507,7 +525,19 @@ char key;
 int numNetworks;
 int numberSSID;
 
+byte selectNetwork = 0;
+byte menuStartNetwork = 0;
+byte menuEndNetwork = numNetworks - 1;
+
 void loop(void) {
+  // ------------------------------ botao --------------
+    int powerDisplay  = digitalRead(pinOnOff);
+    if (powerDisplay == HIGH) {
+      digitalWrite(14, 255);
+    } else {
+      digitalWrite(14, 50);
+    }
+
   // ------------------------------ touchScreen OPERACIONAL ----------------------
     bool pressed = tft.getTouch(&x, &y);
 
@@ -524,7 +554,7 @@ void loop(void) {
   // ------------------------------ TOUCHSCREEN DISPLAY TFT 16 E 17 ---------------------
         if (displayTFT == 16 || displayTFT == 17) {
           touchFillRoundRect(70, 250, 100, 30, 5, nixieColor, blackScript, switchPressedRecalibrate);
-          tft.drawString("Recalibrar", 120, 264, GFXFF);
+          smoothText(120, 255, whiteScript, nixieColor, "Lato_Regular_14", "Recalibrar", "MC_DATUM");
           if (switchPressedRecalibrate == 1) {
             switchPressedRecalibrate = 0;
             touchScreenMode = 0;
@@ -535,14 +565,14 @@ void loop(void) {
           Serial.print("switchPressedTest: ");
           Serial.println(switchPressedTest);
           if (touchScreenMode == 0) {
-            tft.drawString("Testar", 240, 264, GFXFF);
+            smoothText(240, 255, whiteScript, autumnMenu, "Lato_Regular_14", "Testar", "MC_DATUM");
           }
           if (switchPressedTest == 1) {
             testCalibration();
           } 
 
           touchFillRoundRect(310, 250, 100, 30, 5, winterMenu, blackScript, switchPressedExit);
-          tft.drawString("Sair", 360, 264, GFXFF);
+          smoothText(360, 255, whiteScript, winterMenu, "Lato_Regular_14", "Sair", "MC_DATUM");
           if (switchPressedExit == 1) {
             switchPressedExit = 0;
             touchScreenMode = 0;
@@ -553,7 +583,7 @@ void loop(void) {
         }
 
   // ------------------------------ WELCOME DISPLAY TFT 18 ---------------------
-        if ((displayTFT == 18) && (millis() - timeLoadScreen >= 500)) {
+        if ((displayTFT == 18) && (millis() - timeLoadScreen >= 1000)) {
           timeLoadScreen = millis();
           touchFillRect(390, 280, 90, 40, blackScript, blackScript, languageScreen);
           if (languageScreen == 1) {
@@ -579,7 +609,7 @@ void loop(void) {
         }
 
   // ------------------------------ KNOWNAME DISPLAY TFT 19 ---------------------
-        if ((displayTFT == 19) && (millis() - timeLoadScreen >= 500)) {
+        if ((displayTFT == 19) && (millis() - timeLoadScreen >= 1000)) {
           timeLoadScreen = millis();
           touchFillRect(390, 280, 90, 40, blackScript, blackScript, languageScreen);
           if (languageScreen == 1) {
@@ -1020,6 +1050,7 @@ void loop(void) {
 
           if (x > 123 && x < 123 + 100 && y > 216 && y < 216 + 30) {
             switchSearchWiFi = 1;
+            tft.setTextDatum(MC_DATUM);
             if (language == 1) {
               tft.setTextColor(greyScript);
               tft.drawString("SEARCH", 173, 230, GFXFF);
@@ -1135,15 +1166,7 @@ void loop(void) {
             tft.fillScreen(blackScript);
             selectedNetwork = 0;
 
-
-
-
-
-              numberSSID = selectedSSID -1;
-
-
-
-
+            numberSSID = selectedSSID -1;
 
             selectedSSID = 0;
             internetAcess();
@@ -1569,12 +1592,6 @@ void loop(void) {
 
 }
 
-
-byte selectNetwork = 0;
-byte menuStartNetwork = 0;
-byte menuEndNetwork = numNetworks - 1;
-
-
 void menuNetworks() {
   byte spaceText = 30;
   tft.fillCircle(454, 88, 10, greyScript);
@@ -1794,7 +1811,7 @@ void textBoxName(int keys) {
     case 127: key = ' '; break;
   }
 
-  if ((keys >= 1 && keys <= 127) && !(keys == 8 || keys == 10)) {   //APLICAR A TECLAS FUNCAO
+  if ((keys >= 1 && keys <= 127) && !(keys == 8 || keys == 10)) {   //APLICAR AS TECLAS FUNCAO
     if (lenghtText < nameLenght) {
       textKnowName[lenghtText++] = key;
       tft.fillRect(69, 83, 342, 34, blackScript);
@@ -1835,17 +1852,10 @@ void touch_calibrate() {
   displayTFT = 16;
   uint16_t calData[5]; // REMOVER WHITE WHITE WHITE WHITE
 
-  // Calibrate
   tft.fillScreen(blackScript);
-  tft.setCursor(20, 0);
-  
-  tft.setTextDatum(MC_DATUM);
-  tft.setTextColor(whiteScript);
-  tft.setFreeFont(latoRegular24);
-  tft.drawString("Toque nas setas indicados", 240, 124, GFXFF);
-  tft.drawString("Touch in the indicated corners", 240, 154, GFXFF);
 
-  tft.println();
+  smoothText(240, 124, whiteScript, blackScript, "Lato_Regular_14", "Toque nas setas indicadas", "MC_DATUM");
+  smoothText(240, 154, whiteScript, blackScript, "Lato_Regular_14", "Touch in the indicated corners", "MC_DATUM");
 
   tft.calibrateTouch(calData, greenScript, blackScript, 15);
 
@@ -1853,19 +1863,20 @@ void touch_calibrate() {
 
   tft.fillScreen(blackScript);
 
-  tft.setTextDatum(MC_DATUM);
-  tft.setTextColor(whiteScript);
-  tft.setFreeFont(latoRegular24);
-  tft.drawString("Calibracao Concluida!", 240, 124, GFXFF);
-  tft.drawString("Calibration Completed!", 240, 154, GFXFF);
+  smoothText(240, 94, whiteScript, blackScript, "Lato_Regular_24", "Calibracao Concluida!", "MC_DATUM");
+  smoothText(240, 124, whiteScript, blackScript, "Lato_Regular_24", "Calibration Completed!", "MC_DATUM");
+
+  tft.setFreeFont(latoRegular14);
+  smoothText(240, 184, whiteScript, blackScript, "Lato_Regular_14", "To recalibrate press button Mode", "MC_DATUM");
+  smoothText(240, 200, whiteScript, blackScript, "Lato_Regular_14", "Para recalibrar pressione o botao Modo", "MC_DATUM");
 
   tft.drawRoundRect(70, 250, 100, 30, 5, temperatureColor2);
   tft.drawRoundRect(190, 250, 100, 30, 5, icon_9);
   tft.drawRoundRect(310, 250, 100, 30, 5, humidityColor1);
-  tft.setFreeFont(latoRegular14);
-  tft.drawString("Recalibrar", 120, 264, GFXFF);
-  tft.drawString("Testar", 240, 264, GFXFF);
-  tft.drawString("Sair", 360, 264, GFXFF);
+
+  smoothText(120, 255, whiteScript, blackScript, "Lato_Regular_14", "Recalibrar", "MC_DATUM");
+  smoothText(240, 255, whiteScript, blackScript, "Lato_Regular_14", "Testar", "MC_DATUM");
+  smoothText(360, 255, whiteScript, blackScript, "Lato_Regular_14", "Sair", "MC_DATUM");
 }
 
 void testCalibration() {
@@ -1996,23 +2007,14 @@ void startLogo() {
   //tft.pushImage(0, 0, 480, 320, abertura); //white white white white white white ATIVAR PARA USAR
 
   if (language == 1) {
-    tft.setTextDatum(ML_DATUM);
-    tft.setTextColor(whiteScript);
-    tft.setFreeFont(latoBold48);
-    tft.drawString("MAKING THE", 36, 125, GFXFF);
-    tft.drawString("OLD NEW", 36, 185, GFXFF);
+    smoothText(36, 98, whiteScript, blackScript, "Lato_Bold_48", "MAKING THE", "ML_DATUM");
+    smoothText(36, 158, whiteScript, blackScript, "Lato_Bold_48", "OLD NEW", "ML_DATUM");
+    smoothText(394, 279, whiteScript, blackScript, "Lato_Regular_24", "EN-US", "ML_DATUM");
 
-    tft.setFreeFont(latoRegular24);
-    tft.drawString("EN-US", 394, 299, GFXFF);
   } else {
-    tft.setTextDatum(ML_DATUM);
-    tft.setTextColor(whiteScript);
-    tft.setFreeFont(latoBold48);
-    tft.drawString("FAZENDO O", 36, 125, GFXFF);
-    tft.drawString("ANTIGO NOVO", 36, 185, GFXFF);
-
-    tft.setFreeFont(latoRegular24);
-    tft.drawString("PT-BR", 394, 299, GFXFF);
+    smoothText(36, 98, whiteScript, blackScript, "Lato_Bold_48", "FAZENDO O", "ML_DATUM");
+    smoothText(36, 158, whiteScript, blackScript, "Lato_Bold_48", "ANTIGO NOVO", "ML_DATUM");
+    smoothText(394, 279, whiteScript, blackScript, "Lato_Regular_24", "PT-BR", "ML_DATUM");
   }
   wifiLevel();
   batteryLevel();
@@ -6073,37 +6075,25 @@ void keyboard() {
 void welcome() {
   displayTFT = 18;
   if (language == 1) {
-    tft.setTextDatum(MC_DATUM);
-    tft.setTextColor(whiteScript);
-    tft.setFreeFont(latoRegular14);
-    tft.drawString("Minerva Project came by the passion of the classic Nixie tubes", 240, 129, GFXFF);
-    tft.drawString("developed in 50`s decade to the moderns LCD display by", 240, 149, GFXFF);
-    tft.drawString("the inspiration came the challenger of joining the old to the new.", 240, 169, GFXFF);
-    tft.setFreeFont(latoBold48);
-    tft.drawString("WELCOME", 240, 79, GFXFF);
-    tft.setTextDatum(ML_DATUM);
-    tft.setFreeFont(latoRegular24);
-    tft.drawString("EN-US", 394, 299, GFXFF);
-    tft.setTextDatum(MC_DATUM);
-    tft.setFreeFont(latoRegular14);
+    smoothText(240, 79, whiteScript, blackScript, "Lato_Bold_48", "WELCOME", "MC_DATUM");
+
+    smoothText(240, 129, whiteScript, blackScript, "Lato_Regular_14", "Minerva Project came by the passion of the classic Nixie tubes", "MC_DATUM");
+    smoothText(240, 149, whiteScript, blackScript, "Lato_Regular_14", "developed in 50`s decade to the moderns LCD display by", "MC_DATUM");
+    smoothText(240, 169, whiteScript, blackScript, "Lato_Regular_14", "the inspiration came the challenger of joining the old to the new.", "MC_DATUM");
+    
+    smoothText(394, 279, whiteScript, blackScript, "Lato_Regular_24", "EN-US", "ML_DATUM");
     tft.fillRectHGradient(190, 232, 100, 30, temperatureColor1, temperatureColor2);
-    tft.drawString("START", 240, 245, GFXFF);
+    smoothText(240, 237, whiteScript, temperatureColor1, "Lato_Regular_14", "START", "MC_DATUM");
   } else {
-    tft.setTextDatum(MC_DATUM);
-    tft.setTextColor(whiteScript);
-    tft.setFreeFont(latoRegular14);
-    tft.drawString("Projeto Minerva veio da paixao dos classicos tubos Nixie", 240, 129, GFXFF);
-    tft.drawString("desenvolvidos na decada de 50 aos modernos display LCD", 240, 149, GFXFF);
-    tft.drawString("da inspiracao veio junto o desafio de unir o antigo ao novo.", 240, 169, GFXFF);
-    tft.setFreeFont(latoBold48);
-    tft.drawString("BEM-VINDO", 240, 79, GFXFF);
-    tft.setTextDatum(ML_DATUM);
-    tft.setFreeFont(latoRegular24);
-    tft.drawString("PT-BR", 394, 299, GFXFF);
-    tft.setTextDatum(MC_DATUM);
-    tft.setFreeFont(latoRegular14);
+    smoothText(240, 79, whiteScript, blackScript, "Lato_Bold_48", "BEM-VINDO", "MC_DATUM");
+
+    smoothText(240, 129, whiteScript, blackScript, "Lato_Regular_14", "Projeto Minerva veio da paixao dos classicos tubos Nixie", "MC_DATUM");
+    smoothText(240, 149, whiteScript, blackScript, "Lato_Regular_14", "desenvolvidos na decada de 50 aos modernos display LCD", "MC_DATUM");
+    smoothText(240, 169, whiteScript, blackScript, "Lato_Regular_14", "da inspiracao veio junto o desafio de unir o antigo ao novo.", "MC_DATUM");
+ 
+    smoothText(394, 279, whiteScript, blackScript, "Lato_Regular_24", "PT-BR", "ML_DATUM");
     tft.fillRectHGradient(190, 232, 100, 30, temperatureColor1, temperatureColor2);
-    tft.drawString("INICIAR", 240, 245, GFXFF);
+    smoothText(240, 237, whiteScript, temperatureColor1, "Lato_Regular_14", "INICIAR", "MC_DATUM");
   }
 }
 
@@ -6117,29 +6107,24 @@ void knowname() {
   tft.fillCircle(454, 228, 10, greyScript);
   
   if (language == 1) {
-    tft.setTextDatum(MC_DATUM);
-    tft.setFreeFont(latoRegular24);
-    tft.drawString("We need to know", 240, 90, GFXFF);
-    tft.drawString("what is your name?", 240, 120, GFXFF);
-    tft.setTextDatum(ML_DATUM);
-    tft.drawString("EN-US", 394, 299, GFXFF);
-    tft.setTextDatum(MC_DATUM);
-    tft.setFreeFont(latoRegular14);
+    smoothText(240, 75, whiteScript, blackScript, "Lato_Regular_24", "We need to know", "MC_DATUM");
+    smoothText(240, 105, whiteScript, blackScript, "Lato_Regular_24", "What is your name?", "MC_DATUM");
+
+    smoothText(394, 279, whiteScript, blackScript, "Lato_Regular_24", "EN-US", "ML_DATUM");
+
     tft.fillRectHGradient(190, 232, 100, 30, humidityColor1, humidityColor2);
-    tft.drawString("CONTINUE", 240, 245, GFXFF);
+    smoothText(240, 237, whiteScript, humidityColor1, "Lato_Regular_14", "CONTINUE", "MC_DATUM");
 
     tft.drawRoundRect(115, 150, 250, 30, 5, whiteScript);
   } else {
-    tft.setTextDatum(MC_DATUM);
-    tft.setFreeFont(latoRegular24);
-    tft.drawString("Precisamos saber", 240, 90, GFXFF);
-    tft.drawString("Qual o seu nome?", 240, 120, GFXFF);
-    tft.setTextDatum(ML_DATUM);
-    tft.drawString("PT-BR", 394, 299, GFXFF);
-    tft.setTextDatum(MC_DATUM);
-    tft.setFreeFont(latoRegular14);
+    smoothText(240, 75, whiteScript, blackScript, "Lato_Regular_24", "Precisamos saber", "MC_DATUM");
+    smoothText(240, 105, whiteScript, blackScript, "Lato_Regular_24", "Qual o seu nome?", "MC_DATUM");
+
+
+    smoothText(394, 279, whiteScript, blackScript, "Lato_Regular_24", "PT-BR", "ML_DATUM");
+
     tft.fillRectHGradient(190, 232, 100, 30, humidityColor1, humidityColor2);
-    tft.drawString("CONTINUAR", 240, 245, GFXFF);
+    smoothText(240, 237, whiteScript, humidityColor1, "Lato_Regular_14", "CONTINUAR", "MC_DATUM");
 
     tft.drawRoundRect(115, 150, 250, 30, 5, whiteScript);
   }
@@ -6984,4 +6969,114 @@ void touchCircle(int startX, int startY, int size, int color, int erase, byte& s
       status = 0;
     }
   }
+}
+
+void listFiles(void) {
+  Serial.println();
+  Serial.println("SPIFFS files found:");
+
+#ifdef ESP32
+  listDir(SPIFFS, "/", true);
+#else
+  fs::Dir dir = SPIFFS.openDir("/"); // Root directory
+  String  line = "=====================================";
+
+  Serial.println(line);
+  Serial.println("  File name               Size");
+  Serial.println(line);
+
+  while (dir.next()) {
+    String fileName = dir.fileName();
+    Serial.print(fileName);
+    int spaces = 25 - fileName.length(); // Tabulate nicely
+    if (spaces < 0) spaces = 1;
+    while (spaces--) Serial.print(" ");
+    fs::File f = dir.openFile("r");
+    Serial.print(f.size()); Serial.println(" bytes");
+    yield();
+  }
+
+  Serial.println(line);
+#endif
+  Serial.println();
+  delay(1000);
+}
+
+void listDir(fs::FS &fs, const char * dirname, uint8_t levels) {
+  Serial.printf("Listing directory: %s\n", dirname);
+
+  fs::File root = fs.open(dirname);
+  if (!root) {
+    Serial.println("Failed to open directory");
+    return;
+  }
+  if (!root.isDirectory()) {
+    Serial.println("Not a directory");
+    return;
+  }
+
+  fs::File file = root.openNextFile();
+  while (file) {
+
+    if (file.isDirectory()) {
+      Serial.print("DIR : ");
+      String fileName = file.name();
+      Serial.print(fileName);
+      if (levels) {
+        listDir(fs, file.name(), levels - 1);
+      }
+    } else {
+      String fileName = file.name();
+      Serial.print("  " + fileName);
+      int spaces = 32 - fileName.length(); // Tabulate nicely
+      if (spaces < 1) spaces = 1;
+      while (spaces--) Serial.print(" ");
+      String fileSize = (String) file.size();
+      spaces = 8 - fileSize.length(); // Tabulate nicely
+      if (spaces < 1) spaces = 1;
+      while (spaces--) Serial.print(" ");
+      Serial.println(fileSize + " bytes");
+    }
+
+    file = root.openNextFile();
+  }
+}
+
+void smoothText(int startX, int startY, int color, int background, String textStyle, String text, String positionText) {
+  String fileName = textStyle;
+  if (fileName == "lato_Regular_10") {
+    startY = startY - 5;
+  } else if (fileName == "Lato_Regular_12") {
+    startY = startY - 6;
+  } else if (fileName == "lato_Regular_14") {
+    startY = startY - 7;
+  } else if (fileName == "lato_Regular_24") {
+    startY = startY - 12;
+  } else if (fileName == "Lato_Bold_48") {
+    startY = startY - 24;
+  } 
+
+  tft.setTextColor(color, background);
+  tft.loadFont(fileName);
+  int textWidth = tft.textWidth(text);
+  int x, y;
+  
+  if (positionText == "TL_DATUM" || positionText == "ML_DATUM" || positionText == "BL_DATUM") {
+    x = startX; // Alinhamento esquerdo
+  } else if (positionText == "TC_DATUM" || positionText == "MC_DATUM" || positionText == "BC_DATUM") {
+    x = startX - textWidth / 2; // Alinhamento central
+  } else {
+    x = startX - textWidth; // Alinhamento direito
+  }
+
+  if (positionText == "TL_DATUM" || positionText == "TC_DATUM" || positionText == "TR_DATUM") {
+    y = startY + tft.fontHeight(); // Alinhamento superior
+  } else if (positionText == "ML_DATUM" || positionText == "MC_DATUM" || positionText == "MR_DATUM") {
+    y = startY + tft.fontHeight() / 2; // Alinhamento central
+  } else {
+    y = startY; // Alinhamento inferior
+  }
+
+  tft.setCursor(x, y);
+  tft.println(text);
 }
