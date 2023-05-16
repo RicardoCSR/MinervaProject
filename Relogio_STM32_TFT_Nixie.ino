@@ -361,13 +361,13 @@ uint16_t icon_white = 0xD6BA;           //0xD9D9D9
 
 #define GFXFF 1
   // TL_DATUM = Top left (default)
-  // TC_DATUM = Top centre
+  // TC_DATUM = Top center
   // TR_DATUM = Top right
   // ML_DATUM = Middle left
-  // MC_DATUM = Middle centre
+  // MC_DATUM = Middle center
   // MR_DATUM = Middle right
   // BL_DATUM = Bottom left
-  // BC_DATUM = Bottom centre
+  // BC_DATUM = Bottom center
   // BR_DATUM = Bottom right
   // L_BASELINE = Left character baseline (Line the 'A' character would sit on)
   // C_BASELINE = Centre character baseline
@@ -679,8 +679,6 @@ void loop(void) {
 
           }
           */
-
-
 
     // COLUNA 1 TECLADO
           if (x > 2 && x < 2 + 35 && y > 160 && y < 160 + 35) {
@@ -1815,19 +1813,13 @@ void textBoxName(int keys) {
     if (lenghtText < nameLenght) {
       textKnowName[lenghtText++] = key;
       tft.fillRect(69, 83, 342, 34, blackScript);
-      tft.setTextDatum(ML_DATUM);
-      tft.setTextColor(whiteScript);
-      tft.setFreeFont(latoRegular24);
-      tft.drawString(textKnowName, 69, 98, GFXFF);
+      smoothText(69, 86, whiteScript, blackScript, "Lato_Regular_24", textKnowName, "ML_DATUM");
       return;
     }
   }
   else if ((lenghtText < nameLenght) && displayTFT == 20) {
     tft.fillRect(69, 83, 342, 34, blackScript);
-    tft.setTextDatum(ML_DATUM);
-    tft.setTextColor(whiteScript);
-    tft.setFreeFont(latoRegular24);
-    tft.drawString(textKnowName, 69, 98, GFXFF);
+    smoothText(69, 86, whiteScript, blackScript, "Lato_Regular_24", textKnowName, "ML_DATUM");
   }
 }
 
@@ -1887,9 +1879,9 @@ void testCalibration() {
     tft.fillRoundRect(190, 250, 100, 30, 5, autumnMenu);
     tft.drawRoundRect(310, 250, 100, 30, 5, winterMenu);
  
-    tft.drawString("Recalibrar", 120, 264, GFXFF);
-    tft.drawString("Limpar", 240, 264, GFXFF);
-    tft.drawString("Sair", 360, 264, GFXFF);
+    smoothText(120, 255, whiteScript, nixieColor, "Lato_Regular_14", "Recalibrar", "MC_DATUM");
+    smoothText(240, 255, whiteScript, autumnMenu, "Lato_Regular_14", "Limpar", "MC_DATUM");
+    smoothText(360, 255, whiteScript, winterMenu, "Lato_Regular_14", "Sair", "MC_DATUM");
   }
   displayTFT = 17;
   uint16_t x, y;
@@ -5932,143 +5924,112 @@ void keyboard() {
   tft.drawLine(427, 178, 460, 178, whiteScript); 
 
   if (switchCaps == 1) {
-  
-    tft.setTextDatum(MC_DATUM);
-    tft.setTextColor(wifi_off2);
-    tft.setFreeFont(latoRegular12);
+    smoothText(7, 162, wifi_off2, wifi_off1, "Lato_Regular_12", "1", "MC_DATUM");
+    smoothText(47, 162, wifi_off2, wifi_off1, "Lato_Regular_12", "2", "MC_DATUM");
+    smoothText(87, 162, wifi_off2, wifi_off1, "Lato_Regular_12", "3", "MC_DATUM");
+    smoothText(127, 162, wifi_off2, wifi_off1, "Lato_Regular_12", "4", "MC_DATUM");
+    smoothText(167, 162, wifi_off2, wifi_off1, "Lato_Regular_12", "5", "MC_DATUM");
+    smoothText(207, 162, wifi_off2, wifi_off1, "Lato_Regular_12", "6", "MC_DATUM");
+    smoothText(247, 162, wifi_off2, wifi_off1, "Lato_Regular_12", "7", "MC_DATUM");
+    smoothText(287, 162, wifi_off2, wifi_off1, "Lato_Regular_12", "8", "MC_DATUM");
+    smoothText(327, 162, wifi_off2, wifi_off1, "Lato_Regular_12", "9", "MC_DATUM");
+    smoothText(367, 162, wifi_off2, wifi_off1, "Lato_Regular_12", "0", "MC_DATUM");
 
-    tft.drawString("1", 7, 166, GFXFF);
-    tft.drawString("2", 47 , 166, GFXFF);
-    tft.drawString("3", 87, 166, GFXFF);
-    tft.drawString("4", 127, 166, GFXFF);
-    tft.drawString("5", 167, 166, GFXFF);
-    tft.drawString("6", 207, 166, GFXFF);
-    tft.drawString("7", 247, 166, GFXFF);
-    tft.drawString("8", 287, 166, GFXFF);
-    tft.drawString("9", 327, 166, GFXFF);
-    tft.drawString("0", 367, 166, GFXFF);
+    smoothText(20, 160, whiteScript, wifi_off1, "Lato_Regular_24", "Q", "MC_DATUM");
+    smoothText(60, 160, whiteScript, wifi_off1, "Lato_Regular_24", "W", "MC_DATUM");
+    smoothText(100, 160, whiteScript, wifi_off1, "Lato_Regular_24", "E", "MC_DATUM");
+    smoothText(140, 160, whiteScript, wifi_off1, "Lato_Regular_24", "R", "MC_DATUM");
+    smoothText(180, 160, whiteScript, wifi_off1, "Lato_Regular_24", "T", "MC_DATUM");
+    smoothText(220, 160, whiteScript, wifi_off1, "Lato_Regular_24", "Y", "MC_DATUM");
+    smoothText(260, 160, whiteScript, wifi_off1, "Lato_Regular_24", "U", "MC_DATUM");
+    smoothText(300, 160, whiteScript, wifi_off1, "Lato_Regular_24", "I", "MC_DATUM");
+    smoothText(340, 160, whiteScript, wifi_off1, "Lato_Regular_24", "O", "MC_DATUM");
+    smoothText(380, 160, whiteScript, wifi_off1, "Lato_Regular_24", "P", "MC_DATUM");
 
-    tft.setTextColor(whiteScript);
-    tft.setFreeFont(latoRegular24);
+    smoothText(40, 200, whiteScript, wifi_off1, "Lato_Regular_24", "A", "MC_DATUM");
+    smoothText(80, 200, whiteScript, wifi_off1, "Lato_Regular_24", "S", "MC_DATUM");
+    smoothText(120, 200, whiteScript, wifi_off1, "Lato_Regular_24", "D", "MC_DATUM");
+    smoothText(160, 200, whiteScript, wifi_off1, "Lato_Regular_24", "F", "MC_DATUM");
+    smoothText(200, 200, whiteScript, wifi_off1, "Lato_Regular_24", "G", "MC_DATUM");
+    smoothText(240, 200, whiteScript, wifi_off1, "Lato_Regular_24", "H", "MC_DATUM");
+    smoothText(280, 200, whiteScript, wifi_off1, "Lato_Regular_24", "J", "MC_DATUM");
+    smoothText(320, 200, whiteScript, wifi_off1, "Lato_Regular_24", "K", "MC_DATUM");
+    smoothText(360, 200, whiteScript, wifi_off1, "Lato_Regular_24", "L", "MC_DATUM");
+    smoothText(400, 200, whiteScript, wifi_off1, "Lato_Regular_24", "'", "MC_DATUM");
 
-    tft.drawString("Q", 20, 178, GFXFF);
-    tft.drawString("W", 60, 178, GFXFF);
-    tft.drawString("E", 100, 178, GFXFF);
-    tft.drawString("R", 140, 178, GFXFF);
-    tft.drawString("T", 180, 178, GFXFF);
-    tft.drawString("Y", 220, 178, GFXFF);
-    tft.drawString("U", 260, 178, GFXFF);
-    tft.drawString("I", 300, 178, GFXFF);
-    tft.drawString("O", 340, 178, GFXFF);
-    tft.drawString("P", 380, 178, GFXFF);
+    smoothText(60, 240, whiteScript, wifi_off1, "Lato_Regular_24", "Z", "MC_DATUM");
+    smoothText(100, 240, whiteScript, wifi_off1, "Lato_Regular_24", "X", "MC_DATUM");
+    smoothText(140, 240, whiteScript, wifi_off1, "Lato_Regular_24", "C", "MC_DATUM");
+    smoothText(180, 240, whiteScript, wifi_off1, "Lato_Regular_24", "V", "MC_DATUM");
+    smoothText(220, 240, whiteScript, wifi_off1, "Lato_Regular_24", "B", "MC_DATUM");
+    smoothText(260, 240, whiteScript, wifi_off1, "Lato_Regular_24", "N", "MC_DATUM");
+    smoothText(300, 240, whiteScript, wifi_off1, "Lato_Regular_24", "M", "MC_DATUM");
+    smoothText(340, 240, whiteScript, wifi_off1, "Lato_Regular_24", ",", "MC_DATUM");
+    smoothText(380, 240, whiteScript, wifi_off1, "Lato_Regular_24", ".", "MC_DATUM");
+    smoothText(420, 240, whiteScript, wifi_off1, "Lato_Regular_24", "?", "MC_DATUM");
 
+    smoothText(19, 290, whiteScript, wifi_off1, "Lato_Regular_12", "&123", "MC_DATUM");
 
-    tft.drawString("A", 40, 218, GFXFF);
-    tft.drawString("S", 80, 218, GFXFF);
-    tft.drawString("D", 120, 218, GFXFF);
-    tft.drawString("F", 160, 218, GFXFF);
-    tft.drawString("G", 200, 218, GFXFF);
-    tft.drawString("H", 240, 218, GFXFF);
-    tft.drawString("J", 280, 218, GFXFF);
-    tft.drawString("K", 320, 218, GFXFF);
-    tft.drawString("L", 360, 218, GFXFF);
-    tft.drawString("'", 400, 218, GFXFF);
+    smoothText(20, 245, whiteScript, wifi_off1, "Lato_Regular_14", "Caps", "MC_DATUM");
+    smoothText(460, 245, whiteScript, wifi_off1, "Lato_Regular_14", "Del", "MC_DATUM");
 
-    
-    tft.drawString("Z", 60, 258, GFXFF);
-    tft.drawString("X", 100, 258, GFXFF);
-    tft.drawString("C", 140, 258, GFXFF);
-    tft.drawString("V", 180, 258, GFXFF);
-    tft.drawString("B", 220, 258, GFXFF);
-    tft.drawString("N", 260, 258, GFXFF);
-    tft.drawString("M", 300, 258, GFXFF);
-    tft.drawString(",", 340, 258, GFXFF);
-    tft.drawString(".", 380, 258, GFXFF);
-    tft.drawString("?", 420, 258, GFXFF);
-
-    tft.setFreeFont(latoRegular12);
-
-    tft.drawString("&123", 19, 297, GFXFF);
-
-    tft.setFreeFont(latoRegular14);
-
-    tft.drawString("Caps", 20, 258, GFXFF);
-    tft.drawString("Del", 460, 258, GFXFF);
-
-    tft.drawString("ctrl", 58, 295, GFXFF);
-    tft.drawString("fn", 99, 295, GFXFF);
-
-    tft.drawString("ENG", 460, 297, GFXFF);
+    smoothText(58, 285, whiteScript, wifi_off1, "Lato_Regular_14", "Ctrl", "MC_DATUM");
+    smoothText(99, 285, whiteScript, wifi_off1, "Lato_Regular_14", "Fn", "MC_DATUM");
+    smoothText(460, 285, whiteScript, wifi_off1, "Lato_Regular_14", "Eng", "MC_DATUM");
 
   } else {
-    
-    tft.setTextDatum(MC_DATUM);
-    tft.setTextColor(wifi_off2);
-    tft.setFreeFont(latoRegular12);
+    smoothText(7, 162, wifi_off2, wifi_off1, "Lato_Regular_12", "1", "MC_DATUM");
+    smoothText(47, 162, wifi_off2, wifi_off1, "Lato_Regular_12", "2", "MC_DATUM");
+    smoothText(87, 162, wifi_off2, wifi_off1, "Lato_Regular_12", "3", "MC_DATUM");
+    smoothText(127, 162, wifi_off2, wifi_off1, "Lato_Regular_12", "4", "MC_DATUM");
+    smoothText(167, 162, wifi_off2, wifi_off1, "Lato_Regular_12", "5", "MC_DATUM");
+    smoothText(207, 162, wifi_off2, wifi_off1, "Lato_Regular_12", "6", "MC_DATUM");
+    smoothText(247, 162, wifi_off2, wifi_off1, "Lato_Regular_12", "7", "MC_DATUM");
+    smoothText(287, 162, wifi_off2, wifi_off1, "Lato_Regular_12", "8", "MC_DATUM");
+    smoothText(327, 162, wifi_off2, wifi_off1, "Lato_Regular_12", "9", "MC_DATUM");
+    smoothText(367, 162, wifi_off2, wifi_off1, "Lato_Regular_12", "0", "MC_DATUM");
 
-    tft.drawString("1", 7, 166, GFXFF);
-    tft.drawString("2", 47 , 166, GFXFF);
-    tft.drawString("3", 87, 166, GFXFF);
-    tft.drawString("4", 127, 166, GFXFF);
-    tft.drawString("5", 167, 166, GFXFF);
-    tft.drawString("6", 207, 166, GFXFF);
-    tft.drawString("7", 247, 166, GFXFF);
-    tft.drawString("8", 287, 166, GFXFF);
-    tft.drawString("9", 327, 166, GFXFF);
-    tft.drawString("0", 367, 166, GFXFF);
+    smoothText(20, 160, whiteScript, wifi_off1, "Lato_Regular_24", "q", "MC_DATUM");
+    smoothText(60, 160, whiteScript, wifi_off1, "Lato_Regular_24", "w", "MC_DATUM");
+    smoothText(100, 160, whiteScript, wifi_off1, "Lato_Regular_24", "e", "MC_DATUM");
+    smoothText(140, 160, whiteScript, wifi_off1, "Lato_Regular_24", "r", "MC_DATUM");
+    smoothText(180, 160, whiteScript, wifi_off1, "Lato_Regular_24", "t", "MC_DATUM");
+    smoothText(220, 160, whiteScript, wifi_off1, "Lato_Regular_24", "y", "MC_DATUM");
+    smoothText(260, 160, whiteScript, wifi_off1, "Lato_Regular_24", "u", "MC_DATUM");
+    smoothText(300, 160, whiteScript, wifi_off1, "Lato_Regular_24", "i", "MC_DATUM");
+    smoothText(340, 160, whiteScript, wifi_off1, "Lato_Regular_24", "o", "MC_DATUM");
+    smoothText(380, 160, whiteScript, wifi_off1, "Lato_Regular_24", "p", "MC_DATUM");
 
-    tft.setTextColor(whiteScript);
-    tft.setFreeFont(latoRegular24);
+    smoothText(40, 200, whiteScript, wifi_off1, "Lato_Regular_24", "a", "MC_DATUM");
+    smoothText(80, 200, whiteScript, wifi_off1, "Lato_Regular_24", "s", "MC_DATUM");
+    smoothText(120, 200, whiteScript, wifi_off1, "Lato_Regular_24", "d", "MC_DATUM");
+    smoothText(160, 200, whiteScript, wifi_off1, "Lato_Regular_24", "f", "MC_DATUM");
+    smoothText(200, 200, whiteScript, wifi_off1, "Lato_Regular_24", "g", "MC_DATUM");
+    smoothText(240, 200, whiteScript, wifi_off1, "Lato_Regular_24", "h", "MC_DATUM");
+    smoothText(280, 200, whiteScript, wifi_off1, "Lato_Regular_24", "j", "MC_DATUM");
+    smoothText(320, 200, whiteScript, wifi_off1, "Lato_Regular_24", "k", "MC_DATUM");
+    smoothText(360, 200, whiteScript, wifi_off1, "Lato_Regular_24", "l", "MC_DATUM");
+    smoothText(400, 200, whiteScript, wifi_off1, "Lato_Regular_24", "'", "MC_DATUM");
 
-    tft.drawString("q", 20, 178, GFXFF);
-    tft.drawString("w", 60, 178, GFXFF);
-    tft.drawString("e", 100, 178, GFXFF);
-    tft.drawString("r", 140, 178, GFXFF);
-    tft.drawString("t", 180, 178, GFXFF);
-    tft.drawString("y", 220, 178, GFXFF);
-    tft.drawString("u", 260, 178, GFXFF);
-    tft.drawString("i", 300, 178, GFXFF);
-    tft.drawString("o", 340, 178, GFXFF);
-    tft.drawString("p", 380, 178, GFXFF);
+    smoothText(60, 240, whiteScript, wifi_off1, "Lato_Regular_24", "z", "MC_DATUM");
+    smoothText(100, 240, whiteScript, wifi_off1, "Lato_Regular_24", "x", "MC_DATUM");
+    smoothText(140, 240, whiteScript, wifi_off1, "Lato_Regular_24", "c", "MC_DATUM");
+    smoothText(180, 240, whiteScript, wifi_off1, "Lato_Regular_24", "v", "MC_DATUM");
+    smoothText(220, 240, whiteScript, wifi_off1, "Lato_Regular_24", "b", "MC_DATUM");
+    smoothText(260, 240, whiteScript, wifi_off1, "Lato_Regular_24", "n", "MC_DATUM");
+    smoothText(300, 240, whiteScript, wifi_off1, "Lato_Regular_24", "m", "MC_DATUM");
+    smoothText(340, 240, whiteScript, wifi_off1, "Lato_Regular_24", ",", "MC_DATUM");
+    smoothText(380, 240, whiteScript, wifi_off1, "Lato_Regular_24", ".", "MC_DATUM");
+    smoothText(420, 240, whiteScript, wifi_off1, "Lato_Regular_24", "?", "MC_DATUM");
 
+    smoothText(19, 290, whiteScript, wifi_off1, "Lato_Regular_12", "&123", "MC_DATUM");
 
-    tft.drawString("a", 40, 218, GFXFF);
-    tft.drawString("s", 80, 218, GFXFF);
-    tft.drawString("d", 120, 218, GFXFF);
-    tft.drawString("f", 160, 218, GFXFF);
-    tft.drawString("g", 200, 218, GFXFF);
-    tft.drawString("h", 240, 218, GFXFF);
-    tft.drawString("j", 280, 218, GFXFF);
-    tft.drawString("k", 320, 218, GFXFF);
-    tft.drawString("l", 360, 218, GFXFF);
-    tft.drawString("'", 400, 218, GFXFF);
+    smoothText(20, 250, whiteScript, wifi_off1, "Lato_Regular_14", "Caps", "MC_DATUM");
+    smoothText(460, 250, whiteScript, wifi_off1, "Lato_Regular_14", "Del", "MC_DATUM");
 
-    
-    tft.drawString("z", 60, 258, GFXFF);
-    tft.drawString("x", 100, 258, GFXFF);
-    tft.drawString("c", 140, 258, GFXFF);
-    tft.drawString("v", 180, 258, GFXFF);
-    tft.drawString("b", 220, 258, GFXFF);
-    tft.drawString("n", 260, 258, GFXFF);
-    tft.drawString("m", 300, 258, GFXFF);
-    tft.drawString(",", 340, 258, GFXFF);
-    tft.drawString(".", 380, 258, GFXFF);
-    tft.drawString("?", 420, 258, GFXFF);
-
-    tft.setFreeFont(latoRegular12);
-
-    tft.drawString("&123", 19, 297, GFXFF);
-
-    tft.setFreeFont(latoRegular14);
-
-    tft.drawString("Caps", 20, 258, GFXFF);
-    tft.drawString("Del", 460, 258, GFXFF);
-
-    tft.drawString("Ctrl", 58, 295, GFXFF);
-    tft.drawString("Fn", 99, 295, GFXFF);
-
-    tft.drawString("Eng", 460, 295, GFXFF);
-
+    smoothText(58, 285, whiteScript, wifi_off1, "Lato_Regular_14", "Ctrl", "MC_DATUM");
+    smoothText(99, 285, whiteScript, wifi_off1, "Lato_Regular_14", "Fn", "MC_DATUM");
+    smoothText(460, 285, whiteScript, wifi_off1, "Lato_Regular_14", "Eng", "MC_DATUM");
   }
 }
 
@@ -6119,7 +6080,6 @@ void knowname() {
   } else {
     smoothText(240, 75, whiteScript, blackScript, "Lato_Regular_24", "Precisamos saber", "MC_DATUM");
     smoothText(240, 105, whiteScript, blackScript, "Lato_Regular_24", "Qual o seu nome?", "MC_DATUM");
-
 
     smoothText(394, 279, whiteScript, blackScript, "Lato_Regular_24", "PT-BR", "ML_DATUM");
 
