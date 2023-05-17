@@ -358,6 +358,7 @@ uint16_t icon_white = 0xD6BA;           //0xD9D9D9
 
 #define pinOnOff 16
 #define pinSet 17
+int pinBL = 14;
 
 #define GFXFF 1
   // TL_DATUM = Top left (default)
@@ -386,7 +387,6 @@ void setup() {
 
   pinMode(pinOnOff, INPUT_PULLUP);
   pinMode(pinSet, INPUT_PULLUP);
-
 
   if (!SPIFFS.begin()) {
     Serial.println("SPIFFS initialisation failed!");
@@ -531,11 +531,11 @@ byte menuEndNetwork = numNetworks - 1;
 
 void loop(void) {
   // ------------------------------ botao --------------
-    int powerDisplay  = digitalRead(pinOnOff);
+    int powerDisplay = digitalRead(pinOnOff);
     if (powerDisplay == HIGH) {
-      digitalWrite(14, 255);
+      digitalWrite(pinBL, 255);
     } else {
-      digitalWrite(14, 50);
+      digitalWrite(pinBL, 50);
     }
 
   // ------------------------------ touchScreen OPERACIONAL ----------------------
@@ -1813,13 +1813,13 @@ void textBoxName(int keys) {
     if (lenghtText < nameLenght) {
       textKnowName[lenghtText++] = key;
       tft.fillRect(69, 83, 342, 34, blackScript);
-      smoothText(69, 86, whiteScript, blackScript, "Lato_Regular_24", textKnowName, "ML_DATUM");
+      smoothText(69, 80, whiteScript, blackScript, "Lato_Regular_24", textKnowName, "ML_DATUM");
       return;
     }
   }
   else if ((lenghtText < nameLenght) && displayTFT == 20) {
     tft.fillRect(69, 83, 342, 34, blackScript);
-    smoothText(69, 86, whiteScript, blackScript, "Lato_Regular_24", textKnowName, "ML_DATUM");
+    smoothText(69, 80, whiteScript, blackScript, "Lato_Regular_24", textKnowName, "ML_DATUM");
   }
 }
 
@@ -6089,10 +6089,7 @@ void knowname() {
     tft.drawRoundRect(115, 150, 250, 30, 5, whiteScript);
   }
 
-  tft.setTextDatum(ML_DATUM);
-  tft.setTextColor(whiteScript);
-  tft.setFreeFont(latoRegular24);
-  tft.drawString(userName, 120, 163, GFXFF);
+  smoothText(120, 145, whiteScript, blackScript, "Lato_Regular_24", userName, "ML_DATUM");
 }
 
 void profileimage() {
