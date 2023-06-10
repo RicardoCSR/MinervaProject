@@ -10,18 +10,6 @@
 #include "Imagens.h"
 #include "main.h"
 
-#include "Lato_Bold_48.h"
-#include "Lato_Regular_24.h"
-#include "Lato_Regular_14.h"
-#include "Lato_Regular_12.h"
-#include "Lato_Regular_10.h"
-
-#define latoBold48 &Lato_Bold_48
-#define latoRegular24 &Lato_Regular_24
-#define latoRegular14 &Lato_Regular_14
-#define latoRegular12 &Lato_Regular_12
-#define latoRegular10 &Lato_Regular_10
-
 #define pinOnOff 16
 #define pinSet 17
 #define pinBL 25
@@ -42,7 +30,20 @@
 
 // -------------------- CORES DISPLAY RGB 555 --------------------
 
-uint16_t DarkBackgroundColor = 0x2988;  //0x2F3243
+uint16_t darkBackgroundColor = 0x2988;  //0x2F3243
+uint16_t lightBackgroundColor = 0xEF9D; //0xF3F3F3
+uint16_t backgroundColor;
+
+uint16_t redTextColor = 0xF30D;         //0xFC6470
+uint16_t orangeTextColor = 0xDAA1;      //0xE65510
+uint16_t greenTextColor = 0x4FEF;       //0x50FF7D
+uint16_t lightTextColor = 0xEFBE;       //0xF3F8FE
+uint16_t darkTextColor = 0x2988;        //0x2F3243
+uint16_t textColor;
+
+uint16_t blockColor = 0xEFBE;           //0XF3F8FE
+
+
 
 // -------------------- FUNCOES E AJUSTES NAO CONFIGURAVEIS --------------------
 const int pwmResolution = 8;   // Resolucao PWM (8 bits para o ESP32)
@@ -60,6 +61,17 @@ byte firstInicialization = 0; // Define a primeira inicializacao do aparelho
 
 byte displayTFT = 0;
 
+byte colorBackgroundValue = 0;      // Define qual a cor de background
+  // byte colorBackgroundValue = 0 Definido como fundo Escuro
+  // byte colorBackgroundValue = 1 Definido como fundo Claro
+
+byte colorTextValue = 0;            // Define qual a cor de texto
+  // byte colorTextValue = 0 Definido como texto Claro
+  // byte colorTextValue = 1 Definido como texto Escuro
+  // byte colorTextValue = 2 Definido como texto Colorido
+
+  byte error = 0;                   // Armazena e define erros encontrados
+  
 
 // -------------------- FUNCOES E AJUSTES CONFIGURAVEIS --------------------
   byte touchSet = 2;
@@ -70,7 +82,8 @@ byte displayTFT = 0;
 
 
 // -------------------- INSTANCIAS DAS BIBLIOTECAS --------------------
-  TFT_eSPI tft = TFT_eSPI();      // Instancia da biblioteca TFT_eSPI
+  TFT_eSPI tft = TFT_eSPI();      // Instancia da biblioteca TFT_eSPI para operacao do display
+  TFT_eSprite logo = TFT_eSprite(&tft); // Instancia da biblioteca TFT_eSPI para imagem PNG
   //PNG png;                        // Instancia decodificador PNG
 
 // -------------------- CONFIGURACOES E INICIALIZACAO DE MODULOS --------------------
@@ -97,35 +110,22 @@ void setup() {
     uint16_t calData[5] = { 223, 3675, 227, 3503, 7 };
     tft.setTouch(calData);
   }
+  tft.fillScreen(darkBackgroundColor);
 }
 
 void loop() {
   unsigned long currentTime = millis();
+  unsigned long elapsedTime = 0;
 
-
+  firstSettings();
 
 
 
   // -------------------- AJUSTE DE BRILHO DA TELA -------------------- 
-  if (firstInicialization == 0) {
-    unsigned long elapsedTime = currentTime - startTime;
 
-    int dutyCycle = map(elapsedTime, 0, fadeDuration, 0, (1 << pwmResolution) - 1);
-    dacWrite(pinBL, dutyCycle);
-    Serial.println(dutyCycle);
-
-    if (elapsedTime >= fadeDuration) {
-      startTime = currentTime;   // Atualiza o tempo de início
-      firstInicialization = 1;
-    }
-  }
 
   if (displayTFT == 0) {
-    tft.fillScreen(DarkBackgroundColor);
-    tft.setSwapBytes(true);
-    tft.pushImage(0, 0, 165, 165, mufoxStart); //white white white white white white ATIVAR PARA USAR
-    displayTFT = 1;
-    
+
   }
 
 
@@ -145,10 +145,154 @@ void loop() {
   }
 */
 }
+void firstSettings() {
+  unsigned long timerCheckingModule = 0;
+  unsigned long interval = 20;  
+  unsigned long bargraphTime = 5000; 
+  unsigned long logoTime = 2500;
 
-void logoImageStart() {
+  if (colorBackgroundValue == 0) {
+    backgroundColor = darkBackgroundColor;
+  } else {
+    backgroundColor = lightBackgroundColor;
+  }
 
+  if (colorTextValue == 0) {
+    textColor = lightTextColor;
+  } else {
+    textColor = darkTextColor;
+  }
+
+  if (firstInicialization == 0) {
+    logo.createSprite(165, 165);
+    logo.setSwapBytes(true);
+    logo.pushImage(0, 0, 165, 165, mufoxStart); // sizeX e sizeY do PNG carregado
+    logo.pushSprite(158, 37, TFT_BLACK); // x e y do PNG carregado
+
+    tft.setTextDatum(ML_DATUM);
+    tft.setTextColor(textColor, backgroundColor);
+    smoothText("Lato_Bold_14");
+    tft.drawString("Checking Modules", 182, 228, GFXFF);
+
+    unsigned long startTime = millis();
+
+    while (millis() - startTime <= bargraphTime) {
+      if (millis() - timerCheckingModule >= interval) {
+        timerCheckingModule = millis();
+
+        // CARREGAMENTO LINEAR
+        float width = map(millis() - startTime, 0, bargraphTime, 130, 350);
+        tft.drawLine(width, 245, width, 260, blockColor);
+
+        /* CARREGAMENTO COM PERCA DE VELOCIDADE
+        float progress = (millis() - startTime) / (float)bargraphTime;
+        float easedProgress = easeOutCubic(progress);  // Função de desaceleração aplicada ao progresso
+        float width = easedProgress * 220;
+        tft.drawLine(width + 130, 245, width + 130, 260, blockColor); */
+      }
+    }
+    firstInicialization = 1;
+  }
+
+  if (firstInicialization == 1) {
+    unsigned long startTime = millis();
+
+    while (millis() - startTime <= logoTime) {
+      if (millis() - timerCheckingModule >= 10) {
+        timerCheckingModule = millis();
+
+        float progress = (millis() - startTime) / (float)logoTime;
+        float easedProgress = easeOutCubic(progress);  // Função de aceleração aplicada ao progresso
+        float logoXPosition = easedProgress * 111;
+        int logoXEnd = 158 - logoXPosition;
+        //int logoXEnd = tft.width() - logoXPosition;
+
+        logo.pushSprite(logoXEnd, 37);
+
+        Serial.println(logoXPosition);
+      }
+    }
+    firstInicialization = 2;
+    error = 0;
+  }
+
+  if (firstInicialization == 2) {
+    if (error == 0) {
+      tft.fillRect(130, 245, 220, 15, greenTextColor);
+      tft.fillRect(174, 219, 130, 20, backgroundColor);
+      tft.setTextColor(greenTextColor, backgroundColor);
+      tft.setTextDatum(ML_DATUM);
+      tft.drawString("Successful loaded", 182, 228, GFXFF);
+      tft.setTextDatum(MR_DATUM);
+      tft.drawString("Weather", 310, 80, GFXFF);
+      tft.drawString("Geiger", 310, 95, GFXFF);
+      tft.drawString("LDR", 310, 110, GFXFF);
+      tft.drawString("Wi-Fi", 310, 125, GFXFF);
+      tft.drawString("Battery", 310, 140, GFXFF);
+      tft.drawString("Nixie", 310, 155, GFXFF);
+
+      tft.drawString("OK", 345, 80, GFXFF);
+      tft.drawString("OK", 345, 95, GFXFF);
+      tft.drawString("OK", 345, 110, GFXFF);
+      tft.drawString("OK", 345, 125, GFXFF);
+      tft.drawString("OK", 345, 140, GFXFF);
+      tft.drawString("OK", 345, 155, GFXFF);
+    } else {
+      tft.fillRect(130, 245, 220, 15, redTextColor);
+      tft.fillRect(174, 219, 130, 20, backgroundColor);
+      tft.setTextColor(redTextColor, backgroundColor);
+      tft.setTextDatum(ML_DATUM);
+      tft.drawString("Few Errors found", 182, 228, GFXFF);
+      tft.setTextDatum(MR_DATUM);
+      if (error == 1) {
+        tft.setTextDatum(MR_DATUM);
+        tft.drawString("Weather", 310, 80, GFXFF);
+        tft.setTextDatum(ML_DATUM);
+        tft.drawString("FAIL", 326, 80, GFXFF);
+      } else if (error == 2) {
+        tft.setTextDatum(MR_DATUM);
+        tft.drawString("Geiger", 310, 95, GFXFF);
+        tft.setTextDatum(ML_DATUM);
+        tft.drawString("FAIL", 326, 95, GFXFF);
+      } else if (error == 3) {
+        tft.setTextDatum(MR_DATUM);
+        tft.drawString("LDR", 310, 110, GFXFF);
+        tft.setTextDatum(ML_DATUM);
+        tft.drawString("FAIL", 326, 110, GFXFF);
+      } else if (error == 4) {
+        tft.setTextDatum(MR_DATUM);
+        tft.drawString("Wi-Fi", 310, 125, GFXFF);
+        tft.setTextDatum(ML_DATUM);
+        tft.drawString("FAIL", 326, 125, GFXFF);
+      } else if (error == 5) {
+        tft.setTextDatum(MR_DATUM);
+        tft.drawString("Battery", 310, 140, GFXFF);
+        tft.setTextDatum(ML_DATUM);
+        tft.drawString("FAIL", 326, 140, GFXFF);
+      } else if (error == 6) {
+        tft.setTextDatum(MR_DATUM);
+        tft.drawString("Nixie", 310, 155, GFXFF);
+        tft.setTextDatum(ML_DATUM);
+        tft.drawString("FAIL", 326, 155, GFXFF);
+      }
+    }
+    firstInicialization = 3;
+  }
 }
+
+
+
+// Função de desaceleração cúbica (Ease Out Cubic)
+float easeOutCubic(float t) {
+  t--;
+  return t * t * t + 1.0;
+}
+// Função de aceleração cúbica (Ease In Cubic)
+float easeInCubic(float t) {
+  return t * t * t;
+}
+
+
 
 // -------------------- SPIFFS --------------------
 void listFiles(void) {
@@ -262,6 +406,4 @@ void smoothText(String textStyle) {
   tft.println(text);
   */
 }
-
-
 
