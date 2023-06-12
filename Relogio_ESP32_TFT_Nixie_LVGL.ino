@@ -55,8 +55,14 @@ uint16_t darkTextColor = 0x2988;        //0x2F3243
 uint16_t textColor;
 
 uint16_t blockColor = 0xEFBE;           //0XF3F8FE
+uint16_t grayColor = 0x4228;            //0x454545
+uint16_t gray2Color = 0x528A;           //0x545454
+uint16_t blackColor = 0x10A2;           //0x161616
+uint16_t snowColor = 0xEF9D;            //0xF3F3F3
+uint16_t snow2Color = 0xE73C;           //0xEAEAEA
+uint16_t whiteColor = 0xFFFF;           //0xFFFFFF
 
-
+uint16_t bluetoothColor = 0x3BBD;       //0x3D79F2
 
 // -------------------- FUNCOES E AJUSTES NAO CONFIGURAVEIS --------------------
 const int pwmResolution = 8;          // Resolucao PWM (8 bits para o ESP32)
@@ -119,8 +125,8 @@ VERSAO FINAL TODOS FALSE
 Altere para TRUE para pular o carregamento de certas telas
 */
   true,        // loader[0] firstLoading();
-  false,        // loader[1] firstLanguages();
-  false,        // loader[2] 
+  true,        // loader[1] firstLanguages();
+  false,        // loader[2] firstAppTheme();
   false,        // loader[3] 
   false,        // loader[4] 
   false,        // loader[5] 
@@ -130,13 +136,6 @@ Altere para TRUE para pular o carregamento de certas telas
   false,        // loader[9] 
 };
 
-// -------------------- CARREGAMENTO DOS BOTOES --------------------
-static bool buttonFirstLanguage[4] = {
-  false,        // buttonFirstLanguage[0] Language = English
-  false,        // buttonFirstLanguage[1] Language = Portugues
-  false,        // buttonFirstLanguage[2] Language = Espanhol
-  false         // buttonFirstLanguage[3] Language = Italiano
-};
 
 // -------------------- ESTRUTURA DOS BOTOES --------------------
 struct Button {
@@ -144,10 +143,13 @@ struct Button {
   int y;
   int width;
   int height;
-}
+};
 
-Button buttons[BUTTON_COUNT];
 int selectedButton = -1;
+
+const int numberOfButtons = 4; // Substitua 4 pelo número desejado de botões
+
+Button buttons[numberOfButtons];
 
 // -------------------- CONFIGURACOES E INICIALIZACAO DE MODULOS --------------------
 void setup() {
@@ -170,7 +172,7 @@ void setup() {
   listFiles(); // Lista todos os arquivos que estao armazenados no SPIFFS
 
   if (touchSet == 2) {
-    uint16_t calData[5] = { 332, 3537, 254, 2225, 7 };
+    uint16_t calData[5] = { 343, 3546, 211, 2344, 7 };
     tft.setTouch(calData);
   }
   tft.fillScreen(darkBackgroundColor);
@@ -187,7 +189,6 @@ void setup() {
     textColor = darkTextColor;
   }
 
-
 }
 
 
@@ -197,88 +198,193 @@ void loop() {
 
   bool touch = obtainTouch();
 
+  loadScreen(firstLoading, loaded[0]);
+  loadScreen(firstLanguages, loaded[1]);
+  loadScreen(firstAppTheme, loaded[2]);
+
   if (selectedButton != -1) {
     handleButtonAction(selectedButton);
     selectedButton = -1;
   }
-
-  loadScreen(firstLoading, loaded[0]);
-  loadScreen(firstLanguages, loaded[1]);
-  
 }
 
-void handleButtonAction(int index) {
-  // Lógica do botão selecionado
-  // Aqui você pode implementar o que deseja fazer quando um botão é pressionado
-  // Por exemplo, exibir uma mensagem no Serial Monitor
-  Serial.print("Botão ");
-  Serial.print(index + 1);
-  Serial.println(" pressionado.");
-}
 
-void checkButtonPress(int x, int y) {
-  for (int i = 0; i < BUTTON_COUNT; i++) {
-    Button button = buttons[i];
-    if (x >= button.x && x <= button.x + button.width && y >= button.y && y <= button.y + button.height) {
-      // O toque está dentro das coordenadas do botão
-      selectedButton = i;  // Marca o botão como selecionado
-      break;
+
+
+
+
+void firstAppTheme() {
+  tft.fillRect(41, 29, 390, 3, lightRedTextColor);
+  tft.fillRect(41, 29, 130, 3, redTextColor);
+
+  tft.fillSmoothCircle(36, 30, 5, redTextColor, backgroundColor);
+  tft.fillSmoothCircle(166, 30, 5, redTextColor, backgroundColor);
+
+  tft.drawSmoothCircle(296, 30, 5, redTextColor, backgroundColor);
+  tft.fillSmoothCircle(296, 30, 3, backgroundColor, redTextColor);
+ 
+  tft.drawSmoothCircle(426, 30, 5, redTextColor, backgroundColor);
+  tft.fillSmoothCircle(426, 30, 3, backgroundColor, redTextColor);
+
+
+
+/*
+  tft.setTextDatum(ML_DATUM);
+  tft.setTextColor(textColor, backgroundColor);
+  smoothText("Lato_Bold_24");
+  tft.drawString("What", 67, 65, GFXFF);
+  smoothText("Lato_Regular_24");
+  tft.drawString("is your name?", 67, 94, GFXFF);
+  tft.drawSmoothRoundRect(102, 155, 275, 30, 5, redTextColor, backgroundColor);
+
+  // ---------------------------------------
+
+  tft.setTextDatum(ML_DATUM);
+  tft.setTextColor(textColor, backgroundColor);
+  smoothText("Lato_Bold_24");
+  tft.drawString("Choose", 67, 65, GFXFF);
+  smoothText("Lato_Regular_24");
+  tft.drawString("the app theme", 67, 94, GFXFF);
+
+  smoothText("Lato_Regular_14");
+  tft.setTextColor(redTextColor, blackColor);
+  tft.fillSmoothRoundRect(57, 142, 80, 70, 10, grayColor, backgroundColor);
+  tft.fillSmoothRoundRect(73, 161, 64, 51, 10, blackColor, gray2Color);
+  tft.drawString("Aa", 81, 172, GFXFF);
+
+  tft.setTextColor(redTextColor, whiteColor);
+  tft.fillSmoothRoundRect(152, 142, 80, 70, 10, snowColor, backgroundColor);
+  tft.fillSmoothRoundRect(168, 161, 64, 51, 10, whiteColor, snow2Color);
+  tft.drawString("Aa", 173, 172, GFXFF);
+
+  tft.setTextColor(whiteColor, blackColor);
+  tft.fillSmoothRoundRect(247, 142, 80, 70, 10, grayColor, backgroundColor);
+  tft.fillSmoothRoundRect(263, 161, 64, 51, 10, blackColor, gray2Color);
+  tft.drawString("Aa", 271, 172, GFXFF);
+
+  tft.setTextColor(blackColor, whiteColor);
+  tft.fillSmoothRoundRect(342, 142, 80, 70, 10, snowColor, backgroundColor);
+  tft.fillSmoothRoundRect(358, 161, 64, 51, 10, whiteColor, snow2Color);
+  tft.drawString("Aa", 363, 172, GFXFF);
+
+  tft.setTextColor(whiteColor, backgroundColor);
+  smoothText("Lato_Regular_10");
+  tft.drawString("Dark & Color", 57, 223, GFXFF);
+  tft.drawString("Light & Color", 152, 223, GFXFF);
+  tft.drawString("Dark", 247, 223, GFXFF);
+  tft.drawString("Light", 342, 223, GFXFF);
+
+  // ---------------------------------------
+
+  tft.drawRoundRect(11, 180, 22, 22, 2, redTextColor);
+  tft.drawRoundRect(36, 180, 28, 22, 2, redTextColor);
+  tft.drawRoundRect(67, 180, 28, 22, 2, redTextColor);
+  tft.drawRoundRect(98, 180, 28, 22, 2, redTextColor);
+  tft.drawRoundRect(129, 180, 28, 22, 2, redTextColor);
+  tft.drawRoundRect(160, 180, 28, 22, 2, redTextColor);
+  tft.drawRoundRect(191, 180, 28, 22, 2, redTextColor);
+  tft.drawRoundRect(222, 180, 28, 22, 2, redTextColor);
+  tft.drawRoundRect(253, 180, 28, 22, 2, redTextColor);
+  tft.drawRoundRect(284, 180, 28, 22, 2, redTextColor);
+  tft.drawRoundRect(315, 180, 28, 22, 2, redTextColor);
+  tft.drawRoundRect(346, 180, 28, 22, 2, redTextColor);
+  tft.drawRoundRect(377, 180, 28, 22, 2, redTextColor);
+  tft.drawRoundRect(408, 180, 59, 22, 2, redTextColor);
+
+  tft.drawRoundRect(11, 204, 40, 22, 2, redTextColor);
+  tft.drawRoundRect(54, 204, 29, 22, 2, redTextColor);
+  tft.drawRoundRect(86, 204, 29, 22, 2, redTextColor);
+  tft.drawRoundRect(118, 204, 29, 22, 2, redTextColor);
+  tft.drawRoundRect(150, 204, 29, 22, 2, redTextColor);
+  tft.drawRoundRect(182, 204, 29, 22, 2, redTextColor);
+  tft.drawRoundRect(214, 204, 29, 22, 2, redTextColor);
+  tft.drawRoundRect(246, 204, 29, 22, 2, redTextColor);
+  tft.drawRoundRect(278, 204, 29, 22, 2, redTextColor);
+  tft.drawRoundRect(310, 204, 29, 22, 2, redTextColor);
+  tft.drawRoundRect(342, 204, 29, 22, 2, redTextColor);
+  tft.drawRoundRect(374, 204, 29, 22, 2, redTextColor);
+  tft.drawRoundRect(406, 204, 29, 22, 2, redTextColor);
+  tft.drawRoundRect(438, 204, 29, 22, 2, redTextColor);
+
+  tft.drawRoundRect(11, 228, 45, 22, 2, redTextColor);
+  tft.drawRoundRect(59, 228, 29, 22, 2, redTextColor);
+  tft.drawRoundRect(91, 228, 29, 22, 2, redTextColor);
+  tft.drawRoundRect(123, 228, 29, 22, 2, redTextColor);
+  tft.drawRoundRect(155, 228, 29, 22, 2, redTextColor);
+  tft.drawRoundRect(187, 228, 29, 22, 2, redTextColor);
+  tft.drawRoundRect(219, 228, 29, 22, 2, redTextColor);
+  tft.drawRoundRect(251, 228, 29, 22, 2, redTextColor);
+  tft.drawRoundRect(283, 228, 29, 22, 2, redTextColor);
+  tft.drawRoundRect(315, 228, 29, 22, 2, redTextColor);
+  tft.drawRoundRect(347, 228, 29, 22, 2, redTextColor);
+  tft.drawRoundRect(379, 228, 29, 22, 2, redTextColor);
+  tft.drawRoundRect(411, 228, 56, 22, 2, redTextColor);
+
+  tft.drawRoundRect(11, 252, 45, 22, 2, redTextColor);
+  tft.drawRoundRect(59, 252, 33, 22, 2, redTextColor);
+  tft.drawRoundRect(95, 252, 33, 22, 2, redTextColor);
+  tft.drawRoundRect(131, 252, 33, 22, 2, redTextColor);
+  tft.drawRoundRect(167, 252, 33, 22, 2, redTextColor);
+  tft.drawRoundRect(203, 252, 33, 22, 2, redTextColor);
+  tft.drawRoundRect(239, 252, 33, 22, 2, redTextColor);
+  tft.drawRoundRect(275, 252, 33, 22, 2, redTextColor);
+  tft.drawRoundRect(311, 252, 33, 22, 2, redTextColor);
+  tft.drawRoundRect(347, 252, 33, 22, 2, redTextColor);
+  tft.drawRoundRect(383, 252, 33, 22, 2, redTextColor);
+  tft.drawRoundRect(419, 252, 48, 22, 2, redTextColor);
+
+  tft.drawRoundRect(11, 276, 45, 22, 2, redTextColor);
+  tft.drawRoundRect(59, 276, 29, 22, 2, redTextColor);
+  tft.drawRoundRect(91, 276, 325, 22, 2, redTextColor);
+  tft.drawRoundRect(419, 276, 48, 22, 2, redTextColor);
+*/
+  tft.setTextDatum(ML_DATUM);
+  tft.setTextColor(textColor, backgroundColor);
+  smoothText("Lato_Bold_24");
+  tft.drawString("Select", 67, 65, GFXFF);
+  smoothText("Lato_Regular_24");
+  tft.drawString("a profile image", 67, 94, GFXFF);
+
+  tft.fillRect(67, 144, 50, 50, blockColor);
+  tft.fillSmoothRoundRect(128, 144, 50, 50, 7, blockColor);
+  tft.fillSmoothCircle(92, 230, 25, blockColor);
+  tft.fillRect(128, 205, 50, 50, blockColor);
+  tft.fillTriangle(125, 202, 125, 221, 144, 202, backgroundColor);
+  tft.fillTriangle(162, 202, 181, 221, 181, 202, backgroundColor);
+  tft.fillTriangle(125, 239, 125, 258, 144, 258, backgroundColor);
+  tft.fillTriangle(162, 258, 181, 258, 181, 239, backgroundColor);
+
+  tft.drawRect(282, 120, 100, 100, backgroundColor);
+
+  tft.fillSmoothCircle(347, 72, 17, bluetoothColor);
+
+
+
+  unsigned long startTime = millis();
+  unsigned long timerCheckingModule = 0;
+  unsigned long interval = 20;  
+  unsigned long loading = 2000; 
+
+  while (millis() - startTime <= loading) {
+    if (millis() - timerCheckingModule >= interval) {
+      timerCheckingModule = millis();
+      float progress = (millis() - startTime) / (float)loading;
+      float easedProgress = easeOutCubic(progress);  // Função de desaceleração aplicada ao progresso
+      float width = easedProgress * 41;
+      tft.fillRect(171, 29, width, 3, redTextColor);
     }
   }
 }
 
-
-void touchScreenPressed(uint16_t x, uint16_t y) {
-  checkButtonPress(x, y);
-}
-
-void touchScreenReleased(uint16_t x, uint16_t y) {
-  if (selectedButton != -1) {
-    // Lógica adicional de tratamento do toque liberado para o botão selecionado
-    // Por exemplo, executar uma ação específica ou redefinir o estado do botão
-
-    // Limpa o botão selecionado após o toque ser liberado
-    selectedButton = -1;
-  }
-}
-
-void touchScreenMoved(uint16_t x, uint16_t y) {
-  if (selectedButton != -1) {
-    // Lógica adicional de tratamento do toque movido para o botão selecionado
-    // Por exemplo, atualizar a aparência visual do botão durante o movimento
-
-    // Verifique se o toque está dentro das coordenadas do botão selecionado
-    Button button = buttons[selectedButton];
-    if (x < button.x || x > button.x + button.width || y < button.y || y > button.y + button.height) {
-      // O toque se moveu para fora das coordenadas do botão selecionado
-      // Limpe o botão selecionado
-      selectedButton = -1;
-    }
-  }
-}
-
-bool obtainTouch(void){
-  bool pressed = tft.getTouch(&t_x, &t_y);
-  if (pressed) {
-    xScreen = map(t_x, 0, tft.width(), 0, 480);
-    yScreen = map(t_y, 0, tft.height(), 0, 480);
-    Serial.print("x, y, z = ");
-    Serial.print(xScreen);
-    Serial.print(" ,");
-    Serial.print(yScreen);
-    Serial.print(" ,");
-    Serial.printf("%i \n", tft.getTouchRawZ()); 
-    return true;
-  }
-  return false; 
-}
-
+// -------------------- PRIMEIRA CONFIGURACOES DO APARELHO --------------------
 void firstLanguages() {
   firstSettings = 1;
   buttons[0] = {140, 123, 96, 68};
   buttons[1] = {244, 123, 96, 68};
   buttons[2] = {140, 205, 96, 68};
   buttons[3] = {244, 205, 96, 68};
+
+
   tft.fillRect(41, 29, 390, 3, lightRedTextColor);
 
   tft.fillSmoothCircle(36, 30, 5, redTextColor, backgroundColor);
@@ -349,16 +455,6 @@ void firstLanguages() {
       float width = easedProgress * 41;
       tft.fillRect(41, 29, width, 3, redTextColor);
     }
-  }
-}
-
-
-// -------------------- FUNCAO DE CARREGAMENTO DAS TELAS --------------------
-void loadScreen(void (*drawFunction)(), bool& loaded) {
-  if (!loaded) {
-    tft.fillScreen(backgroundColor);
-    drawFunction();
-    loaded = true;
   }
 }
 
@@ -498,6 +594,15 @@ void firstLoading() {
   }
 }
 
+// -------------------- FUNCAO DE CARREGAMENTO DAS TELAS --------------------
+void loadScreen(void (*drawFunction)(), bool& loaded) {
+  if (!loaded) {
+    tft.fillScreen(backgroundColor);
+    drawFunction();
+    loaded = true;
+  }
+}
+
 // -------------------- SPIFFS --------------------
 void listFiles(void) {
   Serial.println();
@@ -611,7 +716,7 @@ void smoothText(String textStyle) {
   */
 }
 
-// -------------------- FUNCAO DE ANIMACAO --------------------
+// -------------------- FUNCOES DE ANIMACAO --------------------
 // Função de desaceleração cúbica (Ease Out Cubic)
   float easeOutCubic(float t) {
     t--;
@@ -639,3 +744,75 @@ void smoothText(String textStyle) {
 */
 
 
+// -------------------- OBTENCAO DA POSICAO DE TOUCH --------------------
+bool obtainTouch(void) {
+  bool pressed = tft.getTouch(&t_x, &t_y);
+  if (pressed) {
+    xScreen = map(t_x, 0, tft.width(), 0, 480);
+    yScreen = map(t_y, 0, tft.height(), 0, 480);
+    Serial.print("x, y, z = ");
+    Serial.print(xScreen);
+    Serial.print(" ,");
+    Serial.print(yScreen);
+    Serial.print(" ,");
+    Serial.printf("%i \n", tft.getTouchRawZ()); 
+    return true;
+  }
+  return false; 
+}
+
+// -------------------- FUNCAO DOS BOTOES --------------------
+void touchScreenPressed(uint16_t x, uint16_t y) {
+  checkButtonPress(x, y);
+}
+
+void checkButtonPress(int x, int y) {
+  for (int i = 0; i < numberOfButtons; i++) {
+    Button button = buttons[i];
+    if (x >= button.x && x <= button.x + button.width && y >= button.y && y <= button.y + button.height) {     
+      selectedButton = i;  // Marca o botão como selecionado
+      Serial.print("Botao pressionado: ");
+      Serial.println(selectedButton); 
+      break;
+    }
+  }
+}
+
+void touchScreenReleased(uint16_t x, uint16_t y) {
+  if (selectedButton != -1) {
+    // Lógica adicional de tratamento do toque liberado para o botão selecionado
+    // Por exemplo, executar uma ação específica ou redefinir o estado do botão
+
+    Serial.print("Botao liberado: ");
+    Serial.println(selectedButton); 
+    // Limpa o botão selecionado após o toque ser liberado
+    selectedButton = -1;
+  }
+}
+
+void touchScreenMoved(uint16_t x, uint16_t y) {
+  if (selectedButton != -1) {
+    // Lógica adicional de tratamento do toque movido para o botão selecionado
+    // Por exemplo, atualizar a aparência visual do botão durante o movimento
+
+    // Verifique se o toque está dentro das coordenadas do botão selecionado
+    Button button = buttons[selectedButton];
+    if (x < button.x || x > button.x + button.width || y < button.y || y > button.y + button.height) {
+      // O toque se moveu para fora das coordenadas do botão selecionado
+      // Limpe o botão selecionado
+      selectedButton = -1;
+    }
+  }
+}
+
+
+
+
+void handleButtonAction(int index) {
+  // Lógica do botão selecionado
+  // Aqui você pode implementar o que deseja fazer quando um botão é pressionado
+  // Por exemplo, exibir uma mensagem no Serial Monitor
+  Serial.print("Botão ");
+  Serial.print(index + 1);
+  Serial.println(" pressionado.");
+}
