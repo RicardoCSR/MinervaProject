@@ -143,6 +143,9 @@ int pressingDuration = 500;     // Tempo do botão Pressionado em Millis
 unsigned long timerMode = 0;    // Armazena tempo atual
 unsigned long touchMode = 0;    // Armazena tempo Touch
 
+int minimumBrightness = 25;
+int maximumBrightness = 255;
+
 byte displayMode = 0;
 // displayMode = 0 Sistema aguardando comando
 // displayMode = 1 Habilita entrada do Menu
@@ -329,7 +332,6 @@ uint16_t icon_white = 0xD6BA;           //0xD9D9D9
 // Font file is stored in SPIFFS
 #define FS_NO_GLOBALS
 #include <FS.h>
-
 #include <TFT_eSPI.h> 
 #include <SPI.h>
 #include "MapFloat.h"
@@ -358,7 +360,7 @@ uint16_t icon_white = 0xD6BA;           //0xD9D9D9
 
 #define pinOnOff 16
 #define pinSet 17
-int pinBL = 14;
+#define pinBL 25
 
 #define GFXFF 1
   // TL_DATUM = Top left (default)
@@ -377,6 +379,7 @@ int pinBL = 14;
 // ------------------------------- INSTANCIAS DAS BIBLIOTECAS --------------------------
     
     TFT_eSPI tft = TFT_eSPI();      // Could invoke custom library declaring width and height
+    TFT_eSPI_Button button;            // Could invoke button class and create all the button objects
     EasyColor rgb2rgb;                 //Conversão de e para RGB888/RGB565
 
 void setup() {
@@ -393,7 +396,6 @@ void setup() {
     while (1) yield(); // Stay here twiddling thumbs waiting
   }
   listFiles(); // Lists the files so you can see what is in the SPIFFS
-
 
   if (touchSet == 2) {
     uint16_t calData[5] = { 223, 3675, 227, 3503, 7 };
@@ -434,92 +436,91 @@ byte language = 1; // TELA DE ABERTURA
 
 uint16_t x = 0, y = 0; // To store the touch coordinates
 
+// -------------------------- DATA BOTOES -----------------
 
+  byte switchPressedRecalibrate = 0; 
+  // switchPressedRecalibrate = 0 Aguardando comando
+  // switchPressedRecalibrate = 1 Tela de Calibracao
 
-byte switchPressedRecalibrate = 0; 
-// switchPressedRecalibrate = 0 Aguardando comando
-// switchPressedRecalibrate = 1 Tela de Calibracao
+  byte switchPressedTest = 0;
+  // switchPressedTest = 0 Aguardando comando
+  // switchPressedTest = 1 Tela de Teste do Touch
 
-byte switchPressedTest = 0;
-// switchPressedTest = 0 Aguardando comando
-// switchPressedTest = 1 Tela de Teste do Touch
+  byte switchPressedExit = 0;
+  // switchPressedExit = 0 Aguardando comando
+  // switchPressedExit = 1 Saida da calibracao para welcome()
 
-byte switchPressedExit = 0;
-// switchPressedExit = 0 Aguardando comando
-// switchPressedExit = 1 Saida da calibracao para welcome()
+  byte touchScreenMode = 0;
+  // switchPressedExit = 0 Aguardando comando
+  // switchPressedExit = 1 Habilita o testCalibration()
 
-byte touchScreenMode = 0;
-// switchPressedExit = 0 Aguardando comando
-// switchPressedExit = 1 Habilita o testCalibration()
+  byte switchLanguage = 0;
+  // switchLanguage = 0 Aguardando comando
+  // switchLanguage = 1 Altera valor de language
 
-byte switchLanguage = 0;
-// switchLanguage = 0 Aguardando comando
-// switchLanguage = 1 Altera valor de language
+  byte switchStartWelcome = 0;
+  // swtichStartWelcome = 0 Aguardando comando
+  // swtichStartWelcome = 1 Saida de welcome para knowname()
 
-byte switchStartWelcome = 0;
-// swtichStartWelcome = 0 Aguardando comando
-// swtichStartWelcome = 1 Saida de welcome para knowname()
+  byte switchInputName = 0;
+  // swtichStartWelcome = 0 Aguardando comando
+  // swtichStartWelcome = 1 Habita o keyboard()
 
-byte switchInputName = 0;
-// swtichStartWelcome = 0 Aguardando comando
-// swtichStartWelcome = 1 Habita o keyboard()
+  byte switchMenuStart = 0;
+  // swtichStartWelcome = 0 Aguardando comando
+  // swtichStartWelcome = 1 Habita o welcome()
+  // swtichStartWelcome = 2 Habita o knowname()
+  // swtichStartWelcome = 3 Habita o profileimage()
+  // swtichStartWelcome = 4 Habita o internetAcess()
+  // swtichStartWelcome = 5 Habita o startProgram()
 
-byte switchMenuStart = 0;
-// swtichStartWelcome = 0 Aguardando comando
-// swtichStartWelcome = 1 Habita o welcome()
-// swtichStartWelcome = 2 Habita o knowname()
-// swtichStartWelcome = 3 Habita o profileimage()
-// swtichStartWelcome = 4 Habita o internetAcess()
-// swtichStartWelcome = 5 Habita o startProgram()
+  byte switchKeyboard = 0;
+  // switchKeyboard = 0 Aguardando comando
+  // switchKeyboard = 1 Habita o knowname()
 
-byte switchKeyboard = 0;
-// switchKeyboard = 0 Aguardando comando
-// switchKeyboard = 1 Habita o knowname()
+  byte keyboardClose = 0;
+  // keyboardClose = 0 Aguardando comando
+  // keyboardClose = 1 Habita o knowname()
 
-byte keyboardClose = 0;
-// keyboardClose = 0 Aguardando comando
-// keyboardClose = 1 Habita o knowname()
+  byte swithContinueKnowname = 0;
+  // swithContinueKnowname = 0 Aguardando comando
+  // swithContinueKnowname = 1 Habita o profileimage()
 
-byte swithContinueKnowname = 0;
-// swithContinueKnowname = 0 Aguardando comando
-// swithContinueKnowname = 1 Habita o profileimage()
+  byte switchCaps = 0;
+  // switchCaps = 0 Aguardando comando
+  // switchCaps = 1 Habita o CAPSLOCK
 
+  byte languageScreen = 0;
+  // languageScreen = 0 Aguardando comando
+  // languageScreen = 1 Habilita alteracao da byte language
 
-byte switchCaps = 0;
-// switchCaps = 0 Aguardando comando
-// switchCaps = 1 Habita o CAPSLOCK
+  byte switchSearchWiFi = 0;
+  // switchSearchWiFi = 0 Aguardando Comando
+  // switchSearchWiFi = 1 Habilita procura de rede Wi-Fi
 
-byte languageScreen = 0;
-// languageScreen = 0 Aguardando comando
-// languageScreen = 1 Habilita alteracao da byte language
+  byte switchAcessWiFi = 0;
+  // switchAcessWiFi = 0 Aguardando Comando
+  // switchAcessWiFi = 1 Habilita conexao com a Rede Wi-Fi selecionada
 
-byte switchSearchWiFi = 0;
-// switchSearchWiFi = 0 Aguardando Comando
-// switchSearchWiFi = 1 Habilita procura de rede Wi-Fi
+  byte switchSelectWiFi = 0;
+  // switchSelectWiFi = 0 Aguardando comando
+  // switchSelectWiFi = 1 Habita o menuNetworks()
 
-byte switchAcessWiFi = 0;
-// switchAcessWiFi = 0 Aguardando Comando
-// switchAcessWiFi = 1 Habilita conexao com a Rede Wi-Fi selecionada
+  byte switchMenuNetworks = 0;
+  // switchMenuNetworks = 0 Aguardando comando
+  // switchMenuNetworks = 1 Habilita menuNetworks()
 
-byte switchSelectWiFi = 0;
-// switchSelectWiFi = 0 Aguardando comando
-// switchSelectWiFi = 1 Habita o menuNetworks()
+  byte selectedNetwork = 0;
+  // selectedNetwork = 0 Aguardando comando
+  // selectedNetwork = 1 Marca a rede selecionada menunetworks()
 
-byte switchMenuNetworks = 0;
-// switchMenuNetworks = 0 Aguardando comando
-// switchMenuNetworks = 1 Habilita menuNetworks()
+  byte selectedSSID = 0;
+  // selectedSSID = 0 Aguardando comando
+  // selectedSSID = 1 Marca a posicao da rede selecionada
 
-byte selectedNetwork = 0;
-// selectedNetwork = 0 Aguardando comando
-// selectedNetwork = 1 Marca a rede selecionada menunetworks()
-
-byte selectedSSID = 0;
-// selectedSSID = 0 Aguardando comando
-// selectedSSID = 1 Marca a posicao da rede selecionada
-
-byte switchPasswordWiFi = 0;
-// switchPasswordWiFi = 0 Aguardando comando
-// switchPasswordWiFi = 1 Habita o passwordWiFi()
+  byte switchPasswordWiFi = 0;
+  // switchPasswordWiFi = 0 Aguardando comando
+  // switchPasswordWiFi = 1 Habita o passwordWiFi()
 
 #define nameLenght 15
 #define passwordLenght 24
@@ -538,17 +539,39 @@ byte selectNetwork = 0;
 byte menuStartNetwork = 0;
 byte menuEndNetwork = numNetworks - 1;
 
+
+
 void loop(void) {
   // ------------------------------ botao --------------
     int powerDisplay = digitalRead(pinOnOff);
     if (powerDisplay == HIGH) {
-      digitalWrite(pinBL, 255);
+      dacWrite(pinBL, 255);
     } else {
-      digitalWrite(pinBL, 50);
+      dacWrite(pinBL, 100);
     }
 
   // ------------------------------ touchScreen OPERACIONAL ----------------------
-    bool pressed = tft.getTouch(&x, &y);
+    
+    uint16_t t_x = 0, t_y = 0; 
+
+    bool pressed = tft.getTouch(&t_x, &t_y);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     if (pressed) {
       if (timeSystem - timePressed >= 250) {
@@ -564,7 +587,7 @@ void loop(void) {
         if (displayTFT == 16 || displayTFT == 17) {
           touchFillRoundRect(70, 250, 100, 30, 5, nixieColor, blackScript, switchPressedRecalibrate);
           tft.setTextDatum(MC_DATUM);
-          tft.setTextColor(whiteScript, nixieColor);
+          tft.setTextColor(whiteScript, blackScript);
           smoothText("Lato_Regular_14");
           tft.drawString("Recalibrar", 120, 266, GFXFF);
           if (switchPressedRecalibrate == 1) {
@@ -585,8 +608,6 @@ void loop(void) {
           } 
 
           touchFillRoundRect(310, 250, 100, 30, 5, winterMenu, blackScript, switchPressedExit);
-          tft.setTextColor(whiteScript, winterMenu);
-          tft.drawString("Limpar", 240, 266, GFXFF);
           if (switchPressedExit == 1) {
             switchPressedExit = 0;
             touchScreenMode = 0;
@@ -645,9 +666,9 @@ void loop(void) {
 
           touchFillRoundRect(115, 150, 250, 30, 5, whiteScript, blackScript, switchInputName);
           if (switchInputName == 1) {
-            displayTFT = 20;
             tft.fillScreen(blackScript);
             switchInputName = 0;
+            displayTFT = 20;
             keyboard();
           }
 
@@ -675,7 +696,7 @@ void loop(void) {
         }
 
   // ------------------------------ KEYBOARD DISPLAY TFT 20 ---------------------
-        if ((displayTFT == 20) && (millis() - timeLoadScreen >= 500)) {
+        if ((displayTFT == 20)  && (millis() - timeLoadScreen >= 500)) {
           timeLoadScreen = millis();
           touchFillRect(2, 240, 35, 35, wifi_off2, blackScript, switchCaps);
           touchFillRect(442, 240, 35, 35, wifi_off2, blackScript, switchCaps);
@@ -690,10 +711,15 @@ void loop(void) {
 
           touchCircle(20, 90, 20, blackScript, blackScript, keyboardClose);
           if (keyboardClose == 1) {
-            displayTFT = 19;
+            displayTFT = 20;
             keyboardClose = 0;
-            tft.fillScreen(blackScript);
-            knowname();
+            if (displayTFT == 19) {
+              tft.fillScreen(blackScript);
+              knowname();
+            } else if (displayTFT == 22) {
+              tft.fillScreen(blackScript);
+              internetAcess();
+            }
           }
           updateClock();
           wifiLevel();
@@ -1267,7 +1293,7 @@ void loop(void) {
 
 
   // ------------------------------ KEYBOARD DISPLAY TFT 24 ------------
-        if ((displayTFT == 24) && (millis() - timeLoadScreen >= 500)) {
+        /*if ((displayTFT == 24) && (millis() - timeLoadScreen >= 500)) {
           timeLoadScreen = millis();
           touchFillRect(2, 240, 35, 35, wifi_off2, blackScript, switchCaps);
           touchFillRect(442, 240, 35, 35, wifi_off2, blackScript, switchCaps);
@@ -1291,287 +1317,9 @@ void loop(void) {
           wifiLevel();
           batteryLevel();
           lockLevel();
-          /*
-          if (timeSystem - timePointLenghText >= 500) {
-
-          }
-          */
-
-    // COLUNA 1 TECLADO
-          if (x > 2 && x < 2 + 35 && y > 160 && y < 160 + 35) {
-            if (switchCaps == 0) {
-              textBoxName(113);
-              Serial.println("q");
-            } else {
-              textBoxName(81);
-              Serial.println("Q");
-            }
-          }
-          if (x > 42 && x < 42 + 35 && y > 160 && y < 160 + 35) {
-            if (switchCaps == 0) {
-              textBoxName(119);
-              Serial.println("w");
-            } else {
-              textBoxName(87);
-              Serial.println("W");
-            }
-          }
-          if (x > 82 && x < 82 + 35 && y > 160 && y < 160 + 35) {
-            if (switchCaps == 0) {
-              textBoxName(101);
-              Serial.println("e");
-            } else {
-              textBoxName(69);
-              Serial.println("E");
-            }
-          }
-          if (x > 122 && x < 122 + 35 && y > 160 && y < 160 + 35) {
-            if (switchCaps == 0) {
-              textBoxName(114);
-              Serial.println("r");
-            } else {
-              textBoxName(82);
-              Serial.println("R");
-            }
-          }
-          if (x > 162 && x < 162 + 35 && y > 160 && y < 160 + 35) {
-            if (switchCaps == 0) {
-              textBoxName(116);
-              Serial.println("t");
-            } else {
-              textBoxName(84);
-              Serial.println("T");
-            }
-          }
-          if (x > 202 && x < 202 + 35 && y > 160 && y < 160 + 35) {
-            if (switchCaps == 0) {
-              textBoxName(121);
-              Serial.println("y");
-            } else {
-              textBoxName(89);
-              Serial.println("Y");
-            }
-          }
-          if (x > 242 && x < 242 + 35 && y > 160 && y < 160 + 35) {
-            if (switchCaps == 0) {
-              textBoxName(117);
-              Serial.println("u");
-            } else {
-              textBoxName(85);
-              Serial.println("U");
-            }
-          }
-          if (x > 282 && x < 282 + 35 && y > 160 && y < 160 + 35) {
-            if (switchCaps == 0) {
-              textBoxName(105);
-              Serial.println("i");
-            } else {
-              textBoxName(73);
-              Serial.println("I");
-            }
-          }
-          if (x > 322 && x < 322 + 35 && y > 160 && y < 160 + 35) {
-            if (switchCaps == 0) {
-              textBoxName(111);
-              Serial.println("o");
-            } else {
-              textBoxName(79);
-              Serial.println("O");
-            }
-          }
-          if (x > 362 && x < 362 + 35 && y > 160 && y < 160 + 35) {
-            if (switchCaps == 0) {
-              textBoxName(112);
-              Serial.println("p");
-            } else {
-              textBoxName(80);
-              Serial.println("P");
-            }
-          }
-          if (x > 402 && x < 402 + 75 && y > 160 && y < 160 + 35) {
-            textBoxName(8);
-            Serial.println("Backspace");
-          }
-
-    // COLUNA 2 TECLADO
-          if (x > 24 && x < 24 + 35 && y > 200 && y < 200 + 35) {
-            if (switchCaps == 0) {
-              textBoxName(97);
-              Serial.println("a");
-            } else {
-              textBoxName(65);
-              Serial.println("A");
-            }
-          }
-          if (x > 64 && x < 64 + 35 && y > 200 && y < 200 + 35) {
-            if (switchCaps == 0) {
-              textBoxName(115);
-              Serial.println("s");
-            } else {
-              textBoxName(83);
-              Serial.println("S");
-            }
-          }
-          if (x > 104 && x < 104 + 35 && y > 200 && y < 200 + 35) {
-            if (switchCaps == 0) {
-              textBoxName(100);
-              Serial.println("d");
-            } else {
-              textBoxName(68);
-              Serial.println("D");
-            }
-          }
-          if (x > 144 && x < 144 + 35 && y > 200 && y < 200 + 35) {
-            if (switchCaps == 0) {
-              textBoxName(102);
-              Serial.println("f");
-            } else {
-              textBoxName(70);
-              Serial.println("F");
-            }
-          }
-          if (x > 184 && x < 184 + 35 && y > 200 && y < 200 + 35) {
-            if (switchCaps == 0) {
-              textBoxName(103);
-              Serial.println("g");
-            } else {
-              textBoxName(71);
-              Serial.println("G");
-            }
-          }
-          if (x > 224 && x < 224 + 35 && y > 200 && y < 200 + 35) {
-            if (switchCaps == 0) {
-              textBoxName(104);
-              Serial.println("h");
-            } else {
-              textBoxName(72);
-              Serial.println("H");
-            }
-          }
-          if (x > 264 && x < 264 + 35 && y > 200 && y < 200 + 35) {
-            if (switchCaps == 0) {
-              textBoxName(106);
-              Serial.println("j");
-            } else {
-              textBoxName(74);
-              Serial.println("J");
-            }
-          }
-          if (x > 304 && x < 304 + 35 && y > 200 && y < 200 + 35) {
-            if (switchCaps == 0) {
-              textBoxName(107);
-              Serial.println("k");
-            } else {
-              textBoxName(75);
-              Serial.println("K");
-            }
-          }
-          if (x > 344 && x < 344 + 35 && y > 200 && y < 200 + 35) {
-            if (switchCaps == 0) {
-              textBoxName(108);
-              Serial.println("l");
-            } else {
-              textBoxName(76);
-              Serial.println("L");
-            }
-          }
-          if (x > 384 && x < 384 + 35 && y > 200 && y < 200 + 35) {
-            textBoxName(39);
-            Serial.println("'");
-          }
-          if (x > 424 && x < 424 + 53 && y > 200 && y < 200 + 35) {
-            textBoxName(10);
-            Serial.println("Enter");
-          }
-
-    // COLUNA 3 TECLADO
-          if (x > 42 && x < 42 + 35 && y > 240 && y < 240 + 35) {
-            if (switchCaps == 0) {
-              textBoxName(122);
-              Serial.println("z");
-            } else {
-              textBoxName(90);
-              Serial.println("Z");
-            }
-          }
-          if (x > 82 && x < 82 + 35 && y > 240 && y < 240 + 35) {
-            if (switchCaps == 0) {
-              textBoxName(120);
-              Serial.println("x");
-            } else {
-              textBoxName(88);
-              Serial.println("X");
-            }
-          }
-          if (x > 122 && x < 122 + 35 && y > 240 && y < 240 + 35) {
-            if (switchCaps == 0) {
-              textBoxName(99);
-              Serial.println("c");
-            } else {
-              textBoxName(67);
-              Serial.println("C");
-            }
-          }
-          if (x > 162 && x < 162 + 35 && y > 240 && y < 240 + 35) {
-            if (switchCaps == 0) {
-              textBoxName(118);
-              Serial.println("v");
-            } else {
-              textBoxName(86);
-              Serial.println("V");
-            }
-          }
-          if (x > 202 && x < 202 + 35 && y > 240 && y < 240 + 35) {
-            if (switchCaps == 0) {
-              textBoxName(98);
-              Serial.println("b");
-            } else {
-              textBoxName(66);
-              Serial.println("B");
-            }
-          }
-          if (x > 242 && x < 242 + 35 && y > 240 && y < 240 + 35) {
-            if (switchCaps == 0) {
-              textBoxName(110);
-              Serial.println("n");
-            } else {
-              textBoxName(78);
-              Serial.println("N");
-            }
-          }
-          if (x > 282 && x < 282 + 35 && y > 240 && y < 240 + 35) {
-            if (switchCaps == 0) {
-              textBoxName(109);
-              Serial.println("m");
-            } else {
-              textBoxName(77);
-              Serial.println("M");
-            }
-          }
-          if (x > 322 && x < 322 + 35 && y > 240 && y < 240 + 35) {
-            textBoxName(44);
-            Serial.println(",");
-          }
-          if (x > 362 && x < 362 + 35 && y > 240 && y < 240 + 35) {
-            textBoxName(46);
-            Serial.println(".");
-          }
-          if (x > 402 && x < 402 + 35 && y > 240 && y < 240 + 35) {
-            textBoxName(63);
-            Serial.println("?");
-          }
-          if (x > 442 && x < 442 + 35 && y > 240 && y < 240 + 35) {
-            textBoxName(127);
-            Serial.println("Del");
-          }
-
-    // COLUNA 4 TECLADO
-          if (x > 122 && x < 122 + 235 && y > 280 && y < 280 + 35) {
-            textBoxName(32);
-            Serial.println("Space");
-          }
+          
         }
-
+        */
 
       }
     }
@@ -2039,7 +1787,6 @@ void menuNetworks() {
   }
 }
 
-
 void scrollUp() {
   if (selectNetwork > 0) {
     selectNetwork --;
@@ -2198,7 +1945,7 @@ void textBoxName(int keys) {
   if ((keys >= 1 && keys <= 127) && !(keys == 8 || keys == 10)) {   //APLICAR AS TECLAS FUNCAO
     if (lenghtText < nameLenght) {
       textKnowName[lenghtText++] = key;
-      tft.fillRect(69, 83, 342, 34, blackScript);
+      //tft.fillRect(69, 83, 342, 34, blackScript);
       smoothText("Lato_Regular_24");
       tft.setTextDatum(ML_DATUM);
       if (displayTFT == 20) {
@@ -2211,11 +1958,12 @@ void textBoxName(int keys) {
     }
   }
   else if (lenghtText < nameLenght) {
-    tft.fillRect(69, 83, 342, 34, blackScript);
+    //tft.fillRect(69, 83, 342, 34, blackScript);
     smoothText("Lato_Regular_24");
     tft.setTextDatum(ML_DATUM);
     if (displayTFT == 20) {
       tft.drawString(textKnowName, 69, 100, GFXFF);
+      return;
     } else if (displayTFT == 24) {
       tft.drawString(textKnowPassword, 69, 165, GFXFF);
       return;
@@ -2224,10 +1972,16 @@ void textBoxName(int keys) {
 }
 
 void keyBackspace() {
-  if (lenghtText > 0) {
-    textKnowName[--lenghtText] = '\0';
+  if (displayTFT == 20) {
+    if (lenghtText > 0) {
+      textKnowName[--lenghtText] = '\0';
+    }
+    tft.fillRect(69, 83, 342, 34, blackScript);
+  } else if (displayTFT == 24) {
+    if (lenghtText > 0) {
+      textKnowPassword[--lenghtText] = '\0';
+    }
   }
-  tft.fillRect(69, 83, 342, 34, blackScript);
 }
 
 void enter() {
@@ -2300,11 +2054,11 @@ void testCalibration() {
 
     smoothText("Lato_Regular_14");
     tft.setTextDatum(MC_DATUM);
-    tft.setTextColor(whiteScript, nixieColor);
+    tft.setTextColor(whiteScript, blackScript);
     tft.drawString("Recalibrar", 120, 266, GFXFF);
     tft.setTextColor(whiteScript, autumnMenu);
     tft.drawString("Testar", 240, 266, GFXFF);
-    tft.setTextColor(whiteScript, winterMenu);
+    tft.setTextColor(whiteScript, blackScript);
     tft.drawString("Sair", 360, 266, GFXFF);
   }
   displayTFT = 17;
@@ -2318,7 +2072,7 @@ void testCalibration() {
     tft.setCursor(5, 20, 2);
     tft.printf("y: %i    ", y);
 
-    tft.fillCircle(x, y, 2, green_battery);
+    tft.fillCircle(x, y, 1, redScript);
 
     if (switchPressedTest == 0 && touchScreenMode == 1) {
       touchScreenMode == 0;
@@ -6495,6 +6249,51 @@ void keyboard() {
   }
 }
 
+void fillRoundRectHGradient(int startX, int startY, int sizeX, int sizeY, int color1, int color2, int background, int radius) {
+
+  /*
+      270
+    /    \
+  180     360-0
+    \    /
+      90
+  */
+
+  tft.fillRectHGradient(startX, startY, sizeX, sizeY, color1, color2);
+
+  fillCircleHelper(startX + radius, startY + sizeY - radius - 1, radius, 1, sizeX - radius - radius - 1, background);
+  fillCircleHelper(startX + radius    , startY + radius, radius, 2, sizeX - radius - radius - 1, background);
+
+
+}
+
+void fillCircleHelper(int x0, int y0, int r, byte cornername, int delta, int color) {
+  int32_t f     = 1 - r;
+  int32_t ddF_x = 1;
+  int32_t ddF_y = -r - r;
+  int32_t y     = 0;
+
+  delta++;
+
+  while (y < r) {
+    if (f >= 0) {
+      if (cornername & 0x1) tft.drawFastHLine(x0 - y, y0 + r, y + y + delta, color);
+      if (cornername & 0x2) tft.drawFastHLine(x0 - y, y0 - r, y + y + delta, color);
+      r--;
+      ddF_y += 2;
+      f     += ddF_y;
+    }
+
+    y++;
+    ddF_x += 2;
+    f     += ddF_x;
+
+    if (cornername & 0x1) tft.drawFastHLine(x0 - r, y0 + y, r + r + delta, color);
+    if (cornername & 0x2) tft.drawFastHLine(x0 - r, y0 - y, r + r + delta, color);
+  }
+}
+
+
 void welcome() {
   displayTFT = 18;
   if (language == 1) {
@@ -6506,7 +6305,8 @@ void welcome() {
     tft.drawString("Minerva Project came by the passion of the classic Nixie tubes", 240, 129, GFXFF);
     tft.drawString("developed in 50`s decade to the moderns LCD display by", 240, 149, GFXFF);
     tft.drawString("the inspiration came the challenger of joining the old to the new.", 240, 169, GFXFF);
-     tft.fillRectHGradient(190, 232, 100, 30, temperatureColor1, temperatureColor2);
+    tft.fillRectHGradient(190, 232, 100, 30, temperatureColor1, temperatureColor2);
+    //fillRoundRectHGradient(190, 232, 100, 30, temperatureColor1, temperatureColor2, whiteScript, 5);
     tft.setTextColor(whiteScript, temperatureColor1);
     tft.drawString("START", 240, 248, GFXFF);
     tft.setTextDatum(ML_DATUM);
