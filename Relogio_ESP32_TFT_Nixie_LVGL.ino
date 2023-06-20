@@ -89,7 +89,6 @@ byte firstSettings = 0;               // Define a primeira configuracao do apare
 
 
 
-byte screenLoaded = 0;
 
 
 byte colorBackgroundValue = 0;        // Define qual a cor de background
@@ -113,6 +112,13 @@ byte colorTextValue = 0;              // Define qual a cor de texto
   // touchSet = 2 Usando os valores do DESENVOLVEDOR no setup()
   // touchSet = 3 Finalizacao de calibracao do Touchscreen
 
+  byte systemLanguage = 1;
+  // systemLanguage = 0 Definido sistema em Ingles
+  // systemLanguage = 1 Definido sistema em Portugues
+  // systemLanguage = 2 Definido sistema em Espanhol
+  // systemLanguage = 3 Definido sistema em Italiano
+
+
 
 // -------------------- INSTANCIAS DAS BIBLIOTECAS --------------------
   TFT_eSPI tft = TFT_eSPI();      // Instancia da biblioteca TFT_eSPI para operacao do display
@@ -125,9 +131,9 @@ VERSAO FINAL TODOS FALSE
 Altere para TRUE para pular o carregamento de certas telas
 */
   true,        // loader[0] firstLoading();
-  true,        // loader[1] firstLanguages();
-  false,        // loader[2] firstAppTheme();
-  false,        // loader[3] 
+  false,        // loader[1] firstLanguages();
+  true,        // loader[2] firstAppTheme();
+  true,        // loader[3] firstWiFiConnection();
   false,        // loader[4] 
   false,        // loader[5] 
   false,        // loader[6] 
@@ -136,20 +142,29 @@ Altere para TRUE para pular o carregamento de certas telas
   false,        // loader[9] 
 };
 
+byte screenLoaded = 0;
 
 // -------------------- ESTRUTURA DOS BOTOES --------------------
-struct Button {
-  int x;
-  int y;
-  int width;
-  int height;
+bool request[10] = {      // Variavel request para recarregamento completo da tela
+  false,        // loader[0] firstLoading();
+  false,        // loader[1] firstLanguages();
+  false,        // loader[2] firstAppTheme();
+  false,        // loader[3] firstWiFiConnection();
+  false,        // loader[4] 
+  false,        // loader[5] 
+  false,        // loader[6] 
+  false,        // loader[7] 
+  false,        // loader[8] 
+  false,        // loader[9] 
 };
 
-int selectedButton = -1;
+int releaseTouchX, releaseTouchY; // Armazena ultima posicao do Touch para liberar acao do Botao
 
-const int numberOfButtons = 4; // Substitua 4 pelo número desejado de botões
+// -------------------- BOOLEAN DE BOTOES E ACOES --------------------
 
-Button buttons[numberOfButtons];
+
+
+
 
 // -------------------- CONFIGURACOES E INICIALIZACAO DE MODULOS --------------------
 void setup() {
@@ -192,19 +207,105 @@ void setup() {
 }
 
 
+
 void loop() {
   unsigned long currentTime = millis();
   unsigned long elapsedTime = 0;
 
   bool touch = obtainTouch();
 
-  loadScreen(firstLoading, loaded[0]);
-  loadScreen(firstLanguages, loaded[1]);
-  loadScreen(firstAppTheme, loaded[2]);
+  switch (screenLoaded) {
+    case 1:
+    break;
+    case 2: btn_firstLanguages();
+    break;
+  
+  }
 
-  if (selectedButton != -1) {
-    handleButtonAction(selectedButton);
-    selectedButton = -1;
+  loadScreen(firstLoading, loaded[0], request[0]);
+  loadScreen(firstLanguages, loaded[1], request[1]);
+  loadScreen(firstAppTheme, loaded[2], request[2]);
+  loadScreen(firstWiFiConnection, loaded[3], request[3]);
+
+}
+
+bool executeBtn = false;
+
+bool btn_Lang_English, act_Lang_English = false;
+
+void btn_firstLanguages() {
+  // BOTAO MUDAR LINGUAGEM DO SISTEMA PARA INGLES
+  touchRect(140, 123, 96, 68, btn_Lang_English, act_Lang_English);
+
+  // ANIMACAO DO BOTAO MUDAR LINGUAGEM DO SISTEMA PARA INGLES
+  if ((btn_Lang_English) && (!executeBtn)) {
+    executeBtn = true;
+    Serial.println("Ativado btn_Lang_English");
+    tft.fillSmoothRoundRect(140, 123, 96, 68, 5, redTextColor, backgroundColor);
+      
+    tft.setTextDatum(ML_DATUM);
+    tft.setTextColor(lightTextColor, redTextColor);
+    smoothText("Lato_Regular_14");
+    tft.drawString("Hi!", 145, 142, GFXFF);
+    tft.drawString("I am Mufox", 145, 157, GFXFF);
+
+    tft.setTextColor(darkTextColor, redTextColor);
+    smoothText("Lato_Regular_10");
+    tft.drawString("English", 147, 178, GFXFF);
+  }
+
+
+  else if (btn_Lang_English && !act_Lang_English) {
+    Serial.println("Desativado btn_Lang_English");
+    tft.fillSmoothRoundRect(140, 123, 96, 68, 5, lightTextColor, backgroundColor);
+
+    tft.setTextDatum(ML_DATUM);
+    tft.setTextColor(darkTextColor, lightBackgroundColor);
+    smoothText("Lato_Regular_14");
+    tft.drawString("Hi!", 145, 142, GFXFF);
+    tft.drawString("I am Mufox", 145, 157, GFXFF);
+
+    tft.setTextColor(redTextColor, lightBackgroundColor);
+    smoothText("Lato_Regular_10");
+    tft.drawString("English", 147, 178, GFXFF);
+  }
+
+
+  else if ((act_Lang_English) &&(!btn_Lang_English)) {
+    Serial.println("Ativado act_Lang_English");
+    systemLanguage = 1;
+    act_Lang_English = false;
+    executeBtn = false;
+
+    request[1] = true;
+  }
+
+}
+// -------------------- FUNCAO DOS BOTOES --------------------
+void touchRect(int startX, int startY, int sizeX, int sizeY, bool& button, bool& action) {
+  bool pressed = tft.getTouch(&t_x, &t_y);
+  if (pressed) {
+    if (t_x > startX && t_x < startX + sizeX && t_y > startY && t_y < startY + sizeY) {
+      Serial.println("Botao btn_Lang_English Pressionado");
+      releaseTouchX = t_x;
+      releaseTouchY = t_y;
+      button = true;
+      action = false;
+      return;
+    }
+  }
+
+  
+  if ((executeBtn) && (!pressed)) {
+    button = false;
+    if (releaseTouchX > startX && releaseTouchX < startX + sizeX && releaseTouchY > startY && releaseTouchY < startY + sizeY) {
+      Serial.println("Botao btn_Lang_English Solto");
+      action = true;
+      return;
+    } else {
+      Serial.println("Botao btn_Lang_English Cancelado");
+      action = false;
+    }
   }
 }
 
@@ -212,7 +313,49 @@ void loop() {
 
 
 
+// -------------------- PRIMEIRA CONFIGURACOES DE INTERNET --------------------
+void firstWiFiConnection() {
+  tft.fillRect(41, 29, 390, 3, lightRedTextColor);
+  tft.fillRect(41, 29, 260, 3, redTextColor);
 
+  tft.fillSmoothCircle(36, 30, 5, redTextColor, backgroundColor);
+  tft.fillSmoothCircle(166, 30, 5, redTextColor, backgroundColor);
+  tft.fillSmoothCircle(296, 30, 5, redTextColor, backgroundColor);
+ 
+  tft.drawSmoothCircle(426, 30, 5, redTextColor, backgroundColor);
+  tft.fillSmoothCircle(426, 30, 3, backgroundColor, redTextColor);
+
+  tft.setTextDatum(ML_DATUM);
+  tft.setTextColor(textColor, backgroundColor);
+  smoothText("Lato_Bold_24");
+  tft.drawString("Connect", 67, 65, GFXFF);
+  smoothText("Lato_Regular_24");
+  tft.drawString("in your network", 67, 94, GFXFF);
+
+  tft.fillSmoothCircle(236, 182, 40, bluetoothColor);
+  tft.fillSmoothCircle(235, 197, 3, blockColor);
+  tft.drawArc(235, 197, 10, 13, 135, 225, blockColor, bluetoothColor, true);
+  tft.drawArc(235, 197, 20, 23, 135, 225, blockColor, bluetoothColor, true);
+  tft.drawArc(235, 197, 30, 33, 135, 225, blockColor, bluetoothColor, true);
+
+  unsigned long startTime = millis();
+  unsigned long timerCheckingModule = 0;
+  unsigned long interval = 20;  
+  unsigned long loading = 2000; 
+
+  while (millis() - startTime <= loading) {
+    if (millis() - timerCheckingModule >= interval) {
+      timerCheckingModule = millis();
+      float progress = (millis() - startTime) / (float)loading;
+      float easedProgress = easeOutCubic(progress);  // Função de desaceleração aplicada ao progresso
+      float width = easedProgress * 41;
+      tft.fillRect(301, 29, width, 3, redTextColor);
+    }
+  }
+
+}
+
+// -------------------- PRIMEIRA CONFIGURACOES DE TEMA --------------------
 void firstAppTheme() {
   tft.fillRect(41, 29, 390, 3, lightRedTextColor);
   tft.fillRect(41, 29, 130, 3, redTextColor);
@@ -356,9 +499,9 @@ void firstAppTheme() {
 
   tft.drawRect(282, 120, 100, 100, backgroundColor);
 
-  tft.fillSmoothCircle(347, 72, 17, bluetoothColor);
+  tft.fillSmoothCircle(365, 90, 18, bluetoothColor);
 
-
+  tft.drawRect(282, 120, 100, 100, blockColor);
 
   unsigned long startTime = millis();
   unsigned long timerCheckingModule = 0;
@@ -378,12 +521,8 @@ void firstAppTheme() {
 
 // -------------------- PRIMEIRA CONFIGURACOES DO APARELHO --------------------
 void firstLanguages() {
-  firstSettings = 1;
-  buttons[0] = {140, 123, 96, 68};
-  buttons[1] = {244, 123, 96, 68};
-  buttons[2] = {140, 205, 96, 68};
-  buttons[3] = {244, 205, 96, 68};
-
+  screenLoaded = 2;
+  request[1] = false;
 
   tft.fillRect(41, 29, 390, 3, lightRedTextColor);
 
@@ -595,11 +734,15 @@ void firstLoading() {
 }
 
 // -------------------- FUNCAO DE CARREGAMENTO DAS TELAS --------------------
-void loadScreen(void (*drawFunction)(), bool& loaded) {
+void loadScreen(void (*drawFunction)(), bool& loaded, bool& request) {
   if (!loaded) {
     tft.fillScreen(backgroundColor);
     drawFunction();
     loaded = true;
+  } else if (request) {
+    tft.fillScreen(backgroundColor);
+    drawFunction();
+    request = false;
   }
 }
 
@@ -761,58 +904,9 @@ bool obtainTouch(void) {
   return false; 
 }
 
-// -------------------- FUNCAO DOS BOTOES --------------------
-void touchScreenPressed(uint16_t x, uint16_t y) {
-  checkButtonPress(x, y);
-}
-
-void checkButtonPress(int x, int y) {
-  for (int i = 0; i < numberOfButtons; i++) {
-    Button button = buttons[i];
-    if (x >= button.x && x <= button.x + button.width && y >= button.y && y <= button.y + button.height) {     
-      selectedButton = i;  // Marca o botão como selecionado
-      Serial.print("Botao pressionado: ");
-      Serial.println(selectedButton); 
-      break;
-    }
-  }
-}
-
-void touchScreenReleased(uint16_t x, uint16_t y) {
-  if (selectedButton != -1) {
-    // Lógica adicional de tratamento do toque liberado para o botão selecionado
-    // Por exemplo, executar uma ação específica ou redefinir o estado do botão
-
-    Serial.print("Botao liberado: ");
-    Serial.println(selectedButton); 
-    // Limpa o botão selecionado após o toque ser liberado
-    selectedButton = -1;
-  }
-}
-
-void touchScreenMoved(uint16_t x, uint16_t y) {
-  if (selectedButton != -1) {
-    // Lógica adicional de tratamento do toque movido para o botão selecionado
-    // Por exemplo, atualizar a aparência visual do botão durante o movimento
-
-    // Verifique se o toque está dentro das coordenadas do botão selecionado
-    Button button = buttons[selectedButton];
-    if (x < button.x || x > button.x + button.width || y < button.y || y > button.y + button.height) {
-      // O toque se moveu para fora das coordenadas do botão selecionado
-      // Limpe o botão selecionado
-      selectedButton = -1;
-    }
-  }
-}
 
 
 
 
-void handleButtonAction(int index) {
-  // Lógica do botão selecionado
-  // Aqui você pode implementar o que deseja fazer quando um botão é pressionado
-  // Por exemplo, exibir uma mensagem no Serial Monitor
-  Serial.print("Botão ");
-  Serial.print(index + 1);
-  Serial.println(" pressionado.");
-}
+
+
