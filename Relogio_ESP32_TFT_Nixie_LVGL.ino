@@ -231,16 +231,27 @@ void loop() {
 
 bool executeBtn = false;
 
+
+
+
+
+
 bool btn_Lang_English, act_Lang_English = false;
+bool btn_Lang_Portuguese, act_Lang_Portuguese = false;
+bool btn_Lang_Spanish, act_Lang_Spanish = false;
+bool btn_Lang_Italian, act_Lang_Italian = false;
 
 void btn_firstLanguages() {
+  bool pressed = tft.getTouch(&t_x, &t_y);
   // BOTAO MUDAR LINGUAGEM DO SISTEMA PARA INGLES
   touchRect(140, 123, 96, 68, btn_Lang_English, act_Lang_English);
+  touchRect(244, 123, 96, 68, btn_Lang_Portuguese, act_Lang_Portuguese);
+  touchRect(140, 205, 96, 68, btn_Lang_Spanish, act_Lang_Spanish);
+  touchRect(244, 205, 96, 68, btn_Lang_Italian, act_Lang_Italian);
 
   // ANIMACAO DO BOTAO MUDAR LINGUAGEM DO SISTEMA PARA INGLES
   if ((btn_Lang_English) && (!executeBtn)) {
     executeBtn = true;
-    Serial.println("Ativado btn_Lang_English");
     tft.fillSmoothRoundRect(140, 123, 96, 68, 5, redTextColor, backgroundColor);
       
     tft.setTextDatum(ML_DATUM);
@@ -254,8 +265,44 @@ void btn_firstLanguages() {
     tft.drawString("English", 147, 178, GFXFF);
   }
 
+  // ANIMACAO E ACAO DO BOTAO MUDAR LINGUAGEM DO SISTEMA PARA INGLES
+  if ((act_Lang_English) &&(!btn_Lang_English)) {
+    systemLanguage = 1;
+    act_Lang_English = false;
+    executeBtn = false;
 
-  else if (btn_Lang_English && !act_Lang_English) {
+    request[1] = true;
+  }
+
+  // ANIMACAO DO BOTAO MUDAR LINGUAGEM DO SISTEMA PARA INGLES
+  if ((btn_Lang_Portuguese) && (!executeBtn)) {
+    executeBtn = true;
+    tft.fillSmoothRoundRect(244, 123, 96, 68, 5, redTextColor, backgroundColor);
+      
+    tft.setTextDatum(ML_DATUM);
+    tft.setTextColor(lightTextColor, redTextColor);
+    smoothText("Lato_Regular_14");
+    tft.drawString("Olá!", 249, 142, GFXFF);
+    tft.drawString("Eu sou Mufox", 249, 157, GFXFF);
+
+    tft.setTextColor(darkTextColor, redTextColor);
+    smoothText("Lato_Regular_10");
+    tft.drawString("Português", 251, 178, GFXFF);
+  }
+
+  // ANIMACAO E ACAO DO BOTAO MUDAR LINGUAGEM DO SISTEMA PARA INGLES
+  if ((act_Lang_Portuguese) &&(!btn_Lang_Portuguese)) {
+    systemLanguage = 1;
+    act_Lang_Portuguese = false;
+    executeBtn = false;
+
+    request[1] = true;
+  }
+
+
+
+/*  FUNCAO PARA CANCELAR A ACAO DO BOTAO APRIMORAR!!!
+    else if ((btn_Lang_English) && (!act_Lang_English) && !pressed) {
     Serial.println("Desativado btn_Lang_English");
     tft.fillSmoothRoundRect(140, 123, 96, 68, 5, lightTextColor, backgroundColor);
 
@@ -269,42 +316,35 @@ void btn_firstLanguages() {
     smoothText("Lato_Regular_10");
     tft.drawString("English", 147, 178, GFXFF);
   }
-
-
-  else if ((act_Lang_English) &&(!btn_Lang_English)) {
-    Serial.println("Ativado act_Lang_English");
-    systemLanguage = 1;
-    act_Lang_English = false;
-    executeBtn = false;
-
-    request[1] = true;
-  }
-
+*/
 }
 // -------------------- FUNCAO DOS BOTOES --------------------
 void touchRect(int startX, int startY, int sizeX, int sizeY, bool& button, bool& action) {
+  static bool buttonPressed = false;  // Variável de controle para rastrear o estado do botão
   bool pressed = tft.getTouch(&t_x, &t_y);
-  if (pressed) {
+  if (pressed && !buttonPressed) {
     if (t_x > startX && t_x < startX + sizeX && t_y > startY && t_y < startY + sizeY) {
       Serial.println("Botao btn_Lang_English Pressionado");
       releaseTouchX = t_x;
       releaseTouchY = t_y;
       button = true;
       action = false;
+      buttonPressed = true;  // Atualiza o estado do botão para pressionado
       return;
     }
   }
 
-  
-  if ((executeBtn) && (!pressed)) {
+  if ((!pressed) && buttonPressed) {
     button = false;
     if (releaseTouchX > startX && releaseTouchX < startX + sizeX && releaseTouchY > startY && releaseTouchY < startY + sizeY) {
       Serial.println("Botao btn_Lang_English Solto");
       action = true;
+      buttonPressed = false;  // Atualiza o estado do botão para solto
       return;
     } else {
       Serial.println("Botao btn_Lang_English Cancelado");
       action = false;
+      buttonPressed = false;  // Atualiza o estado do botão para solto
     }
   }
 }
