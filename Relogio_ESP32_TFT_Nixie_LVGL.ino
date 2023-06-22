@@ -112,11 +112,12 @@ byte colorTextValue = 0;              // Define qual a cor de texto
   // touchSet = 2 Usando os valores do DESENVOLVEDOR no setup()
   // touchSet = 3 Finalizacao de calibracao do Touchscreen
 
-  byte systemLanguage = 1;
-  // systemLanguage = 0 Definido sistema em Ingles
-  // systemLanguage = 1 Definido sistema em Portugues
-  // systemLanguage = 2 Definido sistema em Espanhol
-  // systemLanguage = 3 Definido sistema em Italiano
+  byte systemLanguage = 0;
+  // systemLanguage = 0 A ser definido nas configuracoes
+  // systemLanguage = 1 Definido sistema em Ingles
+  // systemLanguage = 2 Definido sistema em Portugues
+  // systemLanguage = 3 Definido sistema em Espanhol
+  // systemLanguage = 4 Definido sistema em Italiano
 
 
 
@@ -231,10 +232,7 @@ void loop() {
 
 bool executeBtn = false;
 
-
-
-
-
+bool selected_Languages = false;
 
 bool btn_Lang_English, act_Lang_English = false;
 bool btn_Lang_Portuguese, act_Lang_Portuguese = false;
@@ -266,15 +264,15 @@ void btn_firstLanguages() {
   }
 
   // ANIMACAO E ACAO DO BOTAO MUDAR LINGUAGEM DO SISTEMA PARA INGLES
-  if ((act_Lang_English) &&(!btn_Lang_English)) {
+  else if ((act_Lang_English) &&(!btn_Lang_English)) {
     systemLanguage = 1;
     act_Lang_English = false;
     executeBtn = false;
-
     request[1] = true;
+    selected_Languages = true;
   }
 
-  // ANIMACAO DO BOTAO MUDAR LINGUAGEM DO SISTEMA PARA INGLES
+  // ANIMACAO DO BOTAO MUDAR LINGUAGEM DO SISTEMA PARA PORTUGUES
   if ((btn_Lang_Portuguese) && (!executeBtn)) {
     executeBtn = true;
     tft.fillSmoothRoundRect(244, 123, 96, 68, 5, redTextColor, backgroundColor);
@@ -290,13 +288,13 @@ void btn_firstLanguages() {
     tft.drawString("Português", 251, 178, GFXFF);
   }
 
-  // ANIMACAO E ACAO DO BOTAO MUDAR LINGUAGEM DO SISTEMA PARA INGLES
-  if ((act_Lang_Portuguese) &&(!btn_Lang_Portuguese)) {
-    systemLanguage = 1;
+  // ANIMACAO E ACAO DO BOTAO MUDAR LINGUAGEM DO SISTEMA PARA PORTUGUES
+  else if ((act_Lang_Portuguese) &&(!btn_Lang_Portuguese)) {
+    systemLanguage = 2;
     act_Lang_Portuguese = false;
     executeBtn = false;
-
     request[1] = true;
+    selected_Languages = true;
   }
 
 
@@ -322,9 +320,10 @@ void btn_firstLanguages() {
 void touchRect(int startX, int startY, int sizeX, int sizeY, bool& button, bool& action) {
   static bool buttonPressed = false;  // Variável de controle para rastrear o estado do botão
   bool pressed = tft.getTouch(&t_x, &t_y);
+  releaseTouchX = t_x;
+  releaseTouchY = t_y;
   if (pressed && !buttonPressed) {
     if (t_x > startX && t_x < startX + sizeX && t_y > startY && t_y < startY + sizeY) {
-      Serial.println("Botao btn_Lang_English Pressionado");
       releaseTouchX = t_x;
       releaseTouchY = t_y;
       button = true;
@@ -337,12 +336,10 @@ void touchRect(int startX, int startY, int sizeX, int sizeY, bool& button, bool&
   if ((!pressed) && buttonPressed) {
     button = false;
     if (releaseTouchX > startX && releaseTouchX < startX + sizeX && releaseTouchY > startY && releaseTouchY < startY + sizeY) {
-      Serial.println("Botao btn_Lang_English Solto");
       action = true;
       buttonPressed = false;  // Atualiza o estado do botão para solto
       return;
     } else {
-      Serial.println("Botao btn_Lang_English Cancelado");
       action = false;
       buttonPressed = false;  // Atualiza o estado do botão para solto
     }
@@ -576,50 +573,160 @@ void firstLanguages() {
   tft.drawSmoothCircle(426, 30, 5, redTextColor, backgroundColor);
   tft.fillSmoothCircle(426, 30, 3, backgroundColor, redTextColor);
 
-  tft.fillSmoothRoundRect(140, 123, 96, 68, 5, lightTextColor, backgroundColor);
-  tft.fillSmoothRoundRect(244, 123, 96, 68, 5, lightTextColor, backgroundColor);
-  tft.fillSmoothRoundRect(140, 205, 96, 68, 5, lightTextColor, backgroundColor);
-  tft.fillSmoothRoundRect(244, 205, 96, 68, 5, lightTextColor, backgroundColor);
+  if (systemLanguage == 1) {
+    tft.fillSmoothRoundRect(140, 123, 96, 68, 5, redTextColor, backgroundColor);
+    tft.fillSmoothRoundRect(244, 123, 96, 68, 5, lightTextColor, backgroundColor);
+    tft.fillSmoothRoundRect(140, 205, 96, 68, 5, grayColor, backgroundColor);
+    tft.fillSmoothRoundRect(244, 205, 96, 68, 5, grayColor, backgroundColor);
 
-  tft.setTextDatum(ML_DATUM);
-  tft.setTextColor(textColor, backgroundColor);
-  smoothText("Lato_Bold_24");
-  tft.drawString("Choose", 67, 65, GFXFF);
-  smoothText("Lato_Regular_24");
-  tft.drawString("your Language", 67, 94, GFXFF);
+    tft.setTextDatum(ML_DATUM);
+    tft.setTextColor(textColor, backgroundColor);
+    smoothText("Lato_Bold_24");
+    tft.drawString("Choose", 67, 65, GFXFF);
+    smoothText("Lato_Regular_24");
+    tft.drawString("your Language", 67, 94, GFXFF);
 
-  tft.setTextColor(darkTextColor, lightBackgroundColor);
-  smoothText("Lato_Regular_14");
-  tft.drawString("Hi!", 145, 142, GFXFF);
-  tft.drawString("I am Mufox", 145, 157, GFXFF);
+    tft.setTextColor(lightTextColor, redTextColor);
+    smoothText("Lato_Regular_14");
+    tft.drawString("Hi!", 145, 142, GFXFF);
+    tft.drawString("I am Mufox", 145, 157, GFXFF);
 
-  tft.drawString("Olá!", 249, 142, GFXFF);
-  tft.drawString("Eu sou Mufox", 249, 157, GFXFF);
+    tft.setTextColor(darkTextColor, lightBackgroundColor);
+    tft.drawString("Olá!", 249, 142, GFXFF);
+    tft.drawString("Eu sou Mufox", 249, 157, GFXFF);
 
-  //tft.drawString("Hi!", 147, 132, GFXFF);
-  //tft.drawString("I am Mufox", 147, 152, GFXFF);
+    //tft.drawString("Hi!", 147, 132, GFXFF);
+    //tft.drawString("I am Mufox", 147, 152, GFXFF);
 
 
-  //tft.drawString("Hi!", 147, 132, GFXFF);
-  //tft.drawString("I am Mufox", 147, 152, GFXFF);
+    //tft.drawString("Hi!", 147, 132, GFXFF);
+    //tft.drawString("I am Mufox", 147, 152, GFXFF);
 
-  tft.setTextColor(redTextColor, lightBackgroundColor);
-  smoothText("Lato_Regular_10");
-  tft.drawString("English", 147, 178, GFXFF);
-  tft.drawString("Português", 251, 178, GFXFF);
+    smoothText("Lato_Regular_10");
+    tft.setTextColor(darkTextColor, redTextColor);
+    tft.drawString("English", 147, 178, GFXFF);
 
-  // tft.drawString("Español", 147, 260, GFXFF);
-  tft.drawString("En progreso", 147, 260, GFXFF);
-  // tft.drawString("Italiano", 251, 260, GFXFF);
-  tft.drawString("In corso", 251, 260, GFXFF);
+    tft.setTextColor(redTextColor, lightBackgroundColor);
+    tft.drawString("Português", 251, 178, GFXFF);
 
-  tft.setTextColor(redTextColor, backgroundColor);
-  tft.drawString("Language", 36, 15, GFXFF);
-  tft.setTextDatum(MC_DATUM);
-  tft.drawString("Profile", 169, 15, GFXFF);
-  tft.drawString("Network", 299, 15, GFXFF);
-  tft.setTextDatum(MR_DATUM);
-  tft.drawString("Done", 423, 15, GFXFF);
+    tft.setTextColor(lightTextColor, grayColor);
+    // tft.drawString("Español", 147, 260, GFXFF);
+    tft.drawString("En progreso", 147, 260, GFXFF);
+    // tft.drawString("Italiano", 251, 260, GFXFF);
+    tft.drawString("In corso", 251, 260, GFXFF);
+
+    tft.setTextColor(redTextColor, backgroundColor);
+    tft.drawString("Language", 36, 15, GFXFF);
+    tft.setTextDatum(MC_DATUM);
+    tft.drawString("Profile", 169, 15, GFXFF);
+    tft.drawString("Network", 299, 15, GFXFF);
+    tft.setTextDatum(MR_DATUM);
+    tft.drawString("Done", 423, 15, GFXFF);
+  } else if (systemLanguage == 2) {
+    tft.fillSmoothRoundRect(140, 123, 96, 68, 5, lightTextColor, backgroundColor);
+    tft.fillSmoothRoundRect(244, 123, 96, 68, 5, redTextColor, backgroundColor);
+    tft.fillSmoothRoundRect(140, 205, 96, 68, 5, grayColor, backgroundColor);
+    tft.fillSmoothRoundRect(244, 205, 96, 68, 5, grayColor, backgroundColor);
+
+    tft.setTextDatum(ML_DATUM);
+    tft.setTextColor(textColor, backgroundColor);
+    smoothText("Lato_Bold_24");
+    tft.drawString("Escolha", 67, 65, GFXFF);
+    smoothText("Lato_Regular_24");
+    tft.drawString("sua língua", 67, 94, GFXFF);
+
+    tft.setTextColor(darkTextColor, lightBackgroundColor);
+    smoothText("Lato_Regular_14");
+    tft.drawString("Hi!", 145, 142, GFXFF);
+    tft.drawString("I am Mufox", 145, 157, GFXFF);
+
+    tft.setTextColor(lightTextColor, redTextColor);
+    tft.drawString("Olá!", 249, 142, GFXFF);
+    tft.drawString("Eu sou Mufox", 249, 157, GFXFF);
+
+    //tft.drawString("Hi!", 147, 132, GFXFF);
+    //tft.drawString("I am Mufox", 147, 152, GFXFF);
+
+
+    //tft.drawString("Hi!", 147, 132, GFXFF);
+    //tft.drawString("I am Mufox", 147, 152, GFXFF);
+
+    tft.setTextColor(redTextColor, lightBackgroundColor);
+    smoothText("Lato_Regular_10");
+    tft.drawString("English", 147, 178, GFXFF);
+
+    tft.setTextColor(darkTextColor, redTextColor);
+    tft.drawString("Português", 251, 178, GFXFF);
+
+    tft.setTextColor(lightTextColor, grayColor);
+    // tft.drawString("Español", 147, 260, GFXFF);
+    tft.drawString("En progreso", 147, 260, GFXFF);
+    // tft.drawString("Italiano", 251, 260, GFXFF);
+    tft.drawString("In corso", 251, 260, GFXFF);
+
+    tft.setTextColor(redTextColor, backgroundColor);
+    tft.drawString("língua", 36, 15, GFXFF);
+    tft.setTextDatum(MC_DATUM);
+    tft.drawString("Perfil", 169, 15, GFXFF);
+    tft.drawString("Rede", 299, 15, GFXFF);
+    tft.setTextDatum(MR_DATUM);
+    tft.drawString("Pronto", 423, 15, GFXFF);
+  } else {
+    tft.fillSmoothRoundRect(140, 123, 96, 68, 5, lightTextColor, backgroundColor);
+    tft.fillSmoothRoundRect(244, 123, 96, 68, 5, lightTextColor, backgroundColor);
+    tft.fillSmoothRoundRect(140, 205, 96, 68, 5, grayColor, backgroundColor);
+    tft.fillSmoothRoundRect(244, 205, 96, 68, 5, grayColor, backgroundColor);
+
+    tft.setTextDatum(ML_DATUM);
+    tft.setTextColor(textColor, backgroundColor);
+    smoothText("Lato_Bold_24");
+    tft.drawString("Choose", 67, 65, GFXFF);
+    smoothText("Lato_Regular_24");
+    tft.drawString("your Language", 67, 94, GFXFF);
+
+    tft.setTextColor(lightTextColor, redTextColor);
+    smoothText("Lato_Regular_14");
+    tft.drawString("Hi!", 145, 142, GFXFF);
+    tft.drawString("I am Mufox", 145, 157, GFXFF);
+
+    tft.setTextColor(darkTextColor, lightBackgroundColor);
+    tft.drawString("Olá!", 249, 142, GFXFF);
+    tft.drawString("Eu sou Mufox", 249, 157, GFXFF);
+
+    //tft.drawString("Hi!", 147, 132, GFXFF);
+    //tft.drawString("I am Mufox", 147, 152, GFXFF);
+
+
+    //tft.drawString("Hi!", 147, 132, GFXFF);
+    //tft.drawString("I am Mufox", 147, 152, GFXFF);
+
+    smoothText("Lato_Regular_10");
+    tft.setTextColor(darkTextColor, redTextColor);
+    tft.drawString("English", 147, 178, GFXFF);
+
+    tft.setTextColor(redTextColor, lightBackgroundColor);
+    tft.drawString("Português", 251, 178, GFXFF);
+
+    tft.setTextColor(lightTextColor, grayColor);
+    // tft.drawString("Español", 147, 260, GFXFF);
+    tft.drawString("En progreso", 147, 260, GFXFF);
+    // tft.drawString("Italiano", 251, 260, GFXFF);
+    tft.drawString("In corso", 251, 260, GFXFF);
+
+    tft.setTextColor(redTextColor, backgroundColor);
+    tft.drawString("Language", 36, 15, GFXFF);
+    tft.setTextDatum(MC_DATUM);
+    tft.drawString("Profile", 169, 15, GFXFF);
+    tft.drawString("Network", 299, 15, GFXFF);
+    tft.setTextDatum(MR_DATUM);
+    tft.drawString("Done", 423, 15, GFXFF);
+  }
+
+
+
+
+
+
 
   unsigned long startTime = millis();
   unsigned long timerCheckingModule = 0;
