@@ -128,29 +128,32 @@ byte systemLanguage = 0;
 // -------------------- CARREGAMENTO DAS TELAS --------------------
 static bool loaded[10] = {      // Variavel loaded para cada tela
 /*
-VERSAO FINAL loader[0] = false;
+VERSAO FINAL loader[0] = false; e loader[1] = false;
 Altere para TRUE para pular o carregamento de certas telas
 */
   true,        // loader[0] firstLoading();
   true,        // loader[1] firstLanguages();
-  false,        // loader[2] firstAppTheme();
-  true,        // loader[3] firstWiFiConnection();
-  false,        // loader[4] 
-  false,        // loader[5] 
-  false,        // loader[6] 
-  false,        // loader[7] 
-  false,        // loader[8] 
-  false,        // loader[9] 
+  false,       // loader[2] firstAppTheme();
+  true,        // loader[3] keyboard();
+  true,        // loader[4] 
+  true,        // loader[5] 
+  true,        // loader[6] 
+  true,        // loader[7] 
+  true,        // loader[8] 
+  true,        // loader[9] 
 };
 
 byte screenLoaded = 0;
+// screenLoaded = 1 Habita Botoes de firstLanguages()
+// screenLoaded = 2 Habita Botoes de firstAppTheme()
+// screenLoaded = 3 Habita Botoes de keyboard()
 
 // -------------------- ESTRUTURA DOS BOTOES --------------------
 bool request[10] = {      // Variavel request para recarregamento completo da tela
   false,        // loader[0] firstLoading();
   false,        // loader[1] firstLanguages();
   false,        // loader[2] firstAppTheme();
-  false,        // loader[3] firstWiFiConnection();
+  false,        // loader[3] keyboard();
   false,        // loader[4] 
   false,        // loader[5] 
   false,        // loader[6] 
@@ -158,22 +161,22 @@ bool request[10] = {      // Variavel request para recarregamento completo da te
   false,        // loader[8] 
   false,        // loader[9] 
 };
-
-int releaseTouchX, releaseTouchY; // Armazena ultima posicao do Touch para liberar acao do Botao
-
 // -------------------- BOOLEAN DE BOTOES E ACOES --------------------
 
+bool touch = false; // Variavel para rastrear o estado anterior do toque
 bool executeBtn = false;
-
 bool selected_Languages = false;
+bool openKeyboard = false; // Variavel para abrir e fechar teclado
 
-bool btn_Lang_English, act_Lang_English = false;
-bool btn_Lang_Portuguese, act_Lang_Portuguese = false;
-bool btn_Lang_Spanish, act_Lang_Spanish = false;
-bool btn_Lang_Italian, act_Lang_Italian = false;
-bool btn_firstLanguage_Continue, act_firstLanguage_Continue = false;
-
-
+// -------------------- INT DE BOTOES --------------------------------
+int buttonPressed = 0;
+// buttonPressed = 1 Habilita Botao touchedBtn_Lang_English
+// buttonPressed = 2 Habilita Botao touchedBtn_Lang_Portuguese
+// buttonPressed = 3 Habilita Botao touchedBtn_Lang_Spanish
+// buttonPressed = 4 Habilita Botao touchedBtn_Lang_Italian
+// buttonPressed = 5 Habilita Botao touchedBtn_firstLanguague
+// buttonPressed = 6 Habilita Botao 
+// buttonPressed = 7 Habilita Botao 
 
 // -------------------- CONFIGURACOES E INICIALIZACAO DE MODULOS --------------------
 void setup() {
@@ -215,71 +218,69 @@ void setup() {
 
 }
 
-
-
 void loop() {
   unsigned long currentTime = millis();
   unsigned long elapsedTime = 0;
 
-  bool touch = obtainTouch();
+  bool pressed = tft.getTouch(&t_x, &t_y);
+  if (pressed) {
+    obtainTouch();
+  } else {
+    touch = false;
+  }
 
   switch (screenLoaded) {
-    case 1: break;
-    case 2: btn_firstLanguages(); break;
-    case 3: btn_firstAppTheme(); break;
+    case 1: btn_firstLanguages(); break;
+    case 2: btn_firstAppTheme(); break;
+    case 3: btn_keyboard(); break;
   }
 
   loadScreen(firstLoading, loaded[0], request[0]);
   loadScreen(firstLanguages, loaded[1], request[1]);
   loadScreen(firstAppTheme, loaded[2], request[2]);
-  loadScreen(firstWiFiConnection, loaded[3], request[3]);
+  loadScreen(keyboard, loaded[3], request[3]);
+  //loadScreen(firstWiFiConnection, loaded[3], request[3]);
 
 }
 
-
-// -------------------- FUNCAO DOS BOTOES --------------------
-void touchRect(int startX, int startY, int sizeX, int sizeY, bool& button, bool& action) {
-  static bool buttonPressed = false;  // Variável de controle para rastrear o estado do botão
-  bool pressed = tft.getTouch(&t_x, &t_y);
-  releaseTouchX = t_x;
-  releaseTouchY = t_y;
-  if ((pressed) && (!buttonPressed)) {
-    if (t_x > startX && t_x < startX + sizeX && t_y > startY && t_y < startY + sizeY) {
-      releaseTouchX = t_x;
-      releaseTouchY = t_y;
-      button = true;
-      action = false;
-      buttonPressed = true;  // Atualiza o estado do botão para pressionado
-    }
-  }
-
-  else if (!pressed) {
-    button = false;
-    if (releaseTouchX > startX && releaseTouchX < startX + sizeX && releaseTouchY > startY && releaseTouchY < startY + sizeY) {
-      action = true;
-      buttonPressed = false;  // Atualiza o estado do botão para solto
-    } else {
-      action = false;
-      buttonPressed = false;  // Atualiza o estado do botão para solto
-    }
-  }
+// -------------------- OBTENCAO DA POSICAO DE TOUCH --------------------
+void obtainTouch() {
+  xScreen = map(t_x, 0, tft.width(), 0, 480);
+  yScreen = map(t_y, 0, tft.height(), 0, 480);
+  Serial.print("x, y, z = ");
+  Serial.print(xScreen);
+  Serial.print(" ,");
+  Serial.print(yScreen);
+  Serial.print(" ,");
+  Serial.printf("%i \n", tft.getTouchRawZ()); 
+  touch = true;
 }
 
+// -------------------- FUNCAO RECONHECER O BOTAO PRESSIONADO --------------------
+bool touchRect(int startX, int startY, int sizeX, int sizeY) {
+  bool touched = (t_x > startX && t_x < startX + sizeX && t_y > startY && t_y < startY + sizeY);
+  return touched;
+}
 
 // -------------------- ANIMACOES E ACOES DOS BOTOES --------------------
-
 void btn_firstLanguages() {
-  bool pressed = tft.getTouch(&t_x, &t_y);
-  // BOTAO MUDAR LINGUAGEM DO SISTEMA PARA INGLES
-  touchRect(140, 123, 96, 68, btn_Lang_English, act_Lang_English);
-  touchRect(244, 123, 96, 68, btn_Lang_Portuguese, act_Lang_Portuguese);
-  touchRect(140, 205, 96, 68, btn_Lang_Spanish, act_Lang_Spanish);
-  touchRect(244, 205, 96, 68, btn_Lang_Italian, act_Lang_Italian);
-  touchRect(400, 238, 80 , 40, btn_firstLanguage_Continue, act_firstLanguage_Continue);
+  // BOTOES MUDAR LINGUAGEM DO SISTEMA PARA INGLES
+  bool touchedBtn_Lang_English = touchRect(140, 123, 96, 68);
+  bool touchedBtn_Lang_Portuguese = touchRect(244, 123, 96, 68);
+  bool touchedBtn_Lang_Spanish = touchRect(140, 205, 96, 68);
+  bool touchedBtn_Lang_Italian = touchRect(244, 205, 96, 68);
+  bool touchedBtn_firstLanguague = touchRect(400, 238, 80 , 40);
+
+  if (!touch) {
+    touchedBtn_Lang_English = false;
+    touchedBtn_Lang_Portuguese = false;
+    touchedBtn_Lang_Spanish = false;
+    touchedBtn_Lang_Italian = false;
+    touchedBtn_firstLanguague = false;
+  }
 
   // ANIMACAO DO BOTAO MUDAR LINGUAGEM DO SISTEMA PARA INGLES
-  if ((btn_Lang_English) && (!executeBtn)) {
-    executeBtn = true;
+  if (touchedBtn_Lang_English) {
     tft.fillSmoothRoundRect(140, 123, 96, 68, 5, redTextColor, backgroundColor);
     tft.fillSmoothRoundRect(244, 123, 96, 68, 5, lightTextColor, backgroundColor);
 
@@ -299,21 +300,21 @@ void btn_firstLanguages() {
     tft.drawString("English", 147, 178, GFXFF);
     tft.setTextColor(redTextColor, lightBackgroundColor);
     tft.drawString("Português", 251, 178, GFXFF);
+    executeBtn = true;
+    buttonPressed = 1;
   }
 
   // ANIMACAO E ACAO DO BOTAO MUDAR LINGUAGEM DO SISTEMA PARA INGLES
-  else if ((act_Lang_English) && (executeBtn)) {
-    systemLanguage = 1;
-    act_Lang_English = false;
+  if (!touchedBtn_Lang_English && executeBtn && buttonPressed == 1) {
+    touch = false;
     executeBtn = false;
+    systemLanguage = 1;
     request[1] = true;
     selected_Languages = true;
   }
 
   // ANIMACAO DO BOTAO MUDAR LINGUAGEM DO SISTEMA PARA PORTUGUES
-  if ((btn_Lang_Portuguese) && (!executeBtn)) {
-    executeBtn = true;
-
+  if (touchedBtn_Lang_Portuguese) {
     tft.fillSmoothRoundRect(140, 123, 96, 68, 5, lightTextColor, backgroundColor);
     tft.fillSmoothRoundRect(244, 123, 96, 68, 5, redTextColor, backgroundColor);
       
@@ -334,72 +335,75 @@ void btn_firstLanguages() {
     tft.drawString("English", 147, 178, GFXFF);
     tft.setTextColor(darkTextColor, redTextColor);
     tft.drawString("Português", 251, 178, GFXFF);
-    
+    executeBtn = true;
+    buttonPressed = 2;
   }
 
   // ANIMACAO E ACAO DO BOTAO MUDAR LINGUAGEM DO SISTEMA PARA PORTUGUES
-  else if ((act_Lang_Portuguese) && (executeBtn)) {
-    systemLanguage = 2;
-    act_Lang_Portuguese = false;
+  if (!touchedBtn_Lang_Portuguese && executeBtn && buttonPressed == 2) {
+    touch = false;
     executeBtn = false;
+    systemLanguage = 2;
     request[1] = true;
     selected_Languages = true;
   }
 
-
-
-  if ((btn_firstLanguage_Continue) && (!executeBtn)) {
+  // APRESENTACAO DO CAMPO PERMITE CONTINUAR A PROXIMA TELA
+  if (touchedBtn_firstLanguague && selected_Languages) {
     executeBtn = true;
+    buttonPressed = 5;
   }
 
-  // LINGUAGEM SELECIONADA PERMITE CONTINUA A PROXIMA JANELA
-  if ((act_firstLanguage_Continue) && (executeBtn)) {
-    act_firstLanguage_Continue = false;
+  // LINGUAGEM SELECIONADA PERMITE CONTINUAR A PROXIMA JANELA
+  if (!touchedBtn_firstLanguague && executeBtn && buttonPressed == 5) {
+    touch = false;
     executeBtn = false;
     request[2] = true;
   } 
-
-/*  FUNCAO PARA CANCELAR A ACAO DO BOTAO APRIMORAR!!!
-    else if ((btn_Lang_English) && (!act_Lang_English) && !pressed) {
-    Serial.println("Desativado btn_Lang_English");
-    tft.fillSmoothRoundRect(140, 123, 96, 68, 5, lightTextColor, backgroundColor);
-
-    tft.setTextDatum(ML_DATUM);
-    tft.setTextColor(darkTextColor, lightBackgroundColor);
-    smoothText("Lato_Regular_14");
-    tft.drawString("Hi!", 145, 142, GFXFF);
-    tft.drawString("I am Mufox", 145, 157, GFXFF);
-
-    tft.setTextColor(redTextColor, lightBackgroundColor);
-    smoothText("Lato_Regular_10");
-    tft.drawString("English", 147, 178, GFXFF);
-  }
-*/
 }
-
-
-
-bool btn_Open_Keyboard, act_Open_Keyboard = false;
-bool openKeyboard = false;
 
 void btn_firstAppTheme() {
-  bool pressed = tft.getTouch(&t_x, &t_y);
   // BOTAO MUDAR LINGUAGEM DO SISTEMA PARA INGLES
-  touchRect(102, 155, 275, 30, btn_Open_Keyboard, act_Open_Keyboard);
+  bool touchedBtn_Keyboard = touchRect(102, 155, 275, 30);
 
-  // ANIMACAO DO BOTAO MUDAR PARA TECLADO
-  if ((btn_Open_Keyboard) && (!executeBtn)) {
-    executeBtn = true;
-  } 
-  // ANIMACAO E ACAO DO BOTAO MUDAR PARA TECLADO
-  else if ((act_Open_Keyboard) && (executeBtn)) {
-    act_Open_Keyboard = false;
-    executeBtn = false;
-    request[2] = true;
-    openKeyboard = true;
+  if (!touch) {
+    touchedBtn_Keyboard = false;
   }
 
+  if (touchedBtn_Keyboard) {
+    executeBtn = true;
+    buttonPressed = 6;
+  }
+
+  // ANIMACAO E ACAO DO BOTAO MUDAR PARA TECLADO
+  if (!touchedBtn_Keyboard && executeBtn && buttonPressed == 6) {
+    executeBtn = false;
+    request[3] = true;
+    openKeyboard = true;
+  }
 }
+
+void btn_keyboard() {
+  bool touchedBtn_A_Keyboard = touchRect(54, 204, 29, 22);
+
+  if (!touch) {
+    touchedBtn_A_Keyboard = false;
+  }
+
+  if (touchedBtn_A_Keyboard) {
+    executeBtn = true;
+    buttonPressed = 7;
+  }
+
+  if (!touchedBtn_A_Keyboard && executeBtn && buttonPressed == 7) {
+    executeBtn = false;
+  }
+
+  Serial.print("touchedBtn_A_Keyboard: ");
+  Serial.println(touchedBtn_A_Keyboard);
+
+}
+
 
 
 // -------------------- PRIMEIRA CONFIGURACOES DE INTERNET --------------------
@@ -426,28 +430,12 @@ void firstWiFiConnection() {
   tft.drawArc(235, 197, 10, 13, 135, 225, blockColor, bluetoothColor, true);
   tft.drawArc(235, 197, 20, 23, 135, 225, blockColor, bluetoothColor, true);
   tft.drawArc(235, 197, 30, 33, 135, 225, blockColor, bluetoothColor, true);
-
-  unsigned long startTime = millis();
-  unsigned long timerCheckingModule = 0;
-  unsigned long interval = 20;  
-  unsigned long loading = 2000; 
-
-  while (millis() - startTime <= loading) {
-    if (millis() - timerCheckingModule >= interval) {
-      timerCheckingModule = millis();
-      float progress = (millis() - startTime) / (float)loading;
-      float easedProgress = easeOutCubic(progress);  // Função de desaceleração aplicada ao progresso
-      float width = easedProgress * 41;
-      tft.fillRect(301, 29, width, 3, redTextColor);
-    }
-  }
-
 }
 
-// -------------------- PRIMEIRA CONFIGURACOES DE TEMA --------------------
-void firstAppTheme() {
+
+// -------------------- TECLADO --------------------
+void keyboard() {
   screenLoaded = 3;
-  request[2] = false;
   tft.fillRect(41, 29, 390, 3, lightRedTextColor);
   tft.fillRect(41, 29, 130, 3, redTextColor);
 
@@ -459,7 +447,7 @@ void firstAppTheme() {
  
   tft.drawSmoothCircle(426, 30, 5, redTextColor, backgroundColor);
   tft.fillSmoothCircle(426, 30, 3, backgroundColor, redTextColor);
-
+  
   if (systemLanguage == 1) {
     tft.setTextDatum(ML_DATUM);
     smoothText("Lato_Regular_10");
@@ -470,8 +458,6 @@ void firstAppTheme() {
     tft.drawString("Network", 299, 15, GFXFF);
     tft.setTextDatum(MR_DATUM);
     tft.drawString("Done", 423, 15, GFXFF);
-
-    
 
   } else if (systemLanguage == 2) {
     tft.setTextDatum(ML_DATUM);
@@ -507,211 +493,133 @@ void firstAppTheme() {
     tft.drawString("Fatto", 423, 15, GFXFF);
   }
 
+  if (openKeyboard) {
+  tft.drawRoundRect(102, 125, 275, 30, 5, redTextColor);
+
+    tft.drawRoundRect(11, 180, 22, 22, 2, redTextColor);
+    tft.drawRoundRect(36, 180, 28, 22, 2, redTextColor);
+    tft.drawRoundRect(67, 180, 28, 22, 2, redTextColor);
+    tft.drawRoundRect(98, 180, 28, 22, 2, redTextColor);
+    tft.drawRoundRect(129, 180, 28, 22, 2, redTextColor);
+    tft.drawRoundRect(160, 180, 28, 22, 2, redTextColor);
+    tft.drawRoundRect(191, 180, 28, 22, 2, redTextColor);
+    tft.drawRoundRect(222, 180, 28, 22, 2, redTextColor);
+    tft.drawRoundRect(253, 180, 28, 22, 2, redTextColor);
+    tft.drawRoundRect(284, 180, 28, 22, 2, redTextColor);
+    tft.drawRoundRect(315, 180, 28, 22, 2, redTextColor);
+    tft.drawRoundRect(346, 180, 28, 22, 2, redTextColor);
+    tft.drawRoundRect(377, 180, 28, 22, 2, redTextColor);
+    tft.drawRoundRect(408, 180, 59, 22, 2, redTextColor);
+
+    tft.drawRoundRect(11, 204, 40, 22, 2, redTextColor);
+    tft.drawRoundRect(54, 204, 29, 22, 2, redTextColor);
+    tft.drawRoundRect(86, 204, 29, 22, 2, redTextColor);
+    tft.drawRoundRect(118, 204, 29, 22, 2, redTextColor);
+    tft.drawRoundRect(150, 204, 29, 22, 2, redTextColor);
+    tft.drawRoundRect(182, 204, 29, 22, 2, redTextColor);
+    tft.drawRoundRect(214, 204, 29, 22, 2, redTextColor);
+    tft.drawRoundRect(246, 204, 29, 22, 2, redTextColor);
+    tft.drawRoundRect(278, 204, 29, 22, 2, redTextColor);
+    tft.drawRoundRect(310, 204, 29, 22, 2, redTextColor);
+    tft.drawRoundRect(342, 204, 29, 22, 2, redTextColor);
+    tft.drawRoundRect(374, 204, 29, 22, 2, redTextColor);
+    tft.drawRoundRect(406, 204, 29, 22, 2, redTextColor);
+    tft.drawRoundRect(438, 204, 29, 22, 2, redTextColor);
+
+    tft.drawRoundRect(11, 228, 45, 22, 2, redTextColor);
+    tft.drawRoundRect(59, 228, 29, 22, 2, redTextColor);
+    tft.drawRoundRect(91, 228, 29, 22, 2, redTextColor);
+    tft.drawRoundRect(123, 228, 29, 22, 2, redTextColor);
+    tft.drawRoundRect(155, 228, 29, 22, 2, redTextColor);
+    tft.drawRoundRect(187, 228, 29, 22, 2, redTextColor);
+    tft.drawRoundRect(219, 228, 29, 22, 2, redTextColor);
+    tft.drawRoundRect(251, 228, 29, 22, 2, redTextColor);
+    tft.drawRoundRect(283, 228, 29, 22, 2, redTextColor);
+    tft.drawRoundRect(315, 228, 29, 22, 2, redTextColor);
+    tft.drawRoundRect(347, 228, 29, 22, 2, redTextColor);
+    tft.drawRoundRect(379, 228, 29, 22, 2, redTextColor);
+    tft.drawRoundRect(411, 228, 56, 22, 2, redTextColor);
+
+    tft.drawRoundRect(11, 252, 45, 22, 2, redTextColor);
+    tft.drawRoundRect(59, 252, 33, 22, 2, redTextColor);
+    tft.drawRoundRect(95, 252, 33, 22, 2, redTextColor);
+    tft.drawRoundRect(131, 252, 33, 22, 2, redTextColor);
+    tft.drawRoundRect(167, 252, 33, 22, 2, redTextColor);
+    tft.drawRoundRect(203, 252, 33, 22, 2, redTextColor);
+    tft.drawRoundRect(239, 252, 33, 22, 2, redTextColor);
+    tft.drawRoundRect(275, 252, 33, 22, 2, redTextColor);
+    tft.drawRoundRect(311, 252, 33, 22, 2, redTextColor);
+    tft.drawRoundRect(347, 252, 33, 22, 2, redTextColor);
+    tft.drawRoundRect(383, 252, 33, 22, 2, redTextColor);
+    tft.drawRoundRect(419, 252, 48, 22, 2, redTextColor);
+
+    tft.drawRoundRect(11, 276, 45, 22, 2, redTextColor);
+    tft.drawRoundRect(59, 276, 29, 22, 2, redTextColor);
+    tft.drawRoundRect(91, 276, 325, 22, 2, redTextColor);
+    tft.drawRoundRect(419, 276, 48, 22, 2, redTextColor);
+  }
+
+  if (openKeyboard) {
+    tft.setTextDatum(MC_DATUM);
+    tft.setTextColor(lightTextColor, backgroundColor);
+    smoothText("Lato_Regular_14");
+    tft.drawString("`", 22, 191, GFXFF);
+    tft.drawString("1", 50, 191, GFXFF);
+    tft.drawString("2", 81, 191, GFXFF);
+    tft.drawString("3", 112, 191, GFXFF);
+    tft.drawString("4", 143, 191, GFXFF);
+    tft.drawString("5", 174, 191, GFXFF);
+    tft.drawString("6", 205, 191, GFXFF);
+    tft.drawString("7", 236, 191, GFXFF);
+    tft.drawString("8", 267, 191, GFXFF);
+    tft.drawString("9", 298, 191, GFXFF);
+    tft.drawString("0", 329, 191, GFXFF);
+    tft.drawString("-", 360, 191, GFXFF);
+    tft.drawString("=", 391, 191, GFXFF);
+
+    tft.drawString("q", 68, 215, GFXFF);
+    tft.drawString("w", 100, 215, GFXFF);
+    tft.drawString("e", 132, 215, GFXFF);
+    tft.drawString("r", 164, 215, GFXFF);
+    tft.drawString("t", 196, 215, GFXFF);
+    tft.drawString("y", 228, 215, GFXFF);
+    tft.drawString("u", 260, 215, GFXFF);
+    tft.drawString("i", 292, 215, GFXFF);
+    tft.drawString("o", 324, 215, GFXFF);
+    tft.drawString("p", 356, 215, GFXFF);
+    tft.drawString("[", 388, 215, GFXFF);
+    tft.drawString("]", 420, 215, GFXFF);
+    tft.drawString("\\", 452, 215, GFXFF);
+
+    tft.drawString("a", 73, 239, GFXFF);
+    tft.drawString("s",105, 239, GFXFF);
+    tft.drawString("d", 136, 239, GFXFF);
+    tft.drawString("f", 168, 239, GFXFF);
+    tft.drawString("g", 200, 239, GFXFF);
+    tft.drawString("h", 232, 239, GFXFF);
+    tft.drawString("j", 264, 239, GFXFF);
+    tft.drawString("k", 296, 239, GFXFF);
+    tft.drawString("l", 328, 239, GFXFF);
+    tft.drawString(";", 360, 239, GFXFF);
+    tft.drawString("'", 394, 239, GFXFF);
+
+    tft.drawString("z", 74, 263, GFXFF);
+    tft.drawString("x", 110, 263, GFXFF);
+    tft.drawString("c", 147, 263, GFXFF);
+    tft.drawString("v", 184, 263, GFXFF);
+    tft.drawString("b", 219, 263, GFXFF);
+    tft.drawString("n", 258, 263, GFXFF);
+    tft.drawString("m", 295, 263, GFXFF);
+    tft.drawString(",", 333, 263, GFXFF);
+    tft.drawString(".", 370, 263, GFXFF);
+    tft.drawString("/", 407, 263, GFXFF);
+
+    tft.drawString("@", 72, 287, GFXFF);
 
 
-    tft.setTextDatum(ML_DATUM);
-    tft.setTextColor(textColor, backgroundColor);
-    smoothText("Lato_Bold_24");
-    tft.drawString("What", 67, 65, GFXFF);
-    smoothText("Lato_Regular_24");
-    tft.drawString("is your name?", 67, 94, GFXFF);
-    if (!openKeyboard) {
-      tft.drawRoundRect(102, 155, 275, 30, 5, redTextColor);
-    }
-
-    if (openKeyboard) {
-      tft.drawRoundRect(102, 125, 275, 30, 5, redTextColor);
-
-      tft.drawRoundRect(11, 180, 22, 22, 2, redTextColor);
-      tft.drawRoundRect(36, 180, 28, 22, 2, redTextColor);
-      tft.drawRoundRect(67, 180, 28, 22, 2, redTextColor);
-      tft.drawRoundRect(98, 180, 28, 22, 2, redTextColor);
-      tft.drawRoundRect(129, 180, 28, 22, 2, redTextColor);
-      tft.drawRoundRect(160, 180, 28, 22, 2, redTextColor);
-      tft.drawRoundRect(191, 180, 28, 22, 2, redTextColor);
-      tft.drawRoundRect(222, 180, 28, 22, 2, redTextColor);
-      tft.drawRoundRect(253, 180, 28, 22, 2, redTextColor);
-      tft.drawRoundRect(284, 180, 28, 22, 2, redTextColor);
-      tft.drawRoundRect(315, 180, 28, 22, 2, redTextColor);
-      tft.drawRoundRect(346, 180, 28, 22, 2, redTextColor);
-      tft.drawRoundRect(377, 180, 28, 22, 2, redTextColor);
-      tft.drawRoundRect(408, 180, 59, 22, 2, redTextColor);
-
-      tft.drawRoundRect(11, 204, 40, 22, 2, redTextColor);
-      tft.drawRoundRect(54, 204, 29, 22, 2, redTextColor);
-      tft.drawRoundRect(86, 204, 29, 22, 2, redTextColor);
-      tft.drawRoundRect(118, 204, 29, 22, 2, redTextColor);
-      tft.drawRoundRect(150, 204, 29, 22, 2, redTextColor);
-      tft.drawRoundRect(182, 204, 29, 22, 2, redTextColor);
-      tft.drawRoundRect(214, 204, 29, 22, 2, redTextColor);
-      tft.drawRoundRect(246, 204, 29, 22, 2, redTextColor);
-      tft.drawRoundRect(278, 204, 29, 22, 2, redTextColor);
-      tft.drawRoundRect(310, 204, 29, 22, 2, redTextColor);
-      tft.drawRoundRect(342, 204, 29, 22, 2, redTextColor);
-      tft.drawRoundRect(374, 204, 29, 22, 2, redTextColor);
-      tft.drawRoundRect(406, 204, 29, 22, 2, redTextColor);
-      tft.drawRoundRect(438, 204, 29, 22, 2, redTextColor);
-
-      tft.drawRoundRect(11, 228, 45, 22, 2, redTextColor);
-      tft.drawRoundRect(59, 228, 29, 22, 2, redTextColor);
-      tft.drawRoundRect(91, 228, 29, 22, 2, redTextColor);
-      tft.drawRoundRect(123, 228, 29, 22, 2, redTextColor);
-      tft.drawRoundRect(155, 228, 29, 22, 2, redTextColor);
-      tft.drawRoundRect(187, 228, 29, 22, 2, redTextColor);
-      tft.drawRoundRect(219, 228, 29, 22, 2, redTextColor);
-      tft.drawRoundRect(251, 228, 29, 22, 2, redTextColor);
-      tft.drawRoundRect(283, 228, 29, 22, 2, redTextColor);
-      tft.drawRoundRect(315, 228, 29, 22, 2, redTextColor);
-      tft.drawRoundRect(347, 228, 29, 22, 2, redTextColor);
-      tft.drawRoundRect(379, 228, 29, 22, 2, redTextColor);
-      tft.drawRoundRect(411, 228, 56, 22, 2, redTextColor);
-
-      tft.drawRoundRect(11, 252, 45, 22, 2, redTextColor);
-      tft.drawRoundRect(59, 252, 33, 22, 2, redTextColor);
-      tft.drawRoundRect(95, 252, 33, 22, 2, redTextColor);
-      tft.drawRoundRect(131, 252, 33, 22, 2, redTextColor);
-      tft.drawRoundRect(167, 252, 33, 22, 2, redTextColor);
-      tft.drawRoundRect(203, 252, 33, 22, 2, redTextColor);
-      tft.drawRoundRect(239, 252, 33, 22, 2, redTextColor);
-      tft.drawRoundRect(275, 252, 33, 22, 2, redTextColor);
-      tft.drawRoundRect(311, 252, 33, 22, 2, redTextColor);
-      tft.drawRoundRect(347, 252, 33, 22, 2, redTextColor);
-      tft.drawRoundRect(383, 252, 33, 22, 2, redTextColor);
-      tft.drawRoundRect(419, 252, 48, 22, 2, redTextColor);
-
-      tft.drawRoundRect(11, 276, 45, 22, 2, redTextColor);
-      tft.drawRoundRect(59, 276, 29, 22, 2, redTextColor);
-      tft.drawRoundRect(91, 276, 325, 22, 2, redTextColor);
-      tft.drawRoundRect(419, 276, 48, 22, 2, redTextColor);
-    }
-
-    if (openKeyboard) {
-      tft.setTextDatum(MC_DATUM);
-      tft.setTextColor(lightTextColor, backgroundColor);
-      smoothText("Lato_Regular_14");
-      tft.drawString("`", 22, 191, GFXFF);
-      tft.drawString("1", 50, 191, GFXFF);
-      tft.drawString("2", 81, 191, GFXFF);
-      tft.drawString("3", 112, 191, GFXFF);
-      tft.drawString("4", 143, 191, GFXFF);
-      tft.drawString("5", 174, 191, GFXFF);
-      tft.drawString("6", 205, 191, GFXFF);
-      tft.drawString("7", 236, 191, GFXFF);
-      tft.drawString("8", 267, 191, GFXFF);
-      tft.drawString("9", 298, 191, GFXFF);
-      tft.drawString("0", 329, 191, GFXFF);
-      tft.drawString("-", 360, 191, GFXFF);
-      tft.drawString("=", 391, 191, GFXFF);
-
-      tft.drawString("q", 68, 215, GFXFF);
-      tft.drawString("w", 100, 215, GFXFF);
-      tft.drawString("e", 132, 215, GFXFF);
-      tft.drawString("r", 164, 215, GFXFF);
-      tft.drawString("t", 196, 215, GFXFF);
-      tft.drawString("y", 228, 215, GFXFF);
-      tft.drawString("u", 260, 215, GFXFF);
-      tft.drawString("i", 292, 215, GFXFF);
-      tft.drawString("o", 324, 215, GFXFF);
-      tft.drawString("p", 356, 215, GFXFF);
-      tft.drawString("[", 388, 215, GFXFF);
-      tft.drawString("]", 420, 215, GFXFF);
-      tft.drawString("\\", 452, 215, GFXFF);
-
-      tft.drawString("a", 73, 239, GFXFF);
-      tft.drawString("s",105, 239, GFXFF);
-      tft.drawString("d", 136, 239, GFXFF);
-      tft.drawString("f", 168, 239, GFXFF);
-      tft.drawString("g", 200, 239, GFXFF);
-      tft.drawString("h", 232, 239, GFXFF);
-      tft.drawString("j", 264, 239, GFXFF);
-      tft.drawString("k", 296, 239, GFXFF);
-      tft.drawString("l", 328, 239, GFXFF);
-      tft.drawString(";", 360, 239, GFXFF);
-      tft.drawString("'", 394, 239, GFXFF);
-
-      tft.drawString("z", 74, 263, GFXFF);
-      tft.drawString("x", 110, 263, GFXFF);
-      tft.drawString("c", 147, 263, GFXFF);
-      tft.drawString("v", 184, 263, GFXFF);
-      tft.drawString("b", 219, 263, GFXFF);
-      tft.drawString("n", 258, 263, GFXFF);
-      tft.drawString("m", 295, 263, GFXFF);
-      tft.drawString(",", 333, 263, GFXFF);
-      tft.drawString(".", 370, 263, GFXFF);
-      tft.drawString("/", 407, 263, GFXFF);
-
-      tft.drawString("@", 72, 287, GFXFF);
-
-
-      smoothText("Lato_Regular_10");
-      tft.drawString("backscape", 438, 191, GFXFF);
-    }
-
-}
-  // ---------------------------------------
-/*
-  tft.setTextDatum(ML_DATUM);
-  tft.setTextColor(textColor, backgroundColor);
-  smoothText("Lato_Bold_24");
-  tft.drawString("Choose", 67, 65, GFXFF);
-  smoothText("Lato_Regular_24");
-  tft.drawString("the app theme", 67, 94, GFXFF);
-
-  smoothText("Lato_Regular_14");
-  tft.setTextColor(redTextColor, blackColor);
-  tft.fillSmoothRoundRect(57, 142, 80, 70, 10, grayColor, backgroundColor);
-  tft.fillSmoothRoundRect(73, 161, 64, 51, 10, blackColor, gray2Color);
-  tft.drawString("Aa", 81, 172, GFXFF);
-
-  tft.setTextColor(redTextColor, whiteColor);
-  tft.fillSmoothRoundRect(152, 142, 80, 70, 10, snowColor, backgroundColor);
-  tft.fillSmoothRoundRect(168, 161, 64, 51, 10, whiteColor, snow2Color);
-  tft.drawString("Aa", 173, 172, GFXFF);
-
-  tft.setTextColor(whiteColor, blackColor);
-  tft.fillSmoothRoundRect(247, 142, 80, 70, 10, grayColor, backgroundColor);
-  tft.fillSmoothRoundRect(263, 161, 64, 51, 10, blackColor, gray2Color);
-  tft.drawString("Aa", 271, 172, GFXFF);
-
-  tft.setTextColor(blackColor, whiteColor);
-  tft.fillSmoothRoundRect(342, 142, 80, 70, 10, snowColor, backgroundColor);
-  tft.fillSmoothRoundRect(358, 161, 64, 51, 10, whiteColor, snow2Color);
-  tft.drawString("Aa", 363, 172, GFXFF);
-
-  tft.setTextColor(whiteColor, backgroundColor);
-  smoothText("Lato_Regular_10");
-  tft.drawString("Dark & Color", 57, 223, GFXFF);
-  tft.drawString("Light & Color", 152, 223, GFXFF);
-  tft.drawString("Dark", 247, 223, GFXFF);
-  tft.drawString("Light", 342, 223, GFXFF);
-  // ---------------------------------------
-
-  
-
-
-
-
-  tft.setTextDatum(ML_DATUM);
-  tft.setTextColor(textColor, backgroundColor);
-  smoothText("Lato_Bold_24");
-  tft.drawString("Select", 67, 65, GFXFF);
-  smoothText("Lato_Regular_24");
-  tft.drawString("a profile image", 67, 94, GFXFF);
-
-  tft.fillRect(67, 144, 50, 50, blockColor);
-  tft.fillSmoothRoundRect(128, 144, 50, 50, 7, blockColor);
-  tft.fillSmoothCircle(92, 230, 25, blockColor);
-  tft.fillRect(128, 205, 50, 50, blockColor);
-  tft.fillTriangle(125, 202, 125, 221, 144, 202, backgroundColor);
-  tft.fillTriangle(162, 202, 181, 221, 181, 202, backgroundColor);
-  tft.fillTriangle(125, 239, 125, 258, 144, 258, backgroundColor);
-  tft.fillTriangle(162, 258, 181, 258, 181, 239, backgroundColor);
-
-  tft.drawRect(282, 120, 100, 100, backgroundColor);
-
-  tft.fillSmoothCircle(365, 90, 18, bluetoothColor);
-
-  tft.drawRect(282, 120, 100, 100, blockColor);
+    smoothText("Lato_Regular_10");
+    tft.drawString("backscape", 438, 191, GFXFF);
+  }
 
   unsigned long startTime = millis();
   unsigned long timerCheckingModule = 0;
@@ -720,19 +628,202 @@ void firstAppTheme() {
 
   while (millis() - startTime <= loading) {
     if (millis() - timerCheckingModule >= interval) {
-      timerCheckingModule = millis();
-      float progress = (millis() - startTime) / (float)loading;
-      float easedProgress = easeOutCubic(progress);  // Função de desaceleração aplicada ao progresso
-      float width = easedProgress * 41;
-      tft.fillRect(171, 29, width, 3, redTextColor);
+      if (systemLanguage == 0) {
+        timerCheckingModule = millis();
+        float progress = (millis() - startTime) / (float)loading;
+        float easedProgress = easeOutCubic(progress);  // Função de desaceleração aplicada ao progresso
+        float width = easedProgress * 41;
+        tft.fillRect(141, 29, width, 3, redTextColor);
+      } else {
+        timerCheckingModule = millis();
+        float progress = (millis() - startTime) / (float)loading;
+        float easedProgress = easeOutCubic(progress);  // Função de desaceleração aplicada ao progresso
+        float width = easedProgress * 50;
+        tft.fillRect(141, 29, width, 3, redTextColor);
+      }
     }
   }
 }
-*/
+
+// -------------------- PRIMEIRA CONFIGURACOES DE TEMA --------------------
+void firstAppTheme() {
+  screenLoaded = 2;
+  request[2] = false;
+  tft.fillRect(41, 29, 390, 3, lightRedTextColor);
+  tft.fillRect(41, 29, 130, 3, redTextColor);
+
+  tft.fillSmoothCircle(36, 30, 5, redTextColor, backgroundColor);
+  tft.fillSmoothCircle(166, 30, 5, redTextColor, backgroundColor);
+
+  tft.drawSmoothCircle(296, 30, 5, redTextColor, backgroundColor);
+  tft.fillSmoothCircle(296, 30, 3, backgroundColor, redTextColor);
+ 
+  tft.drawSmoothCircle(426, 30, 5, redTextColor, backgroundColor);
+  tft.fillSmoothCircle(426, 30, 3, backgroundColor, redTextColor);
+
+  if (systemLanguage == 1) {
+    tft.setTextDatum(ML_DATUM);
+    smoothText("Lato_Regular_10");
+    tft.setTextColor(redTextColor, backgroundColor);
+    tft.drawString("Language", 36, 15, GFXFF);
+    tft.setTextDatum(MC_DATUM);
+    tft.drawString("Profile", 169, 15, GFXFF);
+    tft.drawString("Network", 299, 15, GFXFF);
+    tft.setTextDatum(MR_DATUM);
+    tft.drawString("Done", 423, 15, GFXFF);
+
+  } else if (systemLanguage == 2) {
+    tft.setTextDatum(ML_DATUM);
+    smoothText("Lato_Regular_10");
+    tft.setTextColor(redTextColor, backgroundColor);
+    tft.drawString("língua", 36, 15, GFXFF);
+    tft.setTextDatum(MC_DATUM);
+    tft.drawString("Perfil", 169, 15, GFXFF);
+    tft.drawString("Rede", 299, 15, GFXFF);
+    tft.setTextDatum(MR_DATUM);
+    tft.drawString("Pronto", 423, 15, GFXFF);
+
+  } else if (systemLanguage == 3) {
+    tft.setTextDatum(ML_DATUM);
+    smoothText("Lato_Regular_10");
+    tft.setTextColor(redTextColor, backgroundColor);
+    tft.drawString("Idioma", 36, 15, GFXFF);
+    tft.setTextDatum(MC_DATUM);
+    tft.drawString("Perfil", 169, 15, GFXFF);
+    tft.drawString("Red", 299, 15, GFXFF);
+    tft.setTextDatum(MR_DATUM);
+    tft.drawString("Hecho", 423, 15, GFXFF);
+
+  } else if (systemLanguage == 4) {
+    tft.setTextDatum(ML_DATUM);
+    smoothText("Lato_Regular_10");
+    tft.setTextColor(redTextColor, backgroundColor);
+    tft.drawString("Lingua", 36, 15, GFXFF);
+    tft.setTextDatum(MC_DATUM);
+    tft.drawString("Profilo", 169, 15, GFXFF);
+    tft.drawString("Rete", 299, 15, GFXFF);
+    tft.setTextDatum(MR_DATUM);
+    tft.drawString("Fatto", 423, 15, GFXFF);
+  }
+
+  tft.setTextDatum(ML_DATUM);
+  tft.setTextColor(textColor, backgroundColor);
+  smoothText("Lato_Bold_24");
+  tft.drawString("What", 67, 65, GFXFF);
+  smoothText("Lato_Regular_24");
+  tft.drawString("is your name?", 67, 94, GFXFF);
+  if (!openKeyboard) {
+    tft.drawRoundRect(102, 155, 275, 30, 5, redTextColor);
+  }
+
+  unsigned long startTime = millis();
+  unsigned long timerCheckingModule = 0;
+  unsigned long interval = 20;  
+  unsigned long loading = 2000; 
+
+  while (millis() - startTime <= loading) {
+    if (millis() - timerCheckingModule >= interval) {
+      if (systemLanguage == 0) {
+        timerCheckingModule = millis();
+        float progress = (millis() - startTime) / (float)loading;
+        float easedProgress = easeOutCubic(progress);  // Função de desaceleração aplicada ao progresso
+        float width = easedProgress * 41;
+        tft.fillRect(141, 29, width, 3, redTextColor);
+      } else {
+        timerCheckingModule = millis();
+        float progress = (millis() - startTime) / (float)loading;
+        float easedProgress = easeOutCubic(progress);  // Função de desaceleração aplicada ao progresso
+        float width = easedProgress * 50;
+        tft.fillRect(141, 29, width, 3, redTextColor);
+      }
+    }
+  }
+}
+  // ---------------------------------------
+  /*
+    tft.setTextDatum(ML_DATUM);
+    tft.setTextColor(textColor, backgroundColor);
+    smoothText("Lato_Bold_24");
+    tft.drawString("Choose", 67, 65, GFXFF);
+    smoothText("Lato_Regular_24");
+    tft.drawString("the app theme", 67, 94, GFXFF);
+
+    smoothText("Lato_Regular_14");
+    tft.setTextColor(redTextColor, blackColor);
+    tft.fillSmoothRoundRect(57, 142, 80, 70, 10, grayColor, backgroundColor);
+    tft.fillSmoothRoundRect(73, 161, 64, 51, 10, blackColor, gray2Color);
+    tft.drawString("Aa", 81, 172, GFXFF);
+
+    tft.setTextColor(redTextColor, whiteColor);
+    tft.fillSmoothRoundRect(152, 142, 80, 70, 10, snowColor, backgroundColor);
+    tft.fillSmoothRoundRect(168, 161, 64, 51, 10, whiteColor, snow2Color);
+    tft.drawString("Aa", 173, 172, GFXFF);
+
+    tft.setTextColor(whiteColor, blackColor);
+    tft.fillSmoothRoundRect(247, 142, 80, 70, 10, grayColor, backgroundColor);
+    tft.fillSmoothRoundRect(263, 161, 64, 51, 10, blackColor, gray2Color);
+    tft.drawString("Aa", 271, 172, GFXFF);
+
+    tft.setTextColor(blackColor, whiteColor);
+    tft.fillSmoothRoundRect(342, 142, 80, 70, 10, snowColor, backgroundColor);
+    tft.fillSmoothRoundRect(358, 161, 64, 51, 10, whiteColor, snow2Color);
+    tft.drawString("Aa", 363, 172, GFXFF);
+
+    tft.setTextColor(whiteColor, backgroundColor);
+    smoothText("Lato_Regular_10");
+    tft.drawString("Dark & Color", 57, 223, GFXFF);
+    tft.drawString("Light & Color", 152, 223, GFXFF);
+    tft.drawString("Dark", 247, 223, GFXFF);
+    tft.drawString("Light", 342, 223, GFXFF);
+    // ---------------------------------------
+
+    
+
+
+
+
+    tft.setTextDatum(ML_DATUM);
+    tft.setTextColor(textColor, backgroundColor);
+    smoothText("Lato_Bold_24");
+    tft.drawString("Select", 67, 65, GFXFF);
+    smoothText("Lato_Regular_24");
+    tft.drawString("a profile image", 67, 94, GFXFF);
+
+    tft.fillRect(67, 144, 50, 50, blockColor);
+    tft.fillSmoothRoundRect(128, 144, 50, 50, 7, blockColor);
+    tft.fillSmoothCircle(92, 230, 25, blockColor);
+    tft.fillRect(128, 205, 50, 50, blockColor);
+    tft.fillTriangle(125, 202, 125, 221, 144, 202, backgroundColor);
+    tft.fillTriangle(162, 202, 181, 221, 181, 202, backgroundColor);
+    tft.fillTriangle(125, 239, 125, 258, 144, 258, backgroundColor);
+    tft.fillTriangle(162, 258, 181, 258, 181, 239, backgroundColor);
+
+    tft.drawRect(282, 120, 100, 100, backgroundColor);
+
+    tft.fillSmoothCircle(365, 90, 18, bluetoothColor);
+
+    tft.drawRect(282, 120, 100, 100, blockColor);
+
+    unsigned long startTime = millis();
+    unsigned long timerCheckingModule = 0;
+    unsigned long interval = 20;  
+    unsigned long loading = 2000; 
+
+    while (millis() - startTime <= loading) {
+      if (millis() - timerCheckingModule >= interval) {
+        timerCheckingModule = millis();
+        float progress = (millis() - startTime) / (float)loading;
+        float easedProgress = easeOutCubic(progress);  // Função de desaceleração aplicada ao progresso
+        float width = easedProgress * 41;
+        tft.fillRect(171, 29, width, 3, redTextColor);
+      }
+    }
+  }
+  */
 
 // -------------------- PRIMEIRA CONFIGURACOES DO APARELHO --------------------
 void firstLanguages() {
-  screenLoaded = 2;
+  screenLoaded = 1;
   request[1] = false;
 
   tft.fillRect(41, 29, 390, 3, lightRedTextColor);
@@ -939,7 +1030,7 @@ void firstLoading() {
   unsigned long timerCheckingModule = 0;
   unsigned long interval = 20;  
   unsigned long bargraphTime = 5000; 
-  unsigned long logoTime = 2500;
+  unsigned long logoTime = 5000;
 
   if (firstInicialization == 0) {
     logo.createSprite(165, 165);
@@ -1222,28 +1313,3 @@ void smoothText(String textStyle) {
     return rgb555;
   }
 */
-
-
-// -------------------- OBTENCAO DA POSICAO DE TOUCH --------------------
-bool obtainTouch(void) {
-  bool pressed = tft.getTouch(&t_x, &t_y);
-  if (pressed) {
-    xScreen = map(t_x, 0, tft.width(), 0, 480);
-    yScreen = map(t_y, 0, tft.height(), 0, 480);
-    Serial.print("x, y, z = ");
-    Serial.print(xScreen);
-    Serial.print(" ,");
-    Serial.print(yScreen);
-    Serial.print(" ,");
-    Serial.printf("%i \n", tft.getTouchRawZ()); 
-    return true;
-  }
-  return false; 
-}
-
-
-
-
-
-
-
