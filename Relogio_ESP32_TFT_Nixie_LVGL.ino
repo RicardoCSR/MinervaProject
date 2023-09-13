@@ -384,27 +384,104 @@ void btn_firstAppTheme() {
 }
 
 void btn_keyboard() {
-  bool touchedBtn_A_Keyboard = touchRect(54, 204, 29, 22);
+  bool touchedBtn_A_Keyboard = touchRect(59, 228, 29, 22);
+  bool touchedBtn_B_Keyboard = touchRect(203, 252, 33, 22);
+  bool touchedBtn_C_Keyboard = touchRect(131, 252, 33, 22);
+  bool touchedBtn_D_Keyboard = touchRect(123, 228, 29, 22);
+  bool touchedBtn_E_Keyboard = touchRect(118, 204, 29, 22);
+  bool touchedBtn_F_Keyboard = touchRect(155, 228, 29, 22);
+  bool touchedBtn_G_Keyboard = touchRect(187, 228, 29, 22);
+  bool touchedBtn_H_Keyboard = touchRect(219, 228, 29, 22);
+  bool touchedBtn_I_Keyboard = touchRect(278, 204, 29, 22);
+  bool touchedBtn_J_Keyboard = touchRect(251, 228, 29, 22);
+  bool touchedBtn_K_Keyboard = touchRect(283, 228, 29, 22);
+  bool touchedBtn_L_Keyboard = touchRect(315, 228, 29, 22);
+  bool touchedBtn_M_Keyboard = touchRect(275, 252, 33, 22);
+  bool touchedBtn_N_Keyboard = touchRect(239, 252, 33, 2);
+  bool touchedBtn_O_Keyboard = touchRect(310, 204, 29, 22);
+  bool touchedBtn_P_Keyboard = touchRect(342, 204, 29, 22);
+  bool touchedBtn_Q_Keyboard = touchRect(54, 204, 29, 22);
+  bool touchedBtn_R_Keyboard = touchRect(150, 204, 29, 22);
+  bool touchedBtn_S_Keyboard = touchRect(91, 228, 29, 22);
+  bool touchedBtn_T_Keyboard = touchRect(182, 204, 29, 22);
+  bool touchedBtn_U_Keyboard = touchRect(246, 204, 29, 22);
+  bool touchedBtn_V_Keyboard = touchRect(167, 252, 33, 22);
+  bool touchedBtn_W_Keyboard = touchRect(86, 204, 29, 22);
+  bool touchedBtn_X_Keyboard = touchRect(95, 252, 33, 22);
+  bool touchedBtn_Y_Keyboard = touchRect(214, 204, 29, 22);
+  bool touchedBtn_Z_Keyboard = touchRect(59, 252, 33, 22);
 
   if (!touch) {
     touchedBtn_A_Keyboard = false;
+    touchedBtn_B_Keyboard = false;
+    touchedBtn_C_Keyboard = false;
+    touchedBtn_D_Keyboard = false;
+    touchedBtn_E_Keyboard = false;
+    touchedBtn_F_Keyboard = false;
+    touchedBtn_G_Keyboard = false;
+    touchedBtn_H_Keyboard = false;
+    touchedBtn_I_Keyboard = false;
+    touchedBtn_J_Keyboard = false;
+    touchedBtn_K_Keyboard = false;
+    touchedBtn_L_Keyboard = false;
+    touchedBtn_M_Keyboard = false;
+    touchedBtn_N_Keyboard = false;
+    touchedBtn_O_Keyboard = false;
+    touchedBtn_P_Keyboard = false;
+    touchedBtn_Q_Keyboard = false;
+    touchedBtn_R_Keyboard = false;
+    touchedBtn_S_Keyboard = false;
+    touchedBtn_T_Keyboard = false;
+    touchedBtn_U_Keyboard = false;
+    touchedBtn_V_Keyboard = false;
+    touchedBtn_W_Keyboard = false;
+    touchedBtn_X_Keyboard = false;
+    touchedBtn_Y_Keyboard = false;
+    touchedBtn_Z_Keyboard = false;
   }
 
   if (touchedBtn_A_Keyboard) {
     executeBtn = true;
     buttonPressed = 7;
+    tft.fillRoundRect(59, 228, 29, 22, 2, redTextColor);
+    
+    tft.setTextDatum(MC_DATUM);
+    tft.setTextColor(lightTextColor, redTextColor);
+    tft.drawString("a", 73, 239, GFXFF);
   }
 
   if (!touchedBtn_A_Keyboard && executeBtn && buttonPressed == 7) {
     executeBtn = false;
+
+    tft.fillRoundRect(59, 228, 29, 22, 2, backgroundColor);
+    tft.drawRoundRect(59, 228, 29, 22, 2, redTextColor);
+    tft.setTextDatum(MC_DATUM);
+    tft.setTextColor(lightTextColor, backgroundColor);
+    tft.drawString("a", 73, 239, GFXFF);
   }
 
-  Serial.print("touchedBtn_A_Keyboard: ");
-  Serial.println(touchedBtn_A_Keyboard);
+  if (touchedBtn_B_Keyboard) {
+    executeBtn = true;
+    buttonPressed = 8;
+    tft.fillRoundRect(203, 252, 33, 22, 2, redTextColor);
+
+    tft.setTextDatum(MC_DATUM);
+    tft.setTextColor(lightTextColor, redTextColor);
+    tft.drawString("b", 219, 263, GFXFF);
+  }
+
+  if (!touchedBtn_B_Keyboard && executeBtn && buttonPressed == 8) {
+    executeBtn = false;
+
+    tft.fillRoundRect(59, 228, 29, 22, 2, backgroundColor);
+    tft.drawRoundRect(59, 228, 29, 22, 2, redTextColor);
+    tft.setTextDatum(MC_DATUM);
+    tft.setTextColor(lightTextColor, backgroundColor);
+    tft.drawString("b", 219, 263, GFXFF);
+  }
+
 
 }
-
-
 
 // -------------------- PRIMEIRA CONFIGURACOES DE INTERNET --------------------
 void firstWiFiConnection() {
@@ -431,7 +508,6 @@ void firstWiFiConnection() {
   tft.drawArc(235, 197, 20, 23, 135, 225, blockColor, bluetoothColor, true);
   tft.drawArc(235, 197, 30, 33, 135, 225, blockColor, bluetoothColor, true);
 }
-
 
 // -------------------- TECLADO --------------------
 void keyboard() {
@@ -494,74 +570,77 @@ void keyboard() {
   }
 
   if (openKeyboard) {
-  tft.drawRoundRect(102, 125, 275, 30, 5, redTextColor);
+  tft.drawRoundRect(102, 125, 275, 30, 5, redTextColor);  // 
 
-    tft.drawRoundRect(11, 180, 22, 22, 2, redTextColor);
-    tft.drawRoundRect(36, 180, 28, 22, 2, redTextColor);
-    tft.drawRoundRect(67, 180, 28, 22, 2, redTextColor);
-    tft.drawRoundRect(98, 180, 28, 22, 2, redTextColor);
-    tft.drawRoundRect(129, 180, 28, 22, 2, redTextColor);
-    tft.drawRoundRect(160, 180, 28, 22, 2, redTextColor);
-    tft.drawRoundRect(191, 180, 28, 22, 2, redTextColor);
-    tft.drawRoundRect(222, 180, 28, 22, 2, redTextColor);
-    tft.drawRoundRect(253, 180, 28, 22, 2, redTextColor);
-    tft.drawRoundRect(284, 180, 28, 22, 2, redTextColor);
-    tft.drawRoundRect(315, 180, 28, 22, 2, redTextColor);
-    tft.drawRoundRect(346, 180, 28, 22, 2, redTextColor);
-    tft.drawRoundRect(377, 180, 28, 22, 2, redTextColor);
-    tft.drawRoundRect(408, 180, 59, 22, 2, redTextColor);
+    tft.drawRoundRect(11, 180, 22, 22, 2, redTextColor);  // `
+    tft.drawRoundRect(36, 180, 28, 22, 2, redTextColor);  // 1
+    tft.drawRoundRect(67, 180, 28, 22, 2, redTextColor);  // 2
+    tft.drawRoundRect(98, 180, 28, 22, 2, redTextColor);  // 3
+    tft.drawRoundRect(129, 180, 28, 22, 2, redTextColor); // 4
+    tft.drawRoundRect(160, 180, 28, 22, 2, redTextColor); // 5
+    tft.drawRoundRect(191, 180, 28, 22, 2, redTextColor); // 6
+    tft.drawRoundRect(222, 180, 28, 22, 2, redTextColor); // 7
+    tft.drawRoundRect(253, 180, 28, 22, 2, redTextColor); // 8
+    tft.drawRoundRect(284, 180, 28, 22, 2, redTextColor); // 9
+    tft.drawRoundRect(315, 180, 28, 22, 2, redTextColor); // 0
+    tft.drawRoundRect(346, 180, 28, 22, 2, redTextColor); // -
+    tft.drawRoundRect(377, 180, 28, 22, 2, redTextColor); // =
+    tft.drawRoundRect(408, 180, 59, 22, 2, redTextColor); // backspace
 
-    tft.drawRoundRect(11, 204, 40, 22, 2, redTextColor);
-    tft.drawRoundRect(54, 204, 29, 22, 2, redTextColor);
-    tft.drawRoundRect(86, 204, 29, 22, 2, redTextColor);
-    tft.drawRoundRect(118, 204, 29, 22, 2, redTextColor);
-    tft.drawRoundRect(150, 204, 29, 22, 2, redTextColor);
-    tft.drawRoundRect(182, 204, 29, 22, 2, redTextColor);
-    tft.drawRoundRect(214, 204, 29, 22, 2, redTextColor);
-    tft.drawRoundRect(246, 204, 29, 22, 2, redTextColor);
-    tft.drawRoundRect(278, 204, 29, 22, 2, redTextColor);
-    tft.drawRoundRect(310, 204, 29, 22, 2, redTextColor);
-    tft.drawRoundRect(342, 204, 29, 22, 2, redTextColor);
-    tft.drawRoundRect(374, 204, 29, 22, 2, redTextColor);
-    tft.drawRoundRect(406, 204, 29, 22, 2, redTextColor);
-    tft.drawRoundRect(438, 204, 29, 22, 2, redTextColor);
+    tft.drawRoundRect(11, 204, 40, 22, 2, redTextColor);  // tab
+    tft.drawRoundRect(54, 204, 29, 22, 2, redTextColor);  // q
+    tft.drawRoundRect(86, 204, 29, 22, 2, redTextColor);  // w
+    tft.drawRoundRect(118, 204, 29, 22, 2, redTextColor); // e
+    tft.drawRoundRect(150, 204, 29, 22, 2, redTextColor); // r
+    tft.drawRoundRect(182, 204, 29, 22, 2, redTextColor); // t
+    tft.drawRoundRect(214, 204, 29, 22, 2, redTextColor); // y
+    tft.drawRoundRect(246, 204, 29, 22, 2, redTextColor); // u
+    tft.drawRoundRect(278, 204, 29, 22, 2, redTextColor); // i
+    tft.drawRoundRect(310, 204, 29, 22, 2, redTextColor); // o
+    tft.drawRoundRect(342, 204, 29, 22, 2, redTextColor); // p
+    tft.drawRoundRect(374, 204, 29, 22, 2, redTextColor); // [
+    tft.drawRoundRect(406, 204, 29, 22, 2, redTextColor); // ]
+    tft.drawRoundRect(438, 204, 29, 22, 2, redTextColor); // "\"
 
-    tft.drawRoundRect(11, 228, 45, 22, 2, redTextColor);
-    tft.drawRoundRect(59, 228, 29, 22, 2, redTextColor);
-    tft.drawRoundRect(91, 228, 29, 22, 2, redTextColor);
-    tft.drawRoundRect(123, 228, 29, 22, 2, redTextColor);
-    tft.drawRoundRect(155, 228, 29, 22, 2, redTextColor);
-    tft.drawRoundRect(187, 228, 29, 22, 2, redTextColor);
-    tft.drawRoundRect(219, 228, 29, 22, 2, redTextColor);
-    tft.drawRoundRect(251, 228, 29, 22, 2, redTextColor);
-    tft.drawRoundRect(283, 228, 29, 22, 2, redTextColor);
-    tft.drawRoundRect(315, 228, 29, 22, 2, redTextColor);
-    tft.drawRoundRect(347, 228, 29, 22, 2, redTextColor);
-    tft.drawRoundRect(379, 228, 29, 22, 2, redTextColor);
-    tft.drawRoundRect(411, 228, 56, 22, 2, redTextColor);
+    tft.drawRoundRect(11, 228, 45, 22, 2, redTextColor);  // caps
+    tft.drawRoundRect(59, 228, 29, 22, 2, redTextColor);  // a
+    tft.drawRoundRect(91, 228, 29, 22, 2, redTextColor);  // s
+    tft.drawRoundRect(123, 228, 29, 22, 2, redTextColor); // d
+    tft.drawRoundRect(155, 228, 29, 22, 2, redTextColor); // f
+    tft.drawRoundRect(187, 228, 29, 22, 2, redTextColor); // g
+    tft.drawRoundRect(219, 228, 29, 22, 2, redTextColor); // h
+    tft.drawRoundRect(251, 228, 29, 22, 2, redTextColor); // j
+    tft.drawRoundRect(283, 228, 29, 22, 2, redTextColor); // k
+    tft.drawRoundRect(315, 228, 29, 22, 2, redTextColor); // l
+    tft.drawRoundRect(347, 228, 29, 22, 2, redTextColor); // ;
+    tft.drawRoundRect(379, 228, 29, 22, 2, redTextColor); // '
+    tft.drawRoundRect(411, 228, 56, 22, 2, redTextColor); // enter
 
-    tft.drawRoundRect(11, 252, 45, 22, 2, redTextColor);
-    tft.drawRoundRect(59, 252, 33, 22, 2, redTextColor);
-    tft.drawRoundRect(95, 252, 33, 22, 2, redTextColor);
-    tft.drawRoundRect(131, 252, 33, 22, 2, redTextColor);
-    tft.drawRoundRect(167, 252, 33, 22, 2, redTextColor);
-    tft.drawRoundRect(203, 252, 33, 22, 2, redTextColor);
-    tft.drawRoundRect(239, 252, 33, 22, 2, redTextColor);
-    tft.drawRoundRect(275, 252, 33, 22, 2, redTextColor);
-    tft.drawRoundRect(311, 252, 33, 22, 2, redTextColor);
-    tft.drawRoundRect(347, 252, 33, 22, 2, redTextColor);
-    tft.drawRoundRect(383, 252, 33, 22, 2, redTextColor);
-    tft.drawRoundRect(419, 252, 48, 22, 2, redTextColor);
+    tft.drawRoundRect(11, 252, 45, 22, 2, redTextColor);  // shift
+    tft.drawRoundRect(59, 252, 33, 22, 2, redTextColor);  // z
+    tft.drawRoundRect(95, 252, 33, 22, 2, redTextColor);  // x
+    tft.drawRoundRect(131, 252, 33, 22, 2, redTextColor); // c
+    tft.drawRoundRect(167, 252, 33, 22, 2, redTextColor); // v
+    tft.drawRoundRect(203, 252, 33, 22, 2, redTextColor); // b
+    tft.drawRoundRect(239, 252, 33, 22, 2, redTextColor); // n
+    tft.drawRoundRect(275, 252, 33, 22, 2, redTextColor); // m
+    tft.drawRoundRect(311, 252, 33, 22, 2, redTextColor); // ,
+    tft.drawRoundRect(347, 252, 33, 22, 2, redTextColor); // .
+    tft.drawRoundRect(383, 252, 33, 22, 2, redTextColor); // /
+    tft.drawRoundRect(419, 252, 48, 22, 2, redTextColor); // shift
 
-    tft.drawRoundRect(11, 276, 45, 22, 2, redTextColor);
-    tft.drawRoundRect(59, 276, 29, 22, 2, redTextColor);
-    tft.drawRoundRect(91, 276, 325, 22, 2, redTextColor);
-    tft.drawRoundRect(419, 276, 48, 22, 2, redTextColor);
+    tft.drawRoundRect(11, 276, 45, 22, 2, redTextColor);  // &123
+    tft.drawRoundRect(59, 276, 29, 22, 2, redTextColor);  // @
+    tft.drawRoundRect(91, 276, 325, 22, 2, redTextColor); // space
+    tft.drawRoundRect(419, 276, 48, 22, 2, redTextColor); // close
   }
 
   if (openKeyboard) {
     tft.setTextDatum(MC_DATUM);
     tft.setTextColor(lightTextColor, backgroundColor);
+    smoothText("Lato_Regular_10");
+    tft.drawString("backscape", 438, 191, GFXFF);
+
     smoothText("Lato_Regular_14");
     tft.drawString("`", 22, 191, GFXFF);
     tft.drawString("1", 50, 191, GFXFF);
@@ -615,10 +694,6 @@ void keyboard() {
     tft.drawString("/", 407, 263, GFXFF);
 
     tft.drawString("@", 72, 287, GFXFF);
-
-
-    smoothText("Lato_Regular_10");
-    tft.drawString("backscape", 438, 191, GFXFF);
   }
 
   unsigned long startTime = millis();
