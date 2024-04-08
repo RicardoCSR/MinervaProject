@@ -8,7 +8,10 @@
 
 #include "bigPowerImage.h"
 #include "MufoxLogo.h"
-#include "main.h"
+#include "shift.h"
+#include "shiftPressed.h"
+#include "backspace.h"
+#include "backspacePressed.h"
 
 #define pinOnOff 16
 #define pinSet 17
@@ -90,6 +93,10 @@ bool firstInicialization = false;         // Define a primeira inicializacao do 
   // firstInicialization = false Nao executado primeira inicializacao
   // firstInicialization = true Executado barra de carregamento e analise dos modulos
 
+bool shiftActivated = false;
+  // shiftActivated = false Nao executado
+  // shiftActivated = true Ativo
+
 byte colorBackgroundValue = 0;        // Define qual a cor de background
   // byte colorBackgroundValue = 0 Definido como fundo Escuro
   // byte colorBackgroundValue = 1 Definido como fundo Claro
@@ -122,6 +129,12 @@ byte loadingBar = 0;
   // loadingBar = 1 Executado barra de firstLanguages
   // loadingBar = 2 Executado barra de firstAppTheme
 
+byte keyboardShow = 0;
+  // keyboardShow = 0 Nao executado abertura do teclado
+  // keyboardShow = 1 Executado abertura do teclado
+  // keyboardShow = 2 Executado abertura do Shift key
+  // keyboardShow = 3 Executado fechamento do teclado
+
 
 // -------------------- INSTANCIAS DAS BIBLIOTECAS --------------------
   TFT_eSPI tft = TFT_eSPI();      // Instancia da biblioteca TFT_eSPI para operacao do display
@@ -152,6 +165,9 @@ byte btn_screenLoaded = 0;
 
 // -------------------- ESTRUTURA DOS BOTOES --------------------
 bool request[10] = {      // Variavel request para recarregamento completo da tela
+// false Tela nao e carregada
+// true Tela e carregada
+
   false,        // loader[0] firstLoading();
   false,        // loader[1] firstLanguages();
   false,        // loader[2] firstAppTheme();
@@ -169,6 +185,8 @@ bool touch = false; // Variavel para rastrear o estado anterior do toque
 bool executeBtn = false;
 bool selected_Languages = false;
 bool openKeyboard = false; // Variavel para abrir e fechar teclado
+bool shiftKeyboard = false; // Variavel para abrir e fechar Shift
+
 
 // -------------------- INT DE BOTOES --------------------------------
 int buttonPressed = 0;
@@ -177,8 +195,33 @@ int buttonPressed = 0;
 // buttonPressed = 3 Habilita Botao touchedBtn_Lang_Spanish
 // buttonPressed = 4 Habilita Botao touchedBtn_Lang_Italian
 // buttonPressed = 5 Habilita Botao touchedBtn_firstLanguague
-// buttonPressed = 6 Habilita Botao 
-// buttonPressed = 7 Habilita Botao 
+// buttonPressed = 6 Habilita Botao touchedBtn_Keyboard
+// buttonPressed = 7 Habilita Botao touchedBtn_A_Keyboard
+// buttonPressed = 8 Habilita Botao touchedBtn_B_Keyboard
+// buttonPressed = 9 Habilita Botao touchedBtn_C_Keyboard
+// buttonPressed = 10 Habilita Botao touchedBtn_D_Keyboard
+// buttonPressed = 11 Habilita Botao touchedBtn_E_Keyboard
+// buttonPressed = 12 Habilita Botao touchedBtn_F_Keyboard
+// buttonPressed = 13 Habilita Botao touchedBtn_G_Keyboard
+// buttonPressed = 14 Habilita Botao touchedBtn_H_Keyboard
+// buttonPressed = 15 Habilita Botao touchedBtn_I_Keyboard
+// buttonPressed = 16 Habilita Botao touchedBtn_J_Keyboard
+// buttonPressed = 17 Habilita Botao touchedBtn_K_Keyboard
+// buttonPressed = 18 Habilita Botao touchedBtn_L_Keyboard
+// buttonPressed = 19 Habilita Botao touchedBtn_M_Keyboard
+// buttonPressed = 20 Habilita Botao touchedBtn_N_Keyboard
+// buttonPressed = 21 Habilita Botao touchedBtn_O_Keyboard
+// buttonPressed = 22 Habilita Botao touchedBtn_P_Keyboard
+// buttonPressed = 23 Habilita Botao touchedBtn_Q_Keyboard
+// buttonPressed = 24 Habilita Botao touchedBtn_R_Keyboard
+// buttonPressed = 25 Habilita Botao touchedBtn_S_Keyboard
+// buttonPressed = 26 Habilita Botao touchedBtn_T_Keyboard
+// buttonPressed = 27 Habilita Botao touchedBtn_U_Keyboard
+// buttonPressed = 28 Habilita Botao touchedBtn_V_Keyboard
+// buttonPressed = 29 Habilita Botao touchedBtn_W_Keyboard
+// buttonPressed = 30 Habilita Botao touchedBtn_X_Keyboard
+// buttonPressed = 31 Habilita Botao touchedBtn_Y_Keyboard
+// buttonPressed = 32 Habilita Botao touchedBtn_Z_Keyboard
 
 // -------------------- CONFIGURACOES E INICIALIZACAO DE MODULOS --------------------
 void setup() {
@@ -354,6 +397,7 @@ void btn_firstLanguages() {
     touch = false;
     executeBtn = false;
     systemLanguage = 2;
+    keyboardShow = 1;
     request[1] = true;
     selected_Languages = true;
   }
@@ -396,32 +440,34 @@ void btn_firstAppTheme() {
 }
 
 void btn_keyboard() {
-  bool touchedBtn_A_Keyboard = touchRect(59, 228, 29, 22);
-  bool touchedBtn_B_Keyboard = touchRect(203, 252, 33, 22);
-  bool touchedBtn_C_Keyboard = touchRect(131, 252, 33, 22);
-  bool touchedBtn_D_Keyboard = touchRect(123, 228, 29, 22);
-  bool touchedBtn_E_Keyboard = touchRect(118, 204, 29, 22);
-  bool touchedBtn_F_Keyboard = touchRect(155, 228, 29, 22);
-  bool touchedBtn_G_Keyboard = touchRect(187, 228, 29, 22);
-  bool touchedBtn_H_Keyboard = touchRect(219, 228, 29, 22);
-  bool touchedBtn_I_Keyboard = touchRect(278, 204, 29, 22);
-  bool touchedBtn_J_Keyboard = touchRect(251, 228, 29, 22);
-  bool touchedBtn_K_Keyboard = touchRect(283, 228, 29, 22);
-  bool touchedBtn_L_Keyboard = touchRect(315, 228, 29, 22);
-  bool touchedBtn_M_Keyboard = touchRect(275, 252, 33, 22);
-  bool touchedBtn_N_Keyboard = touchRect(239, 252, 33, 2);
-  bool touchedBtn_O_Keyboard = touchRect(310, 204, 29, 22);
-  bool touchedBtn_P_Keyboard = touchRect(342, 204, 29, 22);
-  bool touchedBtn_Q_Keyboard = touchRect(54, 204, 29, 22);
-  bool touchedBtn_R_Keyboard = touchRect(150, 204, 29, 22);
-  bool touchedBtn_S_Keyboard = touchRect(91, 228, 29, 22);
-  bool touchedBtn_T_Keyboard = touchRect(182, 204, 29, 22);
-  bool touchedBtn_U_Keyboard = touchRect(246, 204, 29, 22);
-  bool touchedBtn_V_Keyboard = touchRect(167, 252, 33, 22);
-  bool touchedBtn_W_Keyboard = touchRect(86, 204, 29, 22);
-  bool touchedBtn_X_Keyboard = touchRect(95, 252, 33, 22);
-  bool touchedBtn_Y_Keyboard = touchRect(214, 204, 29, 22);
-  bool touchedBtn_Z_Keyboard = touchRect(59, 252, 33, 22);
+  bool touchedBtn_Q_Keyboard = touchRect(4, 132, 42, 40);
+  bool touchedBtn_W_Keyboard = touchRect(52, 132, 42, 40);
+  bool touchedBtn_E_Keyboard = touchRect(99, 132, 42, 40);
+  bool touchedBtn_R_Keyboard = touchRect(147, 132, 42, 40);
+  bool touchedBtn_T_Keyboard = touchRect(194, 132, 42, 40);
+  bool touchedBtn_Y_Keyboard = touchRect(242, 132, 42, 40);
+  bool touchedBtn_U_Keyboard = touchRect(291, 132, 42, 40);
+  bool touchedBtn_I_Keyboard = touchRect(338, 132, 42, 40);
+  bool touchedBtn_O_Keyboard = touchRect(386, 132, 42, 40);
+  bool touchedBtn_P_Keyboard = touchRect(434, 132, 42, 40);
+
+  bool touchedBtn_A_Keyboard = touchRect(4, 176, 65, 40);
+  bool touchedBtn_S_Keyboard = touchRect(74, 176, 42, 40);
+  bool touchedBtn_D_Keyboard = touchRect(121, 176, 42, 40);
+  bool touchedBtn_F_Keyboard = touchRect(169, 176, 42, 40);
+  bool touchedBtn_G_Keyboard = touchRect(216, 176, 42, 40);
+  bool touchedBtn_H_Keyboard = touchRect(266, 176, 42, 40);
+  bool touchedBtn_J_Keyboard = touchRect(314, 176, 42, 40);
+  bool touchedBtn_K_Keyboard = touchRect(361, 176, 42, 40);
+  bool touchedBtn_L_Keyboard = touchRect(409, 176, 67, 40);
+
+  bool touchedBtn_Z_Keyboard = touchRect(74, 220, 42, 40);
+  bool touchedBtn_X_Keyboard = touchRect(121, 220, 42, 40);
+  bool touchedBtn_C_Keyboard = touchRect(169, 220, 42, 40);
+  bool touchedBtn_V_Keyboard = touchRect(216, 220, 42, 40);
+  bool touchedBtn_B_Keyboard = touchRect(266, 220, 42, 40);
+  bool touchedBtn_N_Keyboard = touchRect(314, 220, 42, 40);
+  bool touchedBtn_M_Keyboard = touchRect(361, 220, 42, 40);
 
   if (!touch) {
     touchedBtn_A_Keyboard = false;
@@ -455,43 +501,548 @@ void btn_keyboard() {
   if (touchedBtn_A_Keyboard) {
     executeBtn = true;
     buttonPressed = 7;
-    tft.fillRoundRect(59, 228, 29, 22, 2, redTextColor);
     
-    tft.setTextDatum(MC_DATUM);
-    tft.setTextColor(lightTextColor, redTextColor);
-    tft.drawString("a", 73, 239, GFXFF);
+    if (shiftActivated) {
+      tft.drawString("A", 37, 196, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("a", 37, 196, GFXFF);
+    }
   }
 
   if (!touchedBtn_A_Keyboard && executeBtn && buttonPressed == 7) {
     executeBtn = false;
 
-    tft.fillRoundRect(59, 228, 29, 22, 2, backgroundColor);
-    tft.drawRoundRect(59, 228, 29, 22, 2, redTextColor);
-    tft.setTextDatum(MC_DATUM);
-    tft.setTextColor(lightTextColor, backgroundColor);
-    tft.drawString("a", 73, 239, GFXFF);
+    if (shiftActivated) {
+      tft.drawString("A", 37, 196, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("a", 37, 196, GFXFF);
+    }
   }
 
   if (touchedBtn_B_Keyboard) {
     executeBtn = true;
     buttonPressed = 8;
-    tft.fillRoundRect(203, 252, 33, 22, 2, redTextColor);
 
-    tft.setTextDatum(MC_DATUM);
-    tft.setTextColor(lightTextColor, redTextColor);
-    tft.drawString("b", 219, 263, GFXFF);
+    if (shiftActivated) {
+      tft.drawString("B", 284, 238, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("b", 284, 238, GFXFF);
+    }
   }
 
   if (!touchedBtn_B_Keyboard && executeBtn && buttonPressed == 8) {
     executeBtn = false;
 
-    tft.fillRoundRect(59, 228, 29, 22, 2, backgroundColor);
-    tft.drawRoundRect(59, 228, 29, 22, 2, redTextColor);
-    tft.setTextDatum(MC_DATUM);
-    tft.setTextColor(lightTextColor, backgroundColor);
-    tft.drawString("b", 219, 263, GFXFF);
+    if (shiftActivated) {
+      tft.drawString("B", 284, 238, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("b", 284, 238, GFXFF);
+    }
   }
 
+  if (touchedBtn_C_Keyboard) {
+    executeBtn = true;
+    buttonPressed = 9;
+
+    if (shiftActivated) {
+      tft.drawString("C", 188, 238, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("c", 188, 238, GFXFF);
+    }
+  }
+
+  if (!touchedBtn_C_Keyboard && executeBtn && buttonPressed == 9) {
+    executeBtn = false;
+
+    if (shiftActivated) {
+      tft.drawString("C", 188, 238, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("c", 188, 238, GFXFF);
+    }
+  }
+
+  if (touchedBtn_D_Keyboard) {
+    executeBtn = true;
+    buttonPressed = 10;
+
+    if (shiftActivated) {
+      tft.drawString("D", 140, 196, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("d", 140, 196, GFXFF);
+    }
+  }
+
+  if (touchedBtn_D_Keyboard && executeBtn && buttonPressed == 10) {
+    executeBtn = false;
+
+    if (shiftActivated) {
+      tft.drawString("D", 140, 196, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("d", 140, 196, GFXFF);
+    }
+  }
+
+  if (touchedBtn_E_Keyboard) {
+    executeBtn = true;
+    buttonPressed = 11;
+
+    if (shiftActivated) {
+      tft.drawString("E", 118, 150, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("e", 118, 150, GFXFF);
+    }
+  }
+
+  if (touchedBtn_E_Keyboard && executeBtn && buttonPressed == 11) {
+    executeBtn = false;
+
+    if (shiftActivated) {
+      tft.drawString("E", 118, 150, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("e", 118, 150, GFXFF);
+    }
+  }
+
+  if (touchedBtn_F_Keyboard) {
+    executeBtn = true;
+    buttonPressed = 12;
+
+    if (shiftActivated) {
+      tft.drawString("F", 188, 196, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("f", 188, 196, GFXFF);
+    }
+  }
+
+  if (touchedBtn_F_Keyboard && executeBtn && buttonPressed == 12) {
+    executeBtn = false;
+
+    if (shiftActivated) {
+      tft.drawString("F", 188, 196, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("f", 188, 196, GFXFF);
+    }
+  }
+  
+  if (touchedBtn_G_Keyboard) {
+    executeBtn = true;
+    buttonPressed = 13;
+
+    if (shiftActivated) {
+      tft.drawString("G", 236, 196, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("g", 236, 196, GFXFF);
+    }
+  }
+
+  if (touchedBtn_G_Keyboard && executeBtn && buttonPressed == 13) {
+    executeBtn = false;
+
+    if (shiftActivated) {
+      tft.drawString("G", 236, 196, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("g", 236, 196, GFXFF);
+    }
+  }
+
+  if (touchedBtn_H_Keyboard) {
+    executeBtn = true;
+    buttonPressed = 14;
+
+    if (shiftActivated) {
+      tft.drawString("H", 284, 196, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("h", 284, 196, GFXFF);
+    }
+  }
+
+  if (touchedBtn_H_Keyboard && executeBtn && buttonPressed == 14) {
+    executeBtn = false;
+
+    if (shiftActivated) {
+      tft.drawString("H", 284, 196, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("h", 284, 196, GFXFF);
+    }
+  }
+
+  if (touchedBtn_I_Keyboard) {
+    executeBtn = true;
+    buttonPressed = 15;
+
+    if (shiftActivated) {
+      tft.drawString("I", 359, 150, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("i", 359, 150, GFXFF);
+    }
+  }
+
+  if (touchedBtn_I_Keyboard && executeBtn && buttonPressed == 15) {
+    executeBtn = false;
+
+    if (shiftActivated) {
+      tft.drawString("I", 359, 150, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("i", 359, 150, GFXFF);
+    }
+  }
+
+  if (touchedBtn_J_Keyboard) {
+    executeBtn = true;
+    buttonPressed = 16;
+
+    if (shiftActivated) {
+      tft.drawString("J", 332, 196, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("j", 332, 196, GFXFF);
+    }
+  }
+
+  if (touchedBtn_J_Keyboard && executeBtn && buttonPressed == 16) {
+    executeBtn = false;
+
+    if (shiftActivated) {
+      tft.drawString("J", 332, 196, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("j", 332, 196, GFXFF);
+    }
+  }
+
+  if (touchedBtn_K_Keyboard) {
+    executeBtn = true;
+    buttonPressed = 17;
+
+    if (shiftActivated) {
+      tft.drawString("K", 379, 196, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("k", 379, 196, GFXFF);
+    }
+  }
+
+  if (touchedBtn_K_Keyboard && executeBtn && buttonPressed == 17) {
+    executeBtn = false;
+
+    if (shiftActivated) {
+      tft.drawString("K", 379, 196, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("k", 379, 196, GFXFF);
+    }
+  }
+
+  if (touchedBtn_L_Keyboard) {
+    executeBtn = true;
+    buttonPressed = 18;
+
+    if (shiftActivated) {
+      tft.drawString("L", 427, 196, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("l", 427, 196, GFXFF);
+    }
+  }
+
+  if (touchedBtn_L_Keyboard && executeBtn && buttonPressed == 18) {
+    executeBtn = false;
+
+    if (shiftActivated) {
+      tft.drawString("L", 427, 196, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("l", 427, 196, GFXFF);
+    }
+  }
+
+  if (touchedBtn_M_Keyboard) {
+    executeBtn = true;
+    buttonPressed = 19;
+
+    if (shiftActivated) {
+      tft.drawString("M", 379, 238, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("m", 379, 238, GFXFF);
+    }
+  }
+
+  if (touchedBtn_M_Keyboard && executeBtn && buttonPressed == 19) {
+    executeBtn = false;
+
+    if (shiftActivated) {
+      tft.drawString("M", 379, 238, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("m", 379, 238, GFXFF);
+    }
+  }
+
+  if (touchedBtn_N_Keyboard) {
+    executeBtn = true;
+    buttonPressed = 20;
+
+    if (shiftActivated) {
+      tft.drawString("N", 332, 238, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("n", 332, 238, GFXFF);
+    }
+  }
+
+  if (touchedBtn_N_Keyboard && executeBtn && buttonPressed == 20) {
+    executeBtn = false;
+
+    if (shiftActivated) {
+      tft.drawString("N", 332, 238, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("n", 332, 238, GFXFF);
+    }
+  }
+
+  if (touchedBtn_O_Keyboard) {
+    executeBtn = true;
+    buttonPressed = 21;
+
+    if (shiftActivated) {
+      tft.drawString("O", 405, 150, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("o", 405, 150, GFXFF);
+    }
+  }
+
+  if (touchedBtn_O_Keyboard && executeBtn && buttonPressed == 21) {
+    executeBtn = false;
+
+    if (shiftActivated) {
+      tft.drawString("O", 405, 150, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("o", 405, 150, GFXFF);
+    }
+  }
+
+  if (touchedBtn_P_Keyboard) {
+    executeBtn = true;
+    buttonPressed = 22;
+
+    if (shiftActivated) {
+      tft.drawString("P", 453, 150, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("p", 453, 150, GFXFF);
+    }
+  }
+
+  if (touchedBtn_P_Keyboard && executeBtn && buttonPressed == 22) {
+    executeBtn = false;
+
+    if (shiftActivated) {
+      tft.drawString("P", 453, 150, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("p", 453, 150, GFXFF);
+    }
+  }
+
+  if (touchedBtn_Q_Keyboard) {
+    executeBtn = true;
+    buttonPressed = 23;
+
+    if (shiftActivated) {
+      tft.drawString("Q", 23, 150, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("q", 23, 150, GFXFF);
+    }
+  }
+
+  if (touchedBtn_Q_Keyboard && executeBtn && buttonPressed == 23) {
+    executeBtn = false;
+
+    if (shiftActivated) {
+      tft.drawString("Q", 23, 150, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("q", 23, 150, GFXFF);
+    }
+  }
+
+  if (touchedBtn_R_Keyboard) {
+    executeBtn = true;
+    buttonPressed = 24;
+
+    if (shiftActivated) {
+      tft.drawString("R", 166, 150, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("r", 166, 150, GFXFF);
+    }
+  }
+
+  if (touchedBtn_R_Keyboard && executeBtn && buttonPressed == 24) {
+    executeBtn = false;
+
+    if (shiftActivated) {
+      tft.drawString("R", 166, 150, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("r", 166, 150, GFXFF);
+    }
+  }
+
+  if (touchedBtn_S_Keyboard) {
+    executeBtn = true;
+    buttonPressed = 25;
+
+    if (shiftActivated) {
+      tft.drawString("S", 93, 196, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("s", 93, 196, GFXFF);
+    }
+  }
+
+  if (touchedBtn_S_Keyboard && executeBtn && buttonPressed == 25) {
+    executeBtn = false;
+
+    if (shiftActivated) {
+      tft.drawString("S", 93, 196, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("s", 93, 196, GFXFF);
+    }
+  }
+
+  if (touchedBtn_T_Keyboard) {
+    executeBtn = true;
+    buttonPressed = 26;
+
+    if (shiftActivated) {
+      tft.drawString("T", 203, 150, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("t", 203, 150, GFXFF);
+    }
+  }
+
+  if (touchedBtn_T_Keyboard && executeBtn && buttonPressed == 26) {
+    executeBtn = false;
+
+    if (shiftActivated) {
+      tft.drawString("T", 203, 150, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("t", 203, 150, GFXFF);
+    }
+  }
+
+  if (touchedBtn_U_Keyboard) {
+    executeBtn = true;
+    buttonPressed = 27;
+
+    if (shiftActivated) {
+      tft.drawString("U", 310, 150, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("u", 310, 150, GFXFF);
+    }
+  }
+
+  if (touchedBtn_U_Keyboard && executeBtn && buttonPressed == 27) {
+    executeBtn = false;
+
+    if (shiftActivated) {
+      tft.drawString("U", 310, 150, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("u", 310, 150, GFXFF);
+    }
+  }
+
+  if (touchedBtn_V_Keyboard) {
+    executeBtn = true;
+    buttonPressed = 28;
+
+    if (shiftActivated) {
+      tft.drawString("v", 236, 238, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("v", 236, 238, GFXFF);
+    }
+  }
+
+  if (touchedBtn_V_Keyboard && executeBtn && buttonPressed == 28) {
+    executeBtn = false;
+
+    if (shiftActivated) {
+      tft.drawString("v", 236, 238, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("v", 236, 238, GFXFF);
+    }
+  }
+
+  if (touchedBtn_W_Keyboard) {
+    executeBtn = true;
+    buttonPressed = 29;
+
+    if (shiftActivated) {
+      tft.drawString("W", 71, 150, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("w", 71, 150, GFXFF);
+    }
+  }
+
+  if (touchedBtn_W_Keyboard && executeBtn && buttonPressed == 29) {
+    executeBtn = false;
+
+    if (shiftActivated) {
+      tft.drawString("W", 71, 150, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("w", 71, 150, GFXFF);
+    }
+  }
+
+  if (touchedBtn_X_Keyboard) {
+    executeBtn = true;
+    buttonPressed = 30;
+
+    if (shiftActivated) {
+      tft.drawString("X", 140, 238, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("x", 140, 238, GFXFF);
+    }
+  }
+
+  if (touchedBtn_X_Keyboard && executeBtn && buttonPressed == 30) {
+    executeBtn = false;
+
+    if (shiftActivated) {
+      tft.drawString("X", 140, 238, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("x", 140, 238, GFXFF);
+    }
+  }
+
+  if (touchedBtn_Y_Keyboard) {
+    executeBtn = true;
+    buttonPressed = 31;
+
+    if (shiftActivated) {
+      tft.drawString("Y", 261, 150, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("y", 261, 150, GFXFF);
+    }
+  }
+
+  if (touchedBtn_Y_Keyboard && executeBtn && buttonPressed == 31) {
+    executeBtn = false;
+
+    if (shiftActivated) {
+      tft.drawString("Y", 261, 150, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("y", 261, 150, GFXFF);
+    }
+  }
+
+  if (touchedBtn_Z_Keyboard) {
+    executeBtn = true;
+    buttonPressed = 32;
+
+    if (shiftActivated) {
+      tft.drawString("Z", 93, 238, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("z", 93, 238, GFXFF);
+    }
+  }
+
+  if (touchedBtn_Z_Keyboard && executeBtn && buttonPressed == 32) {
+    executeBtn = false;
+
+    if (shiftActivated) {
+      tft.drawString("Z", 93, 238, GFXFF);
+    } else if (!shiftActivated) {
+      tft.drawString("z", 93, 238, GFXFF);
+    }
+  }
 
 }
 
@@ -574,8 +1125,26 @@ void keyboard() {
   if (openKeyboard) {
     tft.drawRoundRect(102, 65, 275, 30, 5, redTextColor); 
 
-    tft.drawRoundRect(74, 220, 42, 40, 2, redTextColor);
-   
+    logo.createSprite(24, 22);
+    logo.setSwapBytes(true);
+    logo.pushImage(0, 0, 24, 22, shift); // sizeX e sizeY do PNG carregado
+    logo.pushSprite(25, 228, backgroundColor); // x e y do PNG carregado
+    logo.deleteSprite();
+
+    logo.createSprite(30, 24);
+    logo.setSwapBytes(true);
+    logo.pushImage(0, 0, 30, 24, backspace); // sizeX e sizeY do PNG carregado
+    logo.pushSprite(426, 227, backgroundColor); // x e y do PNG carregado
+    logo.deleteSprite();
+
+    tft.drawRoundRect(121, 264, 235, 40, 2, textColor); 
+    tft.fillRoundRect(409, 264, 67, 40, 10, bluetoothColor);
+    tft.drawRect(427, 285, 29,2, textColor);
+    tft.drawRect(454, 275, 2, 10, textColor);
+    tft.drawLine(427, 285, 433, 279, textColor);
+    tft.drawLine(428, 285, 434, 279, textColor);
+    tft.drawLine(427, 286, 433, 292, textColor);
+    tft.drawLine(428, 286, 434, 292, textColor);
   }
 
   if (openKeyboard) {
@@ -583,34 +1152,70 @@ void keyboard() {
     tft.setTextColor(lightTextColor, backgroundColor);
     smoothText("Lato_Regular_24");
 
-    tft.drawString("q", 23, 150, GFXFF);
-    tft.drawString("w", 71, 150, GFXFF);
-    tft.drawString("e", 118, 150, GFXFF);
-    tft.drawString("r", 166, 150, GFXFF);
-    tft.drawString("t", 203, 150, GFXFF);
-    tft.drawString("y", 261, 150, GFXFF);
-    tft.drawString("u", 310, 150, GFXFF);
-    tft.drawString("i", 359, 150, GFXFF);
-    tft.drawString("o", 405, 150, GFXFF);
-    tft.drawString("p", 453, 150, GFXFF);
+    if (shiftKeyboard == false) {
+      tft.drawString("q", 23, 150, GFXFF);
+      tft.drawString("w", 71, 150, GFXFF);
+      tft.drawString("e", 118, 150, GFXFF);
+      tft.drawString("r", 166, 150, GFXFF);
+      tft.drawString("t", 203, 150, GFXFF);
+      tft.drawString("y", 261, 150, GFXFF);
+      tft.drawString("u", 310, 150, GFXFF);
+      tft.drawString("i", 359, 150, GFXFF);
+      tft.drawString("o", 405, 150, GFXFF);
+      tft.drawString("p", 453, 150, GFXFF);
 
-    tft.drawString("a", 37, 196, GFXFF);
-    tft.drawString("s", 93, 196, GFXFF);
-    tft.drawString("d", 140, 196, GFXFF);
-    tft.drawString("f", 188, 196, GFXFF);
-    tft.drawString("g", 236, 196, GFXFF);
-    tft.drawString("h", 284, 196, GFXFF);
-    tft.drawString("j", 332, 196, GFXFF);
-    tft.drawString("k", 379, 196, GFXFF);
-    tft.drawString("l", 427, 196, GFXFF);
+      tft.drawString("a", 37, 196, GFXFF);
+      tft.drawString("s", 93, 196, GFXFF);
+      tft.drawString("d", 140, 196, GFXFF);
+      tft.drawString("f", 188, 196, GFXFF);
+      tft.drawString("g", 236, 196, GFXFF);
+      tft.drawString("h", 284, 196, GFXFF);
+      tft.drawString("j", 332, 196, GFXFF);
+      tft.drawString("k", 379, 196, GFXFF);
+      tft.drawString("l", 427, 196, GFXFF);
 
-    tft.drawString("z", 93, 238, GFXFF);
-    tft.drawString("x", 140, 238, GFXFF);
-    tft.drawString("c", 188, 238, GFXFF);
-    tft.drawString("v", 236, 238, GFXFF);
-    tft.drawString("b", 284, 238, GFXFF);
-    tft.drawString("n", 332, 238, GFXFF);
-    tft.drawString("m", 379, 238, GFXFF);
+      tft.drawString("z", 93, 238, GFXFF);
+      tft.drawString("x", 140, 238, GFXFF);
+      tft.drawString("c", 188, 238, GFXFF);
+      tft.drawString("v", 236, 238, GFXFF);
+      tft.drawString("b", 284, 238, GFXFF);
+      tft.drawString("n", 332, 238, GFXFF);
+      tft.drawString("m", 379, 238, GFXFF);
+
+    } else if (shiftKeyboard == true) {
+      tft.drawString("Q", 23, 150, GFXFF);
+      tft.drawString("W", 71, 150, GFXFF);
+      tft.drawString("E", 118, 150, GFXFF);
+      tft.drawString("R", 166, 150, GFXFF);
+      tft.drawString("T", 203, 150, GFXFF);
+      tft.drawString("Y", 261, 150, GFXFF);
+      tft.drawString("U", 310, 150, GFXFF);
+      tft.drawString("I", 359, 150, GFXFF);
+      tft.drawString("O", 405, 150, GFXFF);
+      tft.drawString("P", 453, 150, GFXFF);
+
+      tft.drawString("A", 37, 196, GFXFF);
+      tft.drawString("S", 93, 196, GFXFF);
+      tft.drawString("D", 140, 196, GFXFF);
+      tft.drawString("F", 188, 196, GFXFF);
+      tft.drawString("G", 236, 196, GFXFF);
+      tft.drawString("H", 284, 196, GFXFF);
+      tft.drawString("J", 332, 196, GFXFF);
+      tft.drawString("K", 379, 196, GFXFF);
+      tft.drawString("L", 427, 196, GFXFF);
+
+      tft.drawString("Z", 93, 238, GFXFF);
+      tft.drawString("X", 140, 238, GFXFF);
+      tft.drawString("C", 188, 238, GFXFF);
+      tft.drawString("V", 236, 238, GFXFF);
+      tft.drawString("B", 284, 238, GFXFF);
+      tft.drawString("N", 332, 238, GFXFF);
+      tft.drawString("M", 379, 238, GFXFF);
+    }
+    
+    tft.drawString("?123", 35, 284, GFXFF);
+    tft.drawString(",", 93, 284, GFXFF);
+    tft.drawString(".", 379, 284, GFXFF);
   }
 
   unsigned long startTime = millis();
@@ -623,8 +1228,7 @@ void keyboard() {
     tft.fillRect(41, 29, 130, 3, redTextColor);
 
     tft.fillSmoothCircle(36, 30, 5, redTextColor, backgroundColor);
-    tft.drawSmoothCircle(166, 30, 5, redTextColor, backgroundColor);
-    tft.fillSmoothCircle(166, 30, 3, backgroundColor, redTextColor);
+    tft.fillSmoothCircle(166, 30, 5, redTextColor, backgroundColor);
 
     tft.drawSmoothCircle(296, 30, 5, redTextColor, backgroundColor);
     tft.fillSmoothCircle(296, 30, 3, backgroundColor, redTextColor);
@@ -648,7 +1252,6 @@ void keyboard() {
         }
       }
     }
-    loadingBar = 3;
   }
 }
 
@@ -1071,7 +1674,7 @@ void firstLoading() {
       logo.setSwapBytes(true);
       logo.pushImage(0, 0, 165, 165, MufoxLogo); // sizeX e sizeY do PNG carregado
       logo.pushSprite(158, 37, TFT_BLACK); // x e y do PNG carregado
-
+      logo.deleteSprite();
       tft.setTextDatum(ML_DATUM);
       tft.setTextColor(textColor, backgroundColor);
       smoothText("Lato_Bold_14");
@@ -1159,8 +1762,9 @@ void loadScreen(void (*drawFunction)(), bool& loaded, bool& request) {
       tft.fillRect(143, 9, 55, 15, backgroundColor);      
       tft.fillRect(273, 9, 55, 15, backgroundColor);      
       tft.fillRect(383, 9, 55, 15, backgroundColor);            
-    } else if (loadingBar == 3) {
-      tft.fillRect(97, 152, 284, 36, backgroundColor);
+    }  
+    if (keyboardShow == 1) {
+      tft.fillRect(97, 152, 284, 36, whiteColor);
       tft.fillRect(62, 53, 157, 60, backgroundColor);
       tft.fillRect(140, 123, 200, 150, backgroundColor);
       tft.fillRect(405, 243, 70, 30, backgroundColor); 
@@ -1183,7 +1787,8 @@ void loadScreen(void (*drawFunction)(), bool& loaded, bool& request) {
       tft.fillRect(143, 9, 55, 15, backgroundColor);      
       tft.fillRect(273, 9, 55, 15, backgroundColor);      
       tft.fillRect(383, 9, 55, 15, backgroundColor);  
-    } else if (loadingBar == 3) {
+    }  
+    if (keyboardShow == 1) {
       tft.fillRect(97, 152, 284, 36, backgroundColor);
       tft.fillRect(62, 53, 157, 60, backgroundColor);
       tft.fillRect(140, 123, 200, 150, backgroundColor);
