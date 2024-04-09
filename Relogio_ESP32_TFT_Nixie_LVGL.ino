@@ -468,6 +468,7 @@ void btn_keyboard() {
   bool touchedBtn_B_Keyboard = touchRect(266, 220, 42, 40);
   bool touchedBtn_N_Keyboard = touchRect(314, 220, 42, 40);
   bool touchedBtn_M_Keyboard = touchRect(361, 220, 42, 40);
+  bool touchedBtn_Shift_Keyboard = touchRect(4, 220, 65, 40);
 
   if (!touch) {
     touchedBtn_A_Keyboard = false;
@@ -496,6 +497,7 @@ void btn_keyboard() {
     touchedBtn_X_Keyboard = false;
     touchedBtn_Y_Keyboard = false;
     touchedBtn_Z_Keyboard = false;
+    touchedBtn_Shift_Keyboard = false;
   }
 
   if (touchedBtn_A_Keyboard) {
@@ -902,9 +904,9 @@ void btn_keyboard() {
     buttonPressed = 26;
 
     if (shiftActivated) {
-      tft.drawString("T", 203, 150, GFXFF);
+      tft.drawString("T", 213, 150, GFXFF);
     } else if (!shiftActivated) {
-      tft.drawString("t", 203, 150, GFXFF);
+      tft.drawString("t", 213, 150, GFXFF);
     }
   }
 
@@ -912,9 +914,9 @@ void btn_keyboard() {
     executeBtn = false;
 
     if (shiftActivated) {
-      tft.drawString("T", 203, 150, GFXFF);
+      tft.drawString("T", 213, 150, GFXFF);
     } else if (!shiftActivated) {
-      tft.drawString("t", 203, 150, GFXFF);
+      tft.drawString("t", 213, 150, GFXFF);
     }
   }
 
@@ -1044,6 +1046,40 @@ void btn_keyboard() {
     }
   }
 
+  if (touchedBtn_Shift_Keyboard) {
+    executeBtn = true;
+    buttonPressed = 33;
+
+    if (shiftActivated) {
+      logo.createSprite(24, 22);
+      logo.setSwapBytes(true);
+      logo.pushImage(0, 0, 24, 22, shift); // sizeX e sizeY do PNG carregado
+      logo.pushSprite(25, 228, backgroundColor); // x e y do PNG carregado
+      logo.deleteSprite();  
+    } else if (!shiftActivated) {
+      logo.createSprite(24, 22);
+      logo.setSwapBytes(true);
+      logo.pushImage(0, 0, 24, 22, shiftPressed); // sizeX e sizeY do PNG carregado
+      logo.pushSprite(25, 228, backgroundColor); // x e y do PNG carregado
+      logo.deleteSprite();
+    }
+  }
+
+  if (touchedBtn_Shift_Keyboard && executeBtn && buttonPressed == 33) {
+    if (shiftKeyboard) {
+      shiftKeyboard = false;
+    } else {
+      shiftKeyboard = true;
+    }
+    keyboardShow = 2;
+    executeBtn = false;
+    request[3] = true;
+    openKeyboard = true;
+  }
+
+
+  
+
 }
 
 // -------------------- PRIMEIRA CONFIGURACOES DE INTERNET --------------------
@@ -1124,18 +1160,21 @@ void keyboard() {
 
   if (openKeyboard) {
     tft.drawRoundRect(102, 65, 275, 30, 5, redTextColor); 
-
-    logo.createSprite(24, 22);
-    logo.setSwapBytes(true);
-    logo.pushImage(0, 0, 24, 22, shift); // sizeX e sizeY do PNG carregado
-    logo.pushSprite(25, 228, backgroundColor); // x e y do PNG carregado
-    logo.deleteSprite();
-
-    logo.createSprite(30, 24);
-    logo.setSwapBytes(true);
-    logo.pushImage(0, 0, 30, 24, backspace); // sizeX e sizeY do PNG carregado
-    logo.pushSprite(426, 227, backgroundColor); // x e y do PNG carregado
-    logo.deleteSprite();
+    
+    if (shiftActivated) {
+      logo.createSprite(24, 22);
+      logo.setSwapBytes(true);
+      logo.pushImage(0, 0, 24, 22, shiftPressed); // sizeX e sizeY do PNG carregado
+      logo.pushSprite(25, 228, backgroundColor); // x e y do PNG carregado
+      logo.deleteSprite();  
+    }
+    if (!shiftActivated) {
+      logo.createSprite(24, 22);
+      logo.setSwapBytes(true);
+      logo.pushImage(0, 0, 24, 22, shift); // sizeX e sizeY do PNG carregado
+      logo.pushSprite(25, 228, backgroundColor); // x e y do PNG carregado
+      logo.deleteSprite();
+    }
 
     tft.drawRoundRect(121, 264, 235, 40, 2, textColor); 
     tft.fillRoundRect(409, 264, 67, 40, 10, bluetoothColor);
@@ -1157,7 +1196,7 @@ void keyboard() {
       tft.drawString("w", 71, 150, GFXFF);
       tft.drawString("e", 118, 150, GFXFF);
       tft.drawString("r", 166, 150, GFXFF);
-      tft.drawString("t", 203, 150, GFXFF);
+      tft.drawString("t", 213, 150, GFXFF);
       tft.drawString("y", 261, 150, GFXFF);
       tft.drawString("u", 310, 150, GFXFF);
       tft.drawString("i", 359, 150, GFXFF);
@@ -1187,7 +1226,7 @@ void keyboard() {
       tft.drawString("W", 71, 150, GFXFF);
       tft.drawString("E", 118, 150, GFXFF);
       tft.drawString("R", 166, 150, GFXFF);
-      tft.drawString("T", 203, 150, GFXFF);
+      tft.drawString("T", 213, 150, GFXFF);
       tft.drawString("Y", 261, 150, GFXFF);
       tft.drawString("U", 310, 150, GFXFF);
       tft.drawString("I", 359, 150, GFXFF);
@@ -1772,6 +1811,9 @@ void loadScreen(void (*drawFunction)(), bool& loaded, bool& request) {
       tft.fillRect(143, 9, 55, 15, backgroundColor);      
       tft.fillRect(273, 9, 55, 15, backgroundColor);      
       tft.fillRect(383, 9, 55, 15, backgroundColor); 
+    } 
+    if (keyboardShow == 2) {
+      tft.fillRect(8, 138, 455, 160, backgroundColor);
     } else {
       tft.fillScreen(backgroundColor);
     }
@@ -1797,6 +1839,9 @@ void loadScreen(void (*drawFunction)(), bool& loaded, bool& request) {
       tft.fillRect(143, 9, 55, 15, backgroundColor);      
       tft.fillRect(273, 9, 55, 15, backgroundColor);      
       tft.fillRect(383, 9, 55, 15, backgroundColor); 
+    }
+    if (keyboardShow == 2) {
+      tft.fillRect(8, 138, 455, 160, backgroundColor);
     } else {
       tft.fillScreen(backgroundColor);
     }
