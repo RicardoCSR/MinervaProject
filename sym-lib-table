@@ -1,7 +1,4 @@
 (sym_lib_table
   (version 7)
-  (lib (name "mynixies")(type "Legacy")(uri "E:/Projetos KiCAD/Bibliotecas Externas KICAD/Eagle-and-KiCAD-Nixie-Libs-master/mynixies.lib")(options "")(descr ""))
-  (lib (name "nixiemisc")(type "Legacy")(uri "E:/Projetos KiCAD/Bibliotecas Externas KICAD/Eagle-and-KiCAD-Nixie-Libs-master/nixiemisc.lib")(options "")(descr ""))
-  (lib (name "nixies-us")(type "Legacy")(uri "E:/Projetos KiCAD/Bibliotecas Externas KICAD/Eagle-and-KiCAD-Nixie-Libs-master/nixies-us.lib")(options "")(descr ""))
   (lib (name "Projeto Relogio Nixie IN17-rescue")(type "KiCad")(uri "${KIPRJMOD}/Projeto Relogio Nixie IN17-rescue.kicad_sym")(options "")(descr ""))
 )
