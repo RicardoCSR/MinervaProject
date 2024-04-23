@@ -427,7 +427,7 @@
       "gencad": "",
       "idf": "",
       "netlist": "../../Kicad/",
-      "specctra_dsn": "Projeto Relogio Nixie IN17.dsn",
+      "specctra_dsn": "temp-freerouting.dsn",
       "step": "",
       "vrml": ""
     },

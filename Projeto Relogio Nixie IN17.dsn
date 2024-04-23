@@ -39,7 +39,7 @@
             159600 -80626.5  158833 -81266.4  158042 -81875  157227 -82451.4
             156389 -82994.6  155531 -83503.9  154652 -83978.4  153756 -84417.3
             152842 -84819.9  151913 -85185.5  150970 -85513.7  151000 -88000
-            154500 -88000  154500 -104500  130000 -104500  130000 -88000
+            154500 -88000  154500 -104500  130500 -104500  130500 -88000
             135500 -88000  135500 -85500  134558 -85170.2  133629 -84802.9
             132717 -84398.7  131821 -83958.2  130943 -83482.2  130085 -82971.4
             129249 -82426.7  128435 -81848.8  127644 -81238.8  126879 -80597.6
@@ -193,9 +193,6 @@
     )
   )
   (placement
-    (component Connector_PinHeader_1.27mm:PinHeader_2x12_P1.27mm_Vertical
-      (place J3 150350.000000 -91770.000000 back 270.000000 (PN Conn_01x24))
-    )
     (component Capacitor_THT:C_Axial_L5.1mm_D3.1mm_P10.00mm_Horizontal
       (place C6 160649.838000 -69598.679000 front -130.000000 (PN "4.7uF 400V"))
       (place C5 163713.938000 -72169.777000 front -130.000000 (PN "100nF 400V"))
@@ -250,11 +247,12 @@
     (component "Package_DFN_QFN:QFN-48-1EP_7x7mm_P0.5mm_EP5.3x5.3mm"
       (place U6 141500.000000 -57498.447000 front 45.000000 (PN "ESP32-PICO-D4"))
     )
-    (component Connector_PinHeader_1.27mm:PinHeader_2x12_P1.27mm_Vertical::1
-      (place J2 136310.000000 -80770.000000 front 90.000000 (PN Conn_01x24))
+    (component Connector_PinHeader_1.27mm:PinHeader_2x12_P1.27mm_Vertical
+      (place J2 136150.000000 -80770.000000 front 90.000000 (PN Conn_01x24))
+      (place J3 150200.000000 -91000.000000 front -90.000000 (PN Conn_01x24))
     )
     (component "Package_DFN_QFN:QFN-44-1EP_7x7mm_P0.5mm_EP5.15x5.15mm"
-      (place U3 141500.000000 -69448.447000 front 45.000000 (PN "HV5523K7-G"))
+      (place U3 141736.504000 -70000.002000 front 45.000000 (PN "HV5523K7-G"))
     )
     (component Capacitor_SMD:C_0805_2012Metric
       (place C7 153078.249000 -54421.751000 front -135.000000 (PN 10uF))
@@ -273,7 +271,7 @@
     )
     (component Resistor_SMD:R_0603_1608Metric::1
       (place R20 128000.000000 -78000.000000 back 45.000000 (PN 470R))
-      (place R11 132174.998000 -90000.000000 back 0.000000 (PN 15K))
+      (place R11 149268.920000 -99631.062000 back 270.000000 (PN 15K))
       (place R18 135390.400000 -40952.900000 back 115.000000 (PN 10K))
       (place R12 146125.400000 -46025.600000 back 45.000000 (PN 200K))
       (place R16 145000.000000 -58750.000000 back 135.000000 (PN 1K))
@@ -283,7 +281,7 @@
       (place R14 141750.000000 -49000.000000 back 225.000000 (PN 1K))
       (place R4 147879.600000 -56058.600000 back 315.000000 (PN 10K))
       (place R1 155357.300000 -54357.900000 back 135.000000 (PN 10K))
-      (place R5 132175.000000 -92000.000000 back 0.000000 (PN 15K))
+      (place R5 135911.360000 -99631.060000 back 270.000000 (PN 15K))
       (place R7 162277.800000 -54850.800000 back 290.000000 (PN 10K))
     )
     (component Capacitor_SMD:C_0805_2012Metric::1
@@ -323,54 +321,6 @@
     )
   )
   (library
-    (image Connector_PinHeader_1.27mm:PinHeader_2x12_P1.27mm_Vertical
-      (outline (path signal 120  1577.53 695  2400 695))
-      (outline (path signal 120  307.53 -14665  962.47 -14665))
-      (outline (path signal 120  563.471 -760  706.529 -760))
-      (outline (path signal 120  760 -706.529  760 -563.471))
-      (outline (path signal 120  2400 695  2400 -14665))
-      (outline (path signal 120  -1130 -760  -1130 -14665))
-      (outline (path signal 120  760 695  962.47 695))
-      (outline (path signal 120  760 563.471  760 695))
-      (outline (path signal 120  1577.53 -14665  2400 -14665))
-      (outline (path signal 120  -1130 0  -1130 760))
-      (outline (path signal 120  -1130 -14665  -307.53 -14665))
-      (outline (path signal 120  -1130 760  0 760))
-      (outline (path signal 120  -1130 -760  -563.471 -760))
-      (outline (path signal 50  -1600 -15150  2850 -15150))
-      (outline (path signal 50  2850 1150  -1600 1150))
-      (outline (path signal 50  2850 -15150  2850 1150))
-      (outline (path signal 50  -1600 1150  -1600 -15150))
-      (outline (path signal 100  -217.5 635  2340 635))
-      (outline (path signal 100  2340 635  2340 -14605))
-      (outline (path signal 100  -1070 -217.5  -217.5 635))
-      (outline (path signal 100  -1070 -14605  -1070 -217.5))
-      (outline (path signal 100  2340 -14605  -1070 -14605))
-      (pin Rect[A]Pad_1000x1000_um 1 0 0)
-      (pin Oval[A]Pad_1000x1000_um 2 1270 0)
-      (pin Oval[A]Pad_1000x1000_um 3 0 -1270)
-      (pin Oval[A]Pad_1000x1000_um 4 1270 -1270)
-      (pin Oval[A]Pad_1000x1000_um 5 0 -2540)
-      (pin Oval[A]Pad_1000x1000_um 6 1270 -2540)
-      (pin Oval[A]Pad_1000x1000_um 7 0 -3810)
-      (pin Oval[A]Pad_1000x1000_um 8 1270 -3810)
-      (pin Oval[A]Pad_1000x1000_um 9 0 -5080)
-      (pin Oval[A]Pad_1000x1000_um 10 1270 -5080)
-      (pin Oval[A]Pad_1000x1000_um 11 0 -6350)
-      (pin Oval[A]Pad_1000x1000_um 12 1270 -6350)
-      (pin Oval[A]Pad_1000x1000_um 13 0 -7620)
-      (pin Oval[A]Pad_1000x1000_um 14 1270 -7620)
-      (pin Oval[A]Pad_1000x1000_um 15 0 -8890)
-      (pin Oval[A]Pad_1000x1000_um 16 1270 -8890)
-      (pin Oval[A]Pad_1000x1000_um 17 0 -10160)
-      (pin Oval[A]Pad_1000x1000_um 18 1270 -10160)
-      (pin Oval[A]Pad_1000x1000_um 19 0 -11430)
-      (pin Oval[A]Pad_1000x1000_um 20 1270 -11430)
-      (pin Oval[A]Pad_1000x1000_um 21 0 -12700)
-      (pin Oval[A]Pad_1000x1000_um 22 1270 -12700)
-      (pin Oval[A]Pad_1000x1000_um 23 0 -13970)
-      (pin Oval[A]Pad_1000x1000_um 24 1270 -13970)
-    )
     (image Capacitor_THT:C_Axial_L5.1mm_D3.1mm_P10.00mm_Horizontal
       (outline (path signal 120  1040 0  2330 0))
       (outline (path signal 120  2330 1670  2330 -1670))
@@ -733,7 +683,7 @@
       (pin RoundRect[T]Pad_250x800_62.738_um_0.000000_0 48 -2750 3450)
       (pin Rect[T]Pad_5300x5300_um 49 0 0)
     )
-    (image Connector_PinHeader_1.27mm:PinHeader_2x12_P1.27mm_Vertical::1
+    (image Connector_PinHeader_1.27mm:PinHeader_2x12_P1.27mm_Vertical
       (outline (path signal 120  -1130 760  0 760))
       (outline (path signal 120  -1130 0  -1130 760))
       (outline (path signal 120  -1130 -760  -1130 -14665))
@@ -1554,34 +1504,34 @@
       (pins J3-6 N1-9)
     )
     (net IN1_0
-      (pins J3-13 N2-0)
+      (pins N2-0 J3-13)
     )
     (net IN1_1
-      (pins J3-17 N2-1)
+      (pins N2-1 J3-17)
     )
     (net IN1_2
-      (pins J3-7 N2-2)
+      (pins N2-2 J3-7)
     )
     (net IN1_3
-      (pins J3-19 N2-3)
+      (pins N2-3 J3-19)
     )
     (net IN1_4
-      (pins J3-15 N2-4)
+      (pins N2-4 J3-15)
     )
     (net IN1_5
-      (pins J3-11 N2-5)
+      (pins N2-5 J3-11)
     )
     (net IN1_6
-      (pins J3-9 N2-6)
+      (pins N2-6 J3-9)
     )
     (net IN1_7
-      (pins J3-21 N2-7)
+      (pins N2-7 J3-21)
     )
     (net IN1_8
-      (pins J3-3 N2-8)
+      (pins N2-8 J3-3)
     )
     (net IN1_9
-      (pins J3-5 N2-9)
+      (pins N2-9 J3-5)
     )
     (net TX0
       (pins J1-3 U6-41 U2-4)
@@ -1832,74 +1782,68 @@
     (net "Net-(Q6-C)"
       (pins R12-2 Q6-1 R14-2)
     )
-    (net "Net-(J2-Pin_23)"
-      (pins J2-23 U3-2)
-    )
-    (net "Net-(J2-Pin_24)"
-      (pins J2-24 U3-1)
-    )
     (net IN1_RHDP
       (pins J3-1)
     )
     (net "Net-(J2-Pin_3)"
-      (pins J2-3 U3-22)
+      (pins J2-3 U3-1)
     )
     (net "Net-(J2-Pin_4)"
-      (pins J2-4 U3-21)
+      (pins J2-4 U3-2)
     )
     (net "Net-(J2-Pin_5)"
-      (pins J2-5 U3-20)
+      (pins J2-5 U3-3)
     )
     (net "Net-(J2-Pin_6)"
-      (pins J2-6 U3-19)
+      (pins J2-6 U3-4)
     )
     (net "Net-(J2-Pin_7)"
-      (pins J2-7 U3-18)
+      (pins J2-7 U3-5)
     )
     (net "Net-(J2-Pin_8)"
-      (pins J2-8 U3-17)
+      (pins J2-8 U3-6)
     )
     (net "Net-(J2-Pin_9)"
-      (pins J2-9 U3-16)
+      (pins J2-9 U3-7)
     )
     (net "Net-(J2-Pin_10)"
-      (pins J2-10 U3-15)
+      (pins J2-10 U3-8)
     )
     (net "Net-(J2-Pin_11)"
-      (pins J2-11 U3-14)
+      (pins J2-11 U3-9)
     )
     (net "Net-(J2-Pin_12)"
-      (pins J2-12 U3-13)
+      (pins J2-12 U3-10)
     )
     (net "Net-(J2-Pin_13)"
-      (pins J2-13 U3-12)
+      (pins J2-13 U3-11)
     )
     (net "Net-(J2-Pin_14)"
-      (pins J2-14 U3-11)
+      (pins J2-14 U3-12)
     )
     (net "Net-(J2-Pin_15)"
-      (pins J2-15 U3-10)
+      (pins J2-15 U3-13)
     )
     (net "Net-(J2-Pin_16)"
-      (pins J2-16 U3-9)
+      (pins J2-16 U3-14)
     )
     (net "Net-(J2-Pin_17)"
-      (pins J2-17 U3-8)
+      (pins J2-17 U3-15)
     )
     (net "Net-(J2-Pin_18)"
-      (pins J2-18 U3-7)
+      (pins J2-18 U3-16)
     )
     (net "Net-(J2-Pin_19)"
-      (pins J2-19 U3-6)
+      (pins J2-19 U3-17)
     )
     (net "Net-(J2-Pin_20)"
-      (pins J2-20 U3-5)
+      (pins J2-20 U3-18)
     )
     (net "Net-(J2-Pin_21)"
-      (pins J2-21 U3-4)
+      (pins J2-21 U3-19)
     )
     (net "Net-(J2-Pin_22)"
-      (pins J2-22 U3-3)
+      (pins J2-22 U3-20)
     )
     (net "Net-(R3-Pad2)"
       (pins R3-2 R7-2)
@@ -1924,6 +1868,12 @@
     )
     (net IN1_RHDPe
       (pins N2-RHDP)
+    )
+    (net "Net-(J2-Pin_23)"
+      (pins J2-23 U3-21)
+    )
+    (net "Net-(J2-Pin_24)"
+      (pins J2-24 U3-22)
     )
     (class kicad_default "" 3.3VA 5VA ANT BAT+ "BAT-" BATERRY_LEVEL BL BLUETOOTH_LED
       BOOT BT_LED CLK DATA_IN DCDC DTR EN FB HV HVe IN0_0 IN0_1 IN0_2 IN0_3
