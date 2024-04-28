@@ -11,7 +11,7 @@
     (via_costs 50)
     (plane_via_costs 5)
     (start_ripup_costs 100)
-    (start_pass_no 25)
+    (start_pass_no 3650)
     (layer_rule F.Cu
       (active on)
       (preferred_direction vertical)
@@ -31,6 +31,7 @@
     (clearance 100.0 (type smd_to_turn_gap))
     (clearance 200.2 (type smd))
     (clearance 200.2 (type "kicad_default"))
+    (clearance 200.2 (type kicad))
   )
   (padstack "Via[0-1]_600:300_um"
     (shape
@@ -69,16 +70,19 @@
     "IN0_6" "IN0_7" "IN0_8" "IN0_9" "IN1_0" "IN1_1" "IN1_2" "IN1_3"
     "IN1_4" "IN1_5" "IN1_6" "IN1_7" "IN1_8" "IN1_9" TX0 RX0
     VIN "Net-(U4-SW)" 3.3VA "Net-(Q1-B)" RST EN "Net-(Q2-G)" "Net-(Q2-S)"
-    "Net-(Q3-B)" IO0 DTR "Net-(Q4-B)" "Net-(Q6-B)" FB "Net-(J1-Pin_12)" SW1
-    SW2 "Net-(J3-Pin_12)" "Net-(U5-PROG)" "Net-(D3-A)" STAT "unconnected-(U1-SHDN-Pad4)" "unconnected-(U2-RI{slash}CLK-Pad1)" REGIN
-    "unconnected-(U2-~{RSTb}-Pad9)" "unconnected-(U2-NC-Pad10)" "unconnected-(U2-GPIO.3-Pad11)" "unconnected-(U2-GPIO.2-Pad12)" "unconnected-(U2-GPIO.1-Pad13)" "unconnected-(U2-GPIO.0-Pad14)" "unconnected-(U2-~{SUSPENDb}-Pad15)" "unconnected-(U2-NC-Pad16)"
-    "unconnected-(U2-SUSPEND-Pad17)" "unconnected-(U2-CTS-Pad18)" "unconnected-(U2-RTS-Pad19)" "unconnected-(U2-RXD-Pad20)" "unconnected-(U2-TXD-Pad21)" "unconnected-(U2-DSR-Pad22)" "IN0_DP" "IN1_DP"
-    POL CLK VDD LE "DATA_IN" BL "BATERRY_LEVEL" "BLUETOOTH_LED"
-    ANT "Net-(R3-Pad2)" BOOT "unconnected-(U3-DATA_OUT-Pad23)" "unconnected-(U6-SENSOR_VP-Pad5)" "unconnected-(U6-SENSOR_CAPP-Pad6)" "unconnected-(U6-SENSOR_CAPN-Pad7)" "unconnected-(U6-SENSOR_VN-Pad8)"
-    "unconnected-(U6-IO35-Pad11)" "unconnected-(U6-IO25-Pad14)" "unconnected-(U6-IO26-Pad15)" "unconnected-(U6-IO27-Pad16)" "unconnected-(U6-IO15-Pad21)" "unconnected-(U6-IO2-Pad22)" "unconnected-(U6-IO16-Pad25)" "unconnected-(U6-VDD_SDIO-Pad26)"
-    "unconnected-(U6-IO17-Pad27)" "unconnected-(U6-SD2{slash}IO9-Pad28)" "unconnected-(U6-SD3{slash}IO10-Pad29)" "unconnected-(U6-CMD-Pad30)" "unconnected-(U6-CLK-Pad31)" "unconnected-(U6-SD0-Pad32)" "unconnected-(U6-SD1-Pad33)" "unconnected-(U6-IO23-Pad36)"
-    "unconnected-(U6-IO22-Pad39)" "unconnected-(U6-VDDA-Pad43)" "unconnected-(U6-XTAL_N_NC-Pad44)" "unconnected-(U6-XTAL_P_NC-Pad45)" "unconnected-(U6-VDDA-Pad46)" "unconnected-(U6-CAP2_NC-Pad47)" WS2812B "Net-(D5-K)"
-    "Net-(D6-K)" "Net-(D4-K)" "unconnected-(U6-CAP1_NC-Pad48)" "Net-(Q5-B)" "Net-(Q6-C)"
+    "Net-(Q3-B)" IO0 DTR "Net-(Q4-B)" "Net-(Q6-B)" FB SW1 SW2
+    "Net-(U5-PROG)" "Net-(D3-A)" STAT "unconnected-(U1-SHDN-Pad4)" "unconnected-(U2-RI{slash}CLK-Pad1)" REGIN "unconnected-(U2-~{RSTb}-Pad9)" "unconnected-(U2-NC-Pad10)"
+    "unconnected-(U2-GPIO.3-Pad11)" "unconnected-(U2-GPIO.2-Pad12)" "unconnected-(U2-GPIO.1-Pad13)" "unconnected-(U2-GPIO.0-Pad14)" "unconnected-(U2-~{SUSPENDb}-Pad15)" "unconnected-(U2-NC-Pad16)" "unconnected-(U2-SUSPEND-Pad17)" "unconnected-(U2-CTS-Pad18)"
+    "unconnected-(U2-RTS-Pad19)" "unconnected-(U2-RXD-Pad20)" "unconnected-(U2-TXD-Pad21)" "unconnected-(U2-DSR-Pad22)" POL CLK VDD LE
+    "DATA_IN" BL "BATERRY_LEVEL" "BLUETOOTH_LED" ANT BOOT "unconnected-(U3-DATA_OUT-Pad23)" "unconnected-(U6-SENSOR_VP-Pad5)"
+    "unconnected-(U6-SENSOR_CAPP-Pad6)" "unconnected-(U6-SENSOR_CAPN-Pad7)" "unconnected-(U6-SENSOR_VN-Pad8)" "unconnected-(U6-IO35-Pad11)" "unconnected-(U6-IO25-Pad14)" "unconnected-(U6-IO26-Pad15)" "unconnected-(U6-IO27-Pad16)" "unconnected-(U6-IO15-Pad21)"
+    "unconnected-(U6-IO2-Pad22)" "unconnected-(U6-IO16-Pad25)" "unconnected-(U6-VDD_SDIO-Pad26)" "unconnected-(U6-IO17-Pad27)" "unconnected-(U6-SD2{slash}IO9-Pad28)" "unconnected-(U6-SD3{slash}IO10-Pad29)" "unconnected-(U6-CMD-Pad30)" "unconnected-(U6-CLK-Pad31)"
+    "unconnected-(U6-SD0-Pad32)" "unconnected-(U6-SD1-Pad33)" "unconnected-(U6-IO23-Pad36)" "unconnected-(U6-IO22-Pad39)" "unconnected-(U6-VDDA-Pad43)" "unconnected-(U6-XTAL_N_NC-Pad44)" "unconnected-(U6-XTAL_P_NC-Pad45)" "unconnected-(U6-VDDA-Pad46)"
+    "unconnected-(U6-CAP2_NC-Pad47)" WS2812B "Net-(D5-K)" "Net-(D6-K)" "Net-(D4-K)" "unconnected-(U6-CAP1_NC-Pad48)" "Net-(Q5-B)" "Net-(Q6-C)"
+    "Net-(R3-Pad2)" HVe "Net-(N1-PadA)" "Net-(N2-PadA)" "unconnected-(N1-PadRHDP)" "IN0_LHDPe" "unconnected-(N2-PadLHDP)" "IN1_RHDPe"
+    HVOUT22 HVOUT23 HVOUT24 HVOUT25 HVOUT26 HVOUT27 HVOUT28 HVOUT29
+    HVOUT30 HVOUT31 HVOUT32 HVOUT21 HVOUT20 HVOUT19 HVOUT18 HVOUT17
+    HVOUT16 HVOUT15 HVOUT14 HVOUT13 HVOUT12 HVOUT11
     (clearance_class default)
     (via_rule "kicad_default")
     (rule
