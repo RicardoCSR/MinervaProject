@@ -733,6 +733,73 @@
         )
       )
     )
+    (symbol "Diode:1N4148W" (pin_numbers hide) (pin_names hide) (in_bom yes) (on_board yes)
+      (property "Reference" "D" (at 0 2.54 0)
+        (effects (font (size 1.27 1.27)))
+      )
+      (property "Value" "1N4148W" (at 0 -2.54 0)
+        (effects (font (size 1.27 1.27)))
+      )
+      (property "Footprint" "Diode_SMD:D_SOD-123" (at 0 -4.445 0)
+        (effects (font (size 1.27 1.27)) hide)
+      )
+      (property "Datasheet" "https://www.vishay.com/docs/85748/1n4148w.pdf" (at 0 0 0)
+        (effects (font (size 1.27 1.27)) hide)
+      )
+      (property "Sim.Device" "D" (at 0 0 0)
+        (effects (font (size 1.27 1.27)) hide)
+      )
+      (property "Sim.Pins" "1=K 2=A" (at 0 0 0)
+        (effects (font (size 1.27 1.27)) hide)
+      )
+      (property "ki_keywords" "diode" (at 0 0 0)
+        (effects (font (size 1.27 1.27)) hide)
+      )
+      (property "ki_description" "75V 0.15A Fast Switching Diode, SOD-123" (at 0 0 0)
+        (effects (font (size 1.27 1.27)) hide)
+      )
+      (property "ki_fp_filters" "D*SOD?123*" (at 0 0 0)
+        (effects (font (size 1.27 1.27)) hide)
+      )
+      (symbol "1N4148W_0_1"
+        (polyline
+          (pts
+            (xy -1.27 1.27)
+            (xy -1.27 -1.27)
+          )
+          (stroke (width 0.254) (type default))
+          (fill (type none))
+        )
+        (polyline
+          (pts
+            (xy 1.27 0)
+            (xy -1.27 0)
+          )
+          (stroke (width 0) (type default))
+          (fill (type none))
+        )
+        (polyline
+          (pts
+            (xy 1.27 1.27)
+            (xy 1.27 -1.27)
+            (xy -1.27 0)
+            (xy 1.27 1.27)
+          )
+          (stroke (width 0.254) (type default))
+          (fill (type none))
+        )
+      )
+      (symbol "1N4148W_1_1"
+        (pin passive line (at -3.81 0 0) (length 2.54)
+          (name "K" (effects (font (size 1.27 1.27))))
+          (number "1" (effects (font (size 1.27 1.27))))
+        )
+        (pin passive line (at 3.81 0 180) (length 2.54)
+          (name "A" (effects (font (size 1.27 1.27))))
+          (number "2" (effects (font (size 1.27 1.27))))
+        )
+      )
+    )
     (symbol "Diode:1N5819" (pin_numbers hide) (pin_names (offset 1.016) hide) (in_bom yes) (on_board yes)
       (property "Reference" "D" (at 0 2.54 0)
         (effects (font (size 1.27 1.27)))
@@ -2237,6 +2304,9 @@
   (junction (at 105.41 80.01) (diameter 0) (color 0 0 0 0)
     (uuid 56af2832-7fcf-4570-a7f6-eb305d0bb2db)
   )
+  (junction (at 62.865 32.385) (diameter 0) (color 0 0 0 0)
+    (uuid 5c3dd7f5-76a8-4e3f-9f31-39d42cb1a3a4)
+  )
   (junction (at 104.14 25.4) (diameter 0) (color 0 0 0 0)
     (uuid 5ccd6831-16c4-4eac-8929-2b18fcab0b17)
   )
@@ -2245,6 +2315,9 @@
   )
   (junction (at 132.08 109.22) (diameter 0) (color 0 0 0 0)
     (uuid 607b9f16-fe3f-45ba-be4c-d810c1dc5cfa)
+  )
+  (junction (at 62.865 29.21) (diameter 0) (color 0 0 0 0)
+    (uuid 60d7cb0e-b694-4185-8ce1-202e90320292)
   )
   (junction (at 185.42 109.22) (diameter 0) (color 0 0 0 0)
     (uuid 64d92e46-9c48-472e-8492-276c3d3eed4e)
@@ -2326,6 +2399,9 @@
   )
   (junction (at 132.08 33.02) (diameter 0) (color 0 0 0 0)
     (uuid efa28419-4b02-4c0b-bdd8-d96a2c06edbd)
+  )
+  (junction (at 45.72 29.21) (diameter 0) (color 0 0 0 0)
+    (uuid f71769d6-1452-4e74-a336-2595083f6cf3)
   )
   (junction (at 107.95 162.56) (diameter 0) (color 0 0 0 0)
     (uuid fb996967-dc57-4515-b524-417860b87df6)
@@ -2488,10 +2564,6 @@
     (stroke (width 0) (type default))
     (uuid 15410670-0e3e-4b5f-ac8c-2e1bf8dc144c)
   )
-  (wire (pts (xy 44.45 49.53) (xy 50.8 49.53))
-    (stroke (width 0) (type default))
-    (uuid 15c79245-82fc-49b9-8f3b-2540c62af5db)
-  )
   (wire (pts (xy 426.72 128.905) (xy 424.18 128.905))
     (stroke (width 0) (type default))
     (uuid 1620e3e4-e817-4275-9dd3-a05dd4f0757b)
@@ -2567,6 +2639,10 @@
     (stroke (width 0) (type default))
     (uuid 219a1f09-5ad6-4b4e-b47d-fa7a6dc8fe8d)
   )
+  (wire (pts (xy 62.865 29.21) (xy 65.405 29.21))
+    (stroke (width 0) (type default))
+    (uuid 21c029ee-01f9-48de-ae86-dc970b00cf31)
+  )
   (wire (pts (xy 58.42 248.92) (xy 58.42 251.46))
     (stroke (width 0) (type default))
     (uuid 2236133d-eab6-4eb7-81ae-33bc81c42bdb)
@@ -2629,7 +2705,7 @@
     (uuid 287c0be1-66e2-448a-8af5-283ae8d093fb)
   )
 
-  (wire (pts (xy 44.45 57.15) (xy 50.8 57.15))
+  (wire (pts (xy 31.115 36.83) (xy 37.465 36.83))
     (stroke (width 0) (type default))
     (uuid 29314436-41bc-4ed7-9d35-832e916110ee)
   )
@@ -2878,6 +2954,10 @@
     (stroke (width 0) (type default))
     (uuid 54adf648-68b5-4dc9-a4b2-691dce2359d7)
   )
+  (wire (pts (xy 45.72 29.21) (xy 45.72 32.385))
+    (stroke (width 0) (type default))
+    (uuid 55c34490-f3f1-4479-a1fa-5c242dec8cf6)
+  )
   (wire (pts (xy 237.49 120.65) (xy 240.03 120.65))
     (stroke (width 0) (type default))
     (uuid 56c0c1b1-5910-4ecf-ad73-e727ab9073e8)
@@ -2949,6 +3029,10 @@
     (stroke (width 0) (type default))
     (uuid 5fa2f1fa-1b1d-418e-b4d7-f725f60a888f)
   )
+  (wire (pts (xy 31.115 29.21) (xy 45.72 29.21))
+    (stroke (width 0) (type default))
+    (uuid 5fad1631-c4b7-4667-af5b-b539f453face)
+  )
   (wire (pts (xy 132.08 33.02) (xy 132.08 41.91))
     (stroke (width 0) (type default))
     (uuid 5fb3aad5-1efb-4524-b301-a55a8569eccb)
@@ -2981,6 +3065,10 @@
   (wire (pts (xy 115.57 162.56) (xy 115.57 165.1))
     (stroke (width 0) (type default))
     (uuid 68717863-dab5-4b2e-9425-5a697e63ea8c)
+  )
+  (wire (pts (xy 62.865 40.64) (xy 62.865 43.18))
+    (stroke (width 0) (type default))
+    (uuid 6ab1d23c-04ae-444d-9765-00ab85f44aa6)
   )
   (wire (pts (xy 402.59 43.18) (xy 400.05 43.18))
     (stroke (width 0) (type default))
@@ -3037,6 +3125,10 @@
   (wire (pts (xy 255.27 21.59) (xy 255.27 22.86))
     (stroke (width 0) (type default))
     (uuid 742eb55a-5dc7-4f50-a920-22e7cef1c61d)
+  )
+  (wire (pts (xy 48.26 32.385) (xy 45.72 32.385))
+    (stroke (width 0) (type default))
+    (uuid 74823844-4722-4b05-b51e-400d8d4d6834)
   )
   (wire (pts (xy 90.17 196.85) (xy 90.17 199.39))
     (stroke (width 0) (type default))
@@ -3102,6 +3194,10 @@
   (wire (pts (xy 85.09 186.69) (xy 90.17 186.69))
     (stroke (width 0) (type default))
     (uuid 7e8e6d6f-12f7-484d-acd7-0540fbdf99fb)
+  )
+  (wire (pts (xy 62.865 29.21) (xy 62.865 32.385))
+    (stroke (width 0) (type default))
+    (uuid 7eff2705-67cb-4e0b-9cc3-e6f720f34a0b)
   )
   (wire (pts (xy 85.09 196.85) (xy 85.09 199.39))
     (stroke (width 0) (type default))
@@ -3205,7 +3301,7 @@
     (stroke (width 0) (type default))
     (uuid 88911565-a51e-4a5c-80c9-cf7b2362bc09)
   )
-  (wire (pts (xy 44.45 52.07) (xy 50.8 52.07))
+  (wire (pts (xy 31.115 31.75) (xy 37.465 31.75))
     (stroke (width 0) (type default))
     (uuid 88a25468-5ec8-448c-8dee-6ae366e2885f)
   )
@@ -3285,6 +3381,10 @@
   (wire (pts (xy 134.62 198.12) (xy 138.43 198.12))
     (stroke (width 0) (type default))
     (uuid 94117790-d9f3-4dc5-a44d-29717b721858)
+  )
+  (wire (pts (xy 62.865 29.21) (xy 55.88 29.21))
+    (stroke (width 0) (type default))
+    (uuid 945ae2c1-5430-43ae-bbcc-8dad92980cd9)
   )
   (polyline (pts (xy 162.56 90.17) (xy 74.93 90.17))
     (stroke (width 0) (type default))
@@ -3382,6 +3482,10 @@
     (stroke (width 0) (type default))
     (uuid a2c3844f-5954-432a-87fd-498085cad159)
   )
+  (wire (pts (xy 48.26 29.21) (xy 45.72 29.21))
+    (stroke (width 0) (type default))
+    (uuid a324fe33-0563-4d6f-b14c-86d2776640ca)
+  )
   (wire (pts (xy 426.72 103.505) (xy 424.18 103.505))
     (stroke (width 0) (type default))
     (uuid a50b7ffd-395c-4404-9a5c-78122daaf5fa)
@@ -3472,7 +3576,7 @@
     (stroke (width 0) (type default))
     (uuid b54b7b22-a4b5-4c34-9e39-5dd335f796c2)
   )
-  (wire (pts (xy 44.45 54.61) (xy 50.8 54.61))
+  (wire (pts (xy 31.115 34.29) (xy 37.465 34.29))
     (stroke (width 0) (type default))
     (uuid b83f59de-b881-4a56-9ba0-cc03e19d6174)
   )
@@ -3541,6 +3645,10 @@
   (wire (pts (xy 320.675 106.045) (xy 317.5 106.045))
     (stroke (width 0) (type default))
     (uuid c0c481f1-a856-4ec7-8461-66adc543c89d)
+  )
+  (wire (pts (xy 62.865 32.385) (xy 55.88 32.385))
+    (stroke (width 0) (type default))
+    (uuid c1b5bad2-d831-4a79-9a23-400af15a177a)
   )
   (wire (pts (xy 372.11 33.02) (xy 369.57 33.02))
     (stroke (width 0) (type default))
@@ -3682,6 +3790,10 @@
   (wire (pts (xy 99.06 25.4) (xy 101.6 25.4))
     (stroke (width 0) (type default))
     (uuid d9230066-ad8f-478a-833f-a8b672e59d99)
+  )
+  (wire (pts (xy 62.865 32.385) (xy 62.865 33.02))
+    (stroke (width 0) (type default))
+    (uuid d97cc77c-53ba-4470-b7c0-e3d3a072c9c3)
   )
   (wire (pts (xy 87.63 25.4) (xy 91.44 25.4))
     (stroke (width 0) (type default))
@@ -4451,13 +4563,6 @@
       (effects (font (size 1.27 1.27)) (justify right) hide)
     )
   )
-  (global_label "IO0" (shape input) (at 149.86 49.53 180)
-    (effects (font (size 1.27 1.27)) (justify right))
-    (uuid 60af3bdc-9233-4bde-9ad8-4f92d4602003)
-    (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 149.86 49.53 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-  )
   (global_label "IN1_1" (shape output) (at 368.935 71.12 180) (fields_autoplaced)
     (effects (font (size 1.27 1.27)) (justify right))
     (uuid 61c3d726-3fe1-4ada-80b3-624604e93301)
@@ -4528,10 +4633,10 @@
       (effects (font (size 1.27 1.27)) (justify right) hide)
     )
   )
-  (global_label "TX0" (shape bidirectional) (at 50.8 54.61 0)
+  (global_label "TX0" (shape bidirectional) (at 37.465 34.29 0)
     (effects (font (size 1.27 1.27)) (justify left))
     (uuid 6d716154-c46d-41f2-b648-64f9501f5430)
-    (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 50.8 54.61 0)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 37.465 34.29 0)
       (effects (font (size 1.27 1.27)) hide)
     )
   )
@@ -4710,6 +4815,13 @@
       (effects (font (size 1.27 1.27)) (justify right) hide)
     )
   )
+  (global_label "BOOT" (shape bidirectional) (at 149.86 49.53 180)
+    (effects (font (size 1.27 1.27)) (justify right))
+    (uuid 9d8fe2c4-8f94-4011-88e6-64ab28d30c16)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 149.86 49.53 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+  )
   (global_label "LE" (shape output) (at 138.43 198.12 0) (fields_autoplaced)
     (effects (font (size 1.27 1.27)) (justify left))
     (uuid 9e1e8af7-c5f8-4d45-97f0-6d188214e81a)
@@ -4717,10 +4829,10 @@
       (effects (font (size 1.27 1.27)) (justify left) hide)
     )
   )
-  (global_label "RX0" (shape bidirectional) (at 50.8 52.07 0)
+  (global_label "RX0" (shape bidirectional) (at 37.465 31.75 0)
     (effects (font (size 1.27 1.27)) (justify left))
     (uuid 9f42daa0-76b7-42dd-9227-98491091d6bb)
-    (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 50.8 52.07 0)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 37.465 31.75 0)
       (effects (font (size 1.27 1.27)) hide)
     )
   )
@@ -4752,10 +4864,10 @@
       (effects (font (size 1.27 1.27)) (justify right) hide)
     )
   )
-  (global_label "VIN" (shape output) (at 50.8 49.53 0)
+  (global_label "VIN" (shape output) (at 65.405 29.21 0)
     (effects (font (size 1.27 1.27)) (justify left))
     (uuid abe2359d-f88a-4183-bf44-c75cc8463247)
-    (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 50.8 49.53 0)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 65.405 29.21 0)
       (effects (font (size 1.27 1.27)) hide)
     )
   )
@@ -5153,7 +5265,7 @@
   (symbol (lib_id "Device:C") (at 85.09 193.04 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 034376bf-1f52-4049-9ee5-2f43086e83fa)
-    (property "Reference" "C10" (at 85.09 190.5 0)
+    (property "Reference" "C11" (at 85.09 190.5 0)
       (effects (font (size 1.27 1.27)) (justify right))
     )
     (property "Value" "10uF" (at 85.09 195.58 0)
@@ -5170,7 +5282,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "C10") (unit 1)
+          (reference "C11") (unit 1)
         )
       )
     )
@@ -5265,6 +5377,38 @@
     )
   )
 
+  (symbol (lib_id "Diode:1N4148W") (at 52.07 29.21 0) (mirror y) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid 0d3986d4-fb3f-43e2-a112-40fa320fcfad)
+    (property "Reference" "D2" (at 57.15 26.67 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Value" "1N4148W" (at 49.53 26.67 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Footprint" "Diode_SMD:D_SOD-123" (at 52.07 33.655 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "https://www.vishay.com/docs/85748/1n4148w.pdf" (at 52.07 29.21 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Sim.Device" "D" (at 52.07 29.21 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Sim.Pins" "1=K 2=A" (at 52.07 29.21 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (pin "2" (uuid 3b3494e0-5aa7-4584-9ab6-4342abbd0656))
+    (pin "1" (uuid 4260f36b-3ff6-4b88-a92a-41f03e0376f4))
+    (instances
+      (project "Projeto Relogio Nixie IN17"
+        (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
+          (reference "D2") (unit 1)
+        )
+      )
+    )
+  )
+
   (symbol (lib_id "Device:R") (at 116.84 137.16 270) (mirror x) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 0f77ae7e-8940-4325-9270-5d41002f1e84)
@@ -5294,7 +5438,7 @@
   (symbol (lib_id "power:GNDD") (at 109.22 152.4 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 11426514-4c0e-41a9-ae01-cbbfd43e4912)
-    (property "Reference" "#PWR023" (at 109.22 158.75 0)
+    (property "Reference" "#PWR024" (at 109.22 158.75 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GNDD" (at 109.3216 156.337 0)
@@ -5310,7 +5454,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "#PWR023") (unit 1)
+          (reference "#PWR024") (unit 1)
         )
       )
     )
@@ -5319,7 +5463,7 @@
   (symbol (lib_id "power:GNDD") (at 237.49 137.16 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 18e004f5-2167-4d2b-8b14-e2472ae23c7a)
-    (property "Reference" "#PWR020" (at 237.49 143.51 0)
+    (property "Reference" "#PWR021" (at 237.49 143.51 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GNDD" (at 237.49 140.97 0)
@@ -5335,7 +5479,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "#PWR020") (unit 1)
+          (reference "#PWR021") (unit 1)
         )
       )
     )
@@ -5344,7 +5488,7 @@
   (symbol (lib_id "power:GNDD") (at 45.72 251.46 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 19c3cf69-5347-43fa-b61f-9c01cebe22fd)
-    (property "Reference" "#PWR029" (at 45.72 257.81 0)
+    (property "Reference" "#PWR030" (at 45.72 257.81 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GNDD" (at 45.8216 255.397 0)
@@ -5360,7 +5504,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "#PWR029") (unit 1)
+          (reference "#PWR030") (unit 1)
         )
       )
     )
@@ -5395,7 +5539,7 @@
   (symbol (lib_id "power:GNDD") (at 218.44 137.16 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 22fbd66f-abfd-4d37-b5e5-ec354f9e6a7f)
-    (property "Reference" "#PWR019" (at 218.44 143.51 0)
+    (property "Reference" "#PWR020" (at 218.44 143.51 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GNDD" (at 218.44 140.97 0)
@@ -5411,7 +5555,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "#PWR019") (unit 1)
+          (reference "#PWR020") (unit 1)
         )
       )
     )
@@ -5420,7 +5564,7 @@
   (symbol (lib_id "power:GNDD") (at 85.09 199.39 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 2363d7a0-dd09-4d4f-b19c-c804c704520e)
-    (property "Reference" "#PWR025" (at 85.09 205.74 0)
+    (property "Reference" "#PWR026" (at 85.09 205.74 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GNDD" (at 85.1916 203.327 0)
@@ -5436,7 +5580,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "#PWR025") (unit 1)
+          (reference "#PWR026") (unit 1)
         )
       )
     )
@@ -5463,6 +5607,32 @@
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
           (reference "SW2") (unit 1)
+        )
+      )
+    )
+  )
+
+  (symbol (lib_id "Device:C_Polarized") (at 62.865 36.83 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid 28b38973-18b8-4993-a430-53212e6dac6f)
+    (property "Reference" "C2" (at 65.405 35.56 0)
+      (effects (font (size 1.27 1.27)) (justify left))
+    )
+    (property "Value" "100uF" (at 65.405 38.1 0)
+      (effects (font (size 1.27 1.27)) (justify left))
+    )
+    (property "Footprint" "Capacitor_Tantalum_SMD:CP_EIA-1608-08_AVX-J" (at 63.8302 40.64 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "~" (at 62.865 36.83 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (pin "1" (uuid 9365ce88-b34e-406d-b5fd-7594edcf5c09))
+    (pin "2" (uuid f021455f-7e9d-4896-b9c0-0eea385d6211))
+    (instances
+      (project "Projeto Relogio Nixie IN17"
+        (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
+          (reference "C2") (unit 1)
         )
       )
     )
@@ -5498,7 +5668,7 @@
   (symbol (lib_id "Device:C") (at 264.16 46.99 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 2c8c1f49-4fc3-4d5b-8ad1-7919ea775d36)
-    (property "Reference" "C5" (at 266.7 45.72 0)
+    (property "Reference" "C6" (at 266.7 45.72 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "100nF 400V" (at 265.43 43.18 90)
@@ -5515,7 +5685,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "C5") (unit 1)
+          (reference "C6") (unit 1)
         )
       )
     )
@@ -5597,7 +5767,7 @@
   (symbol (lib_id "power:GNDD") (at 323.85 91.44 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 300c0800-3f8e-44c9-bc85-e2bf3f31cf41)
-    (property "Reference" "#PWR014" (at 323.85 97.79 0)
+    (property "Reference" "#PWR015" (at 323.85 97.79 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GNDD" (at 323.85 95.25 0)
@@ -5613,7 +5783,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "#PWR014") (unit 1)
+          (reference "#PWR015") (unit 1)
         )
       )
     )
@@ -5832,7 +6002,7 @@
   (symbol (lib_id "power:GNDD") (at 154.94 138.43 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 499d6e09-daec-4faa-81a4-58fd30fa76fb)
-    (property "Reference" "#PWR021" (at 154.94 144.78 0)
+    (property "Reference" "#PWR022" (at 154.94 144.78 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GNDD" (at 155.0416 142.367 0)
@@ -5848,7 +6018,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "#PWR021") (unit 1)
+          (reference "#PWR022") (unit 1)
         )
       )
     )
@@ -5909,7 +6079,7 @@
   (symbol (lib_id "Connector_Generic:Conn_01x24") (at 325.755 128.905 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 66f68949-93e3-4c0f-b826-6393fd0e2d22)
-    (property "Reference" "J2" (at 328.93 128.905 0)
+    (property "Reference" "J3" (at 328.93 128.905 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "Conn_02x12_Odd_Even" (at 329.565 132.08 0)
@@ -5948,7 +6118,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "J2") (unit 1)
+          (reference "J3") (unit 1)
         )
       )
     )
@@ -5957,7 +6127,7 @@
   (symbol (lib_id "power:GNDD") (at 181.61 90.17 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 6fb5ee8c-a490-400b-b7c1-1d00c8333e23)
-    (property "Reference" "#PWR012" (at 181.61 96.52 0)
+    (property "Reference" "#PWR013" (at 181.61 96.52 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GNDD" (at 181.61 93.98 0)
@@ -5973,7 +6143,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "#PWR012") (unit 1)
+          (reference "#PWR013") (unit 1)
         )
       )
     )
@@ -6042,7 +6212,7 @@
   (symbol (lib_id "Device:C") (at 90.17 193.04 0) (mirror y) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 752b031c-7819-4b5c-b0cb-06a665e654da)
-    (property "Reference" "C11" (at 90.17 190.5 0)
+    (property "Reference" "C12" (at 90.17 190.5 0)
       (effects (font (size 1.27 1.27)) (justify right))
     )
     (property "Value" "100nF" (at 90.17 195.58 0)
@@ -6059,7 +6229,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "C11") (unit 1)
+          (reference "C12") (unit 1)
         )
       )
     )
@@ -6120,7 +6290,7 @@
   (symbol (lib_id "power:GNDD") (at 185.42 137.16 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 7b26e7ea-d1bb-430e-bcc8-6e65931f55a1)
-    (property "Reference" "#PWR017" (at 185.42 143.51 0)
+    (property "Reference" "#PWR018" (at 185.42 143.51 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GNDD" (at 185.42 140.97 0)
@@ -6136,7 +6306,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "#PWR017") (unit 1)
+          (reference "#PWR018") (unit 1)
         )
       )
     )
@@ -6171,7 +6341,7 @@
   (symbol (lib_id "power:GNDD") (at 90.17 199.39 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 86eb77da-dee1-44bf-9b76-8ad09e5fa1c1)
-    (property "Reference" "#PWR026" (at 90.17 205.74 0)
+    (property "Reference" "#PWR027" (at 90.17 205.74 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GNDD" (at 90.2716 203.327 0)
@@ -6187,7 +6357,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "#PWR026") (unit 1)
+          (reference "#PWR027") (unit 1)
         )
       )
     )
@@ -6221,7 +6391,7 @@
   (symbol (lib_id "power:GNDD") (at 276.86 100.33 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 8d2f9c30-3a5e-47e6-a6d1-8cbb2ccc8ead)
-    (property "Reference" "#PWR016" (at 276.86 106.68 0)
+    (property "Reference" "#PWR017" (at 276.86 106.68 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GNDD" (at 276.86 104.14 0)
@@ -6237,7 +6407,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "#PWR016") (unit 1)
+          (reference "#PWR017") (unit 1)
         )
       )
     )
@@ -6273,7 +6443,7 @@
   (symbol (lib_id "Device:C") (at 237.49 127 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 911fae1a-5226-4c80-80a2-16b022dbad86)
-    (property "Reference" "C8" (at 240.03 125.73 0)
+    (property "Reference" "C9" (at 240.03 125.73 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "4.7uF" (at 240.03 128.27 0)
@@ -6290,7 +6460,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "C8") (unit 1)
+          (reference "C9") (unit 1)
         )
       )
     )
@@ -6322,19 +6492,19 @@
     )
   )
 
-  (symbol (lib_id "Connector_Generic:Conn_01x04") (at 39.37 52.07 0) (mirror y) (unit 1)
+  (symbol (lib_id "Connector_Generic:Conn_01x04") (at 26.035 31.75 0) (mirror y) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 92fd23e7-48c1-4a8f-8eac-6afb2a5467d3)
-    (property "Reference" "J1" (at 39.37 63.5 0)
+    (property "Reference" "J1" (at 26.035 43.18 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Value" "Conn_01x04" (at 39.37 60.96 0)
+    (property "Value" "Conn_01x04" (at 26.035 40.64 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "Connector:Magnetic_01x04" (at 39.37 52.07 0)
+    (property "Footprint" "Connector:Magnetic_01x04" (at 26.035 31.75 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "Datasheet" "~" (at 39.37 52.07 0)
+    (property "Datasheet" "~" (at 26.035 31.75 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (pin "3" (uuid 47e0f954-9670-473e-9d86-0bf127f4cd33))
@@ -6409,7 +6579,7 @@
   (symbol (lib_id "power:GNDD") (at 176.53 53.34 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 962a7f61-7b27-4fe2-a8b7-253047f8e23c)
-    (property "Reference" "#PWR02" (at 176.53 59.69 0)
+    (property "Reference" "#PWR04" (at 176.53 59.69 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GNDD" (at 176.53 57.15 0)
@@ -6425,7 +6595,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "#PWR02") (unit 1)
+          (reference "#PWR04") (unit 1)
         )
       )
     )
@@ -6460,7 +6630,7 @@
   (symbol (lib_id "Connector_Generic:Conn_01x24") (at 431.8 123.825 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 98fa93a6-b694-43cf-8546-fd6863fcf8de)
-    (property "Reference" "J3" (at 434.34 123.825 0)
+    (property "Reference" "J2" (at 434.34 123.825 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "Conn_01x24" (at 434.34 126.365 0)
@@ -6499,7 +6669,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "J3") (unit 1)
+          (reference "J2") (unit 1)
         )
       )
     )
@@ -6508,7 +6678,7 @@
   (symbol (lib_id "power:GNDD") (at 114.3 248.92 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 9a76f1a1-79e8-48ae-b598-baac22b4f993)
-    (property "Reference" "#PWR028" (at 114.3 255.27 0)
+    (property "Reference" "#PWR029" (at 114.3 255.27 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GNDD" (at 114.4016 252.857 0)
@@ -6524,7 +6694,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "#PWR028") (unit 1)
+          (reference "#PWR029") (unit 1)
         )
       )
     )
@@ -6660,7 +6830,7 @@
   (symbol (lib_id "power:GNDD") (at 275.59 53.34 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid a1d5633b-7a7b-4b05-9a2f-ae79e3914498)
-    (property "Reference" "#PWR09" (at 275.59 59.69 0)
+    (property "Reference" "#PWR011" (at 275.59 59.69 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GNDD" (at 275.59 57.15 0)
@@ -6676,7 +6846,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "#PWR09") (unit 1)
+          (reference "#PWR011") (unit 1)
         )
       )
     )
@@ -6685,7 +6855,7 @@
   (symbol (lib_id "power:GNDD") (at 261.62 100.33 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid a3f9dc2b-0a6e-42b5-b8eb-c118e9726efd)
-    (property "Reference" "#PWR015" (at 261.62 106.68 0)
+    (property "Reference" "#PWR016" (at 261.62 106.68 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GNDD" (at 261.62 104.14 0)
@@ -6701,7 +6871,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "#PWR015") (unit 1)
+          (reference "#PWR016") (unit 1)
         )
       )
     )
@@ -6710,7 +6880,7 @@
   (symbol (lib_id "power:GNDD") (at 95.25 251.46 90) (mirror x) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid a65a2bde-5e19-46fa-8f21-f368a44f34b9)
-    (property "Reference" "#PWR031" (at 101.6 251.46 0)
+    (property "Reference" "#PWR032" (at 101.6 251.46 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GNDD" (at 100.33 251.46 90)
@@ -6726,7 +6896,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "#PWR031") (unit 1)
+          (reference "#PWR032") (unit 1)
         )
       )
     )
@@ -6735,7 +6905,7 @@
   (symbol (lib_id "Diode:1N5819") (at 123.19 109.22 0) (mirror y) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid aa3114ad-7dbd-486b-a71f-b3141772cc0b)
-    (property "Reference" "D2" (at 120.65 111.76 0)
+    (property "Reference" "D4" (at 120.65 111.76 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "1N5819" (at 127 111.76 0)
@@ -6752,7 +6922,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "D2") (unit 1)
+          (reference "D4") (unit 1)
         )
       )
     )
@@ -6761,7 +6931,7 @@
   (symbol (lib_id "Device:LED") (at 31.75 234.95 90) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid abe923c0-ed29-4ff2-b1c2-70b61018c348)
-    (property "Reference" "D4" (at 35.56 235.2675 90)
+    (property "Reference" "D6" (at 35.56 235.2675 90)
       (effects (font (size 1.27 1.27)) (justify right))
     )
     (property "Value" "LED" (at 35.56 237.8075 90)
@@ -6778,7 +6948,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "D4") (unit 1)
+          (reference "D6") (unit 1)
         )
       )
     )
@@ -6787,7 +6957,7 @@
   (symbol (lib_id "Device:LED") (at 45.72 234.95 90) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid aca02dd3-1537-45e8-a2c9-379d1ad998ff)
-    (property "Reference" "D5" (at 49.53 235.2675 90)
+    (property "Reference" "D7" (at 49.53 235.2675 90)
       (effects (font (size 1.27 1.27)) (justify right))
     )
     (property "Value" "LED" (at 49.53 237.8075 90)
@@ -6804,7 +6974,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "D5") (unit 1)
+          (reference "D7") (unit 1)
         )
       )
     )
@@ -6813,7 +6983,7 @@
   (symbol (lib_id "power:GNDD") (at 45.72 209.55 90) (mirror x) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid aeb7697e-6afd-484c-a9e5-9abb63067d3f)
-    (property "Reference" "#PWR027" (at 52.07 209.55 0)
+    (property "Reference" "#PWR028" (at 52.07 209.55 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GNDD" (at 50.8 209.55 90)
@@ -6829,7 +6999,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "#PWR027") (unit 1)
+          (reference "#PWR028") (unit 1)
         )
       )
     )
@@ -6890,7 +7060,7 @@
   (symbol (lib_id "Device:C") (at 185.42 130.81 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid b2d089c2-8d3a-487a-abf9-ed9fc99424ce)
-    (property "Reference" "C9" (at 187.96 129.54 0)
+    (property "Reference" "C10" (at 187.96 129.54 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "4.7uF" (at 187.96 132.08 0)
@@ -6907,7 +7077,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "C9") (unit 1)
+          (reference "C10") (unit 1)
         )
       )
     )
@@ -6916,7 +7086,7 @@
   (symbol (lib_id "power:GNDD") (at 194.31 137.16 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid b2e53cf5-b8d3-4268-87ee-0f5ac42b2f7a)
-    (property "Reference" "#PWR018" (at 194.31 143.51 0)
+    (property "Reference" "#PWR019" (at 194.31 143.51 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GNDD" (at 194.31 140.97 0)
@@ -6932,7 +7102,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "#PWR018") (unit 1)
+          (reference "#PWR019") (unit 1)
         )
       )
     )
@@ -6964,26 +7134,26 @@
     )
   )
 
-  (symbol (lib_id "power:GNDD") (at 50.8 57.15 90) (mirror x) (unit 1)
+  (symbol (lib_id "power:GNDD") (at 37.465 36.83 90) (mirror x) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid b455f096-9a9f-44bb-84a4-2293e7e0fde0)
-    (property "Reference" "#PWR010" (at 57.15 57.15 0)
+    (property "Reference" "#PWR02" (at 43.815 36.83 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "Value" "GNDD" (at 55.88 57.15 90)
+    (property "Value" "GNDD" (at 42.545 36.83 90)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "" (at 50.8 57.15 0)
+    (property "Footprint" "" (at 37.465 36.83 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "Datasheet" "" (at 50.8 57.15 0)
+    (property "Datasheet" "" (at 37.465 36.83 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (pin "1" (uuid becb261c-13a8-4254-90fe-c79c427c50a3))
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "#PWR010") (unit 1)
+          (reference "#PWR02") (unit 1)
         )
       )
     )
@@ -6992,7 +7162,7 @@
   (symbol (lib_id "Device:C") (at 58.42 196.85 90) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid b6c1a339-4b75-44af-b55d-11c391cfe06c)
-    (property "Reference" "C12" (at 58.42 200.66 90)
+    (property "Reference" "C13" (at 58.42 200.66 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "1uF" (at 58.42 203.2 90)
@@ -7009,7 +7179,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "C12") (unit 1)
+          (reference "C13") (unit 1)
         )
       )
     )
@@ -7044,7 +7214,7 @@
   (symbol (lib_id "power:GNDD") (at 187.96 53.34 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid b95c2153-8498-454c-b697-248d40807af0)
-    (property "Reference" "#PWR03" (at 187.96 59.69 0)
+    (property "Reference" "#PWR05" (at 187.96 59.69 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GNDD" (at 187.96 57.15 0)
@@ -7060,7 +7230,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "#PWR03") (unit 1)
+          (reference "#PWR05") (unit 1)
         )
       )
     )
@@ -7069,7 +7239,7 @@
   (symbol (lib_id "power:GNDD") (at 209.55 90.17 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid bb1da673-38da-44fb-8c4d-f78edc5ce66e)
-    (property "Reference" "#PWR013" (at 209.55 96.52 0)
+    (property "Reference" "#PWR014" (at 209.55 96.52 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GNDD" (at 209.55 93.98 0)
@@ -7085,7 +7255,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "#PWR013") (unit 1)
+          (reference "#PWR014") (unit 1)
         )
       )
     )
@@ -7170,7 +7340,7 @@
   (symbol (lib_id "power:GNDD") (at 255.27 53.34 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid c0b5aeeb-4c26-4cfd-9033-07ae9210fd35)
-    (property "Reference" "#PWR07" (at 255.27 59.69 0)
+    (property "Reference" "#PWR09" (at 255.27 59.69 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GNDD" (at 255.27 57.15 0)
@@ -7186,7 +7356,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "#PWR07") (unit 1)
+          (reference "#PWR09") (unit 1)
         )
       )
     )
@@ -7247,7 +7417,7 @@
   (symbol (lib_id "Device:C") (at 275.59 46.99 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid c6596b2f-7f5c-4f0e-9b43-214ee50437c6)
-    (property "Reference" "C6" (at 278.13 45.72 0)
+    (property "Reference" "C7" (at 278.13 45.72 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "4.7uF 400V" (at 276.86 43.18 90)
@@ -7264,7 +7434,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "C6") (unit 1)
+          (reference "C7") (unit 1)
         )
       )
     )
@@ -7273,7 +7443,7 @@
   (symbol (lib_id "power:GNDD") (at 68.58 199.39 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid c68d3292-3ee1-43bb-9287-fe1bc31c7fd5)
-    (property "Reference" "#PWR024" (at 68.58 205.74 0)
+    (property "Reference" "#PWR025" (at 68.58 205.74 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GNDD" (at 68.6816 203.327 0)
@@ -7289,7 +7459,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "#PWR024") (unit 1)
+          (reference "#PWR025") (unit 1)
         )
       )
     )
@@ -7326,7 +7496,7 @@
   (symbol (lib_id "Device:C") (at 199.39 46.99 0) (mirror y) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid c968f724-3874-4c8f-88ab-aa974f291748)
-    (property "Reference" "C4" (at 201.93 45.72 0)
+    (property "Reference" "C5" (at 201.93 45.72 0)
       (effects (font (size 1.27 1.27)) (justify right))
     )
     (property "Value" "100nF" (at 201.93 48.26 0)
@@ -7343,7 +7513,32 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "C4") (unit 1)
+          (reference "C5") (unit 1)
+        )
+      )
+    )
+  )
+
+  (symbol (lib_id "power:GNDD") (at 62.865 43.18 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
+    (uuid daa632b1-e283-4cee-9d92-91ce93fa4f73)
+    (property "Reference" "#PWR03" (at 62.865 49.53 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Value" "GNDD" (at 62.865 46.99 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Footprint" "" (at 62.865 43.18 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "" (at 62.865 43.18 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (pin "1" (uuid ce3cb70f-190c-4ac7-aab2-bdfeb593beb6))
+    (instances
+      (project "Projeto Relogio Nixie IN17"
+        (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
+          (reference "#PWR03") (unit 1)
         )
       )
     )
@@ -7352,7 +7547,7 @@
   (symbol (lib_id "Device:C") (at 176.53 46.99 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid de2bd49b-4243-4d2a-848b-6aecc702685c)
-    (property "Reference" "C2" (at 179.07 45.72 0)
+    (property "Reference" "C3" (at 179.07 45.72 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "100nF" (at 179.07 48.26 0)
@@ -7369,7 +7564,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "C2") (unit 1)
+          (reference "C3") (unit 1)
         )
       )
     )
@@ -7459,7 +7654,7 @@
   (symbol (lib_id "power:GNDD") (at 215.9 53.34 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid e0d6badf-a72b-4c6b-8428-5c06ec13c458)
-    (property "Reference" "#PWR05" (at 215.9 59.69 0)
+    (property "Reference" "#PWR07" (at 215.9 59.69 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GNDD" (at 215.9 57.15 0)
@@ -7475,7 +7670,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "#PWR05") (unit 1)
+          (reference "#PWR07") (unit 1)
         )
       )
     )
@@ -7510,7 +7705,7 @@
   (symbol (lib_id "power:GNDD") (at 132.08 146.05 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid eaa28101-4061-47fa-94e1-3535c471ed7e)
-    (property "Reference" "#PWR022" (at 132.08 152.4 0)
+    (property "Reference" "#PWR023" (at 132.08 152.4 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GNDD" (at 132.1816 149.987 0)
@@ -7526,7 +7721,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "#PWR022") (unit 1)
+          (reference "#PWR023") (unit 1)
         )
       )
     )
@@ -7535,7 +7730,7 @@
   (symbol (lib_id "power:GNDD") (at 58.42 251.46 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid ecb43c1f-97ed-4e74-b68e-cdebea361567)
-    (property "Reference" "#PWR030" (at 58.42 257.81 0)
+    (property "Reference" "#PWR031" (at 58.42 257.81 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GNDD" (at 58.5216 255.397 0)
@@ -7551,7 +7746,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "#PWR030") (unit 1)
+          (reference "#PWR031") (unit 1)
         )
       )
     )
@@ -7560,7 +7755,7 @@
   (symbol (lib_id "Device:LED") (at 58.42 234.95 90) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid ecba73ea-9ef0-4593-95b7-42027a1cb219)
-    (property "Reference" "D6" (at 62.23 235.2675 90)
+    (property "Reference" "D8" (at 62.23 235.2675 90)
       (effects (font (size 1.27 1.27)) (justify right))
     )
     (property "Value" "LED" (at 62.23 237.8075 90)
@@ -7577,7 +7772,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "D6") (unit 1)
+          (reference "D8") (unit 1)
         )
       )
     )
@@ -7586,7 +7781,7 @@
   (symbol (lib_id "power:GNDD") (at 238.76 53.34 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid f05767be-0334-4fc1-944f-7e0a5b0d60ac)
-    (property "Reference" "#PWR06" (at 238.76 59.69 0)
+    (property "Reference" "#PWR08" (at 238.76 59.69 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GNDD" (at 238.76 57.15 0)
@@ -7602,7 +7797,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "#PWR06") (unit 1)
+          (reference "#PWR08") (unit 1)
         )
       )
     )
@@ -7611,7 +7806,7 @@
   (symbol (lib_id "Device:C") (at 181.61 80.01 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid f3ae2c49-d3cc-48ed-a344-6a1e4e472c1a)
-    (property "Reference" "C7" (at 184.15 78.74 0)
+    (property "Reference" "C8" (at 184.15 78.74 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "10uF" (at 184.15 81.28 0)
@@ -7628,7 +7823,39 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "C7") (unit 1)
+          (reference "C8") (unit 1)
+        )
+      )
+    )
+  )
+
+  (symbol (lib_id "Diode:1N4148W") (at 52.07 32.385 180) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid f4262598-51a8-4002-a56c-2bbe8cda2e5a)
+    (property "Reference" "D3" (at 57.15 34.925 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Value" "1N4148W" (at 49.53 34.925 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Footprint" "Diode_SMD:D_SOD-123" (at 52.07 27.94 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "https://www.vishay.com/docs/85748/1n4148w.pdf" (at 52.07 32.385 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Sim.Device" "D" (at 52.07 32.385 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Sim.Pins" "1=K 2=A" (at 52.07 32.385 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (pin "2" (uuid b2ce6b85-2362-4fe7-a2e2-c305249b280a))
+    (pin "1" (uuid 4c4e8ffc-dc4d-437b-880d-1d22bc49d6a7))
+    (instances
+      (project "Projeto Relogio Nixie IN17"
+        (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
+          (reference "D3") (unit 1)
         )
       )
     )
@@ -7637,7 +7864,7 @@
   (symbol (lib_id "Device:C_Polarized") (at 187.96 46.99 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid f5154be1-5c38-492b-829d-2cf09dadc581)
-    (property "Reference" "C3" (at 190.5 45.72 0)
+    (property "Reference" "C4" (at 190.5 45.72 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "100uF" (at 190.5 48.26 0)
@@ -7654,7 +7881,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "C3") (unit 1)
+          (reference "C4") (unit 1)
         )
       )
     )
@@ -7663,7 +7890,7 @@
   (symbol (lib_id "Diode:BZD27Cxx") (at 109.22 127 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid f56d482e-b40e-4936-83df-3808780a49cf)
-    (property "Reference" "D3" (at 111.2266 125.8316 90)
+    (property "Reference" "D5" (at 111.2266 125.8316 90)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "BZD27Cxx" (at 111.2266 128.143 90)
@@ -7680,7 +7907,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "D3") (unit 1)
+          (reference "D5") (unit 1)
         )
       )
     )
@@ -7689,7 +7916,7 @@
   (symbol (lib_id "power:GNDD") (at 199.39 53.34 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid f8dd7c45-ef1e-44b1-a47b-e799912e88ee)
-    (property "Reference" "#PWR04" (at 199.39 59.69 0)
+    (property "Reference" "#PWR06" (at 199.39 59.69 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GNDD" (at 199.39 57.15 0)
@@ -7705,7 +7932,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "#PWR04") (unit 1)
+          (reference "#PWR06") (unit 1)
         )
       )
     )
@@ -7714,7 +7941,7 @@
   (symbol (lib_id "power:GNDD") (at 264.16 53.34 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid fa5ac329-bf93-4716-b617-9608d89efbfc)
-    (property "Reference" "#PWR08" (at 264.16 59.69 0)
+    (property "Reference" "#PWR010" (at 264.16 59.69 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GNDD" (at 264.16 57.15 0)
@@ -7730,7 +7957,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "#PWR08") (unit 1)
+          (reference "#PWR010") (unit 1)
         )
       )
     )
@@ -7739,7 +7966,7 @@
   (symbol (lib_id "power:GNDD") (at 105.41 82.55 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid fc46afa7-bea8-4e16-84e4-9a754e30bb99)
-    (property "Reference" "#PWR011" (at 105.41 88.9 0)
+    (property "Reference" "#PWR012" (at 105.41 88.9 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GNDD" (at 105.5116 86.487 0)
@@ -7755,7 +7982,7 @@
     (instances
       (project "Projeto Relogio Nixie IN17"
         (path "/d4c3fedd-faa7-4a76-854e-fc1240390c46"
-          (reference "#PWR011") (unit 1)
+          (reference "#PWR012") (unit 1)
         )
       )
     )
